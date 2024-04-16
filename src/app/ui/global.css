@@ -3,27 +3,28 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground: #F4F4F4;
+}
+
+:root {
+  --dm-serif-font: var(--dmserif); 
+  --roboto-font: var(--roboto);
+  --source-sans-font: var(--sourcesans);
+  --pt-sans-font: var(--ptsans);
+}
+
+.font-dmserif {
+  font-family: var(--dm-serif-font);
+}
+
+.font-roboto {
+  font-family: var(--roboto-font);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: #212121;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
@@ -32,15 +33,66 @@ body {
   }
 }
 
-.nav-link {
-  color: #212121;
-  padding: 1rem;
-  background-color: #FFFFFF; 
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-.nav-link.active {
-  font-weight: bold;
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+body {
+  background-color: #F4F4F4;
+}
+
+.nav-links {
+  color: #212121;
+  font-size: medium;
+  background-color: #FFFFFF; 
+  display: flex;
+  height: 48px;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 20px; /*will fix */
+  border-radius: 15px;
+  background-color: #F9FAFB; 
+  padding-left: 5px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
+  font: 'source-sans-pro';
+
+  &:hover {
+    background-color: #E6E6FA; 
+    color: #212121; 
+  }
+
+  @media (min-width: 768px) { /* Assuming "md" refers to medium screens (768px+) */
+    flex-grow: initial;
+    justify-content: flex-start;
+    padding: 2px 3px;
+  }
+}
+
+.nav-link-active {
   color: #FFFFFF; 
   background-color: #6F42C1; 
 }
 
+.nav-link-active img{
+  fill: #FFFFFF;
+}
+
+.h1 {
+  font: 'roboto';
+  font-size: 36;
+  font-weight: 700;
+  margin: auto;
+}
