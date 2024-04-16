@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import '@/app/ui/globals.css';
+import '@/app/ui/global.css';
 
 const links = [
   { name: 'Dashboard', href: '/', icon: '/icons/dashboard.svg' },
@@ -33,9 +33,9 @@ export default function NavLinks() {
               pathname === link.href && 'nav-link-active ',
             )}
           >
-            <svg className="ml-3 mr-2 h-6 w-6" // Adjust styles as needed 
+            <img className="ml-3 mr-2 h-6 w-6" // Adjust styles as needed 
             aria-hidden="true" 
-            path={link.icon}
+            src={link.icon}
             />
           <span className="image-overlay"></span>
              <p className="hidden md:block">{link.name}</p>
