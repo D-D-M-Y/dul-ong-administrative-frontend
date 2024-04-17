@@ -65,6 +65,6 @@ export default async function Page() {
       <img src="/filler.png" alt="Filler Image" className=" rounded-md "/>
       </div>
       </div>
-    </div>
+    </main>
   );
 }
