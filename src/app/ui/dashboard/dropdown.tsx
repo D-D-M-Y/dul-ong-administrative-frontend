@@ -26,7 +26,7 @@ const Dropdown = ({ options = ["Daily", "Weekly", "Monthly", "Annually"] }) => {
         />
       </button>
       {isOpen && (
-        <ul className="rounded-lg absolute top-full left-0 bg-white shadow-md mt-1">
+        <ul className="rounded-lg absolute top-full left-0 bg-white shadow-md mt-1 dropdown">
           {options.map((option) => (
             <li
               key={option}

@@ -7,9 +7,7 @@ import '@/app/ui/global.css';
 
 const links = [
   { name: 'Dashboard', href: '/', icon: '/icons/dashboard.svg' },
-  { name: 'Company Settings', href: '/company-settings', icon: '/icons/settings.svg'},
-  { name: 'Manage Admins', href: '/company-settings/manage-admins', icon: '/icons/setting.svg'},
-  { name: 'Manage FOOs', href: '/company-settings/manage-foos', icon: '/icons/driver.svg'},
+  { name: 'Company Settings', href: '/company-settings/', icon: '/icons/settings.svg'},
   { name: 'Customer Data', href: '/customer-data', icon: '/icons/customer.svg' },
   { name: 'Generate Route', href: '/generate-route',  icon: '/icons/way.svg'},
   { name: 'Route History', href: '/route-history',  icon: '/icons/history.svg'},
