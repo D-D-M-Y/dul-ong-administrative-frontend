@@ -26,7 +26,7 @@ export default async function Page() {
       </h1>
         
           {/* Delivery Overview */}
-      <div className="flex items-baseline"> {/*fixed it to align to baseline instead of center for the dropdown to not float in the middle */}
+      <div className="flex items-baseline"> 
         <h1> Delivery Overview </h1>
           <div className="ml-4 relative">
             <Dropdown />
@@ -47,10 +47,10 @@ export default async function Page() {
       <h1> FOO Management </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card title="FOOs Available"            value={"1"}         type="fooavailable" />
-        <Card title="FOOs En-route"              value={"11"}        type="fooenroute" />
-        <Card title="FOOs Idling"               value={"0"}         type="fooidling" />
-        <Card title="Packages Delivered"        value={"162"}       type="packagedel" />
+        <Card title="FOOs Available"              value={"1"}         type="fooavailable" />
+        <Card title="FOOs En-route"               value={"11"}        type="fooenroute" />
+        <Card title="FOOs Idling"                 value={"0"}         type="fooidling" />
+        <Card title="Packages Delivered"          value={"162"}       type="packagedel" />
       </div>
 
 
@@ -62,7 +62,7 @@ export default async function Page() {
       
       <div> 
         <div className=" h-full w-auto rounded-xl bg-white p-2 shadow-sm">
-          <img src="/filler.png"                alt="Filler Image" className=" rounded-md "/>
+          <img src="/filler.png"                 alt="Filler Image"   className=" rounded-md "/>
         </div>
       </div>
     </main>
