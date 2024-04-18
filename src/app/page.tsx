@@ -48,7 +48,7 @@ export default async function Page() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card title="FOOs Available"            value={"1"}         type="fooavailable" />
-        <Card title="FOO En-route"              value={"11"}        type="fooenroute" />
+        <Card title="FOOs En-route"              value={"11"}        type="fooenroute" />
         <Card title="FOOs Idling"               value={"0"}         type="fooidling" />
         <Card title="Packages Delivered"        value={"162"}       type="packagedel" />
       </div>
