@@ -1,4 +1,5 @@
 import React from 'react'; 
+import Link from 'next/link';
 
 interface Entity {
   name: string;
@@ -18,7 +19,14 @@ const entities: Entity[] = [
   dateAdded: new Date(), 
   lastLogin: new Date(), 
   editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}
+  deleteIcon: "/icons/trash.svg"},
+{ name: "Jonas Doe", 
+  email: "Jonas.doe@example.com", 
+  username: "jonasdoe", 
+  dateAdded: new Date(), 
+  lastLogin: new Date(), 
+  editIcon: "/icons/edit.svg", 
+  deleteIcon: "/icons/trash.svg"}  
   // ... more entities
 ];
 
@@ -50,7 +58,7 @@ const MyGrid = () => {
                 <img src={entity.editIcon} alt="Edit" width="20" height="20" />
               )}
             </td>
-            <td className="icon-cell">
+            <td  >
               {entity.deleteIcon && (
                 <img src={entity.deleteIcon} alt="Delete" width="20" height="20" />
               )}
@@ -72,14 +80,23 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="customborder-link">
-          <h2 className="pl-5 pr-5">Manage Admins</h2>
+        <div className="flex items-baseline"> 
+          <div className="customborder-active">
+            <h2 className="pl-5 pr-5">Manage Admins</h2>
+          </div>
+          <div className="customborder-link">
+            <Link href="/company-settings/manage-foos" className="pl-2 pr-5">
+              <h2>Manage FOOs</h2>
+            </Link>
+          </div>
         </div>
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="grid">
+          <div className="p-5"> 
+          <div className="grid table">
             <MyGrid />
+            </div>
             </div>
           </div>
         </div>
