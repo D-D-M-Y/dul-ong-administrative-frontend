@@ -22,13 +22,13 @@
   }: {
     title: string;
     value: number | string;
-    type: 'total' | 'avgdeltime' | 'ontimerate' | 'successfulrate';
+    type: 'total' | 'avgdeltime' | 'ontimerate' | 'successfulrate' | 'fooavailable' | 'fooenroute' | 'fooidling' | 'packagedel';
   }) {
   
     return (
       <div className="rounded-xl bg-white p-2 shadow-sm">
-        <p className={`font-source-sans-pro ml-3`} style={{ fontSize: 24}}>{title}</p>
-        <h1 className={`font-roboto font-bold text-[64px] py-8 text-center mb-2`}> {value} </h1>
+        <p className={'font-source-sans-pro ml-3'} style={{fontSize: 24}}>{title}</p>
+        <h1 className={'font-bold py-8 text-center mb-2'}> {value} </h1>
       </div>
     );
   }
