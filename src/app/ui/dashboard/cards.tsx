@@ -27,8 +27,8 @@
   
     return (
       <div className="rounded-xl bg-white p-2 shadow-sm">
-        <p className={'font-source-sans-pro ml-3'} style={{fontSize: 24}}>{title}</p>
-        <h1 className={'font-bold py-8 text-center mb-2'}> {value} </h1>
+        <h3 className='ml-3'>{title}</h3>
+        <h1 className='font-bold py-8 text-center mb-2'> {value} </h1>
       </div>
     );
   }
