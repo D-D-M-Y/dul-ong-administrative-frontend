@@ -124,14 +124,29 @@ h3 {                   /*header for cards*/
 
 /* company settings */
 
-.customborder-link {
+.customborder-active {
   width: fit-content;
   height: 100%; 
   position: relative;
   background-color: white;
-  overflow: hidden;
+  border-width: 2px;
   border-color: white;
   border-radius: 6px 6px 0 0;  
+  color: #6F42C1;
+  z-index: 1;
+}
+
+.customborder-link {
+  width: fit-content;
+  height: 100%; 
+  position: relative;
+  background-color: #F4F4F4;
+  border-width: 2px;
+  border-left: 2px;
+  border-color: #D9D9D9;
+  border-radius: 6px 6px 0 0;  
+  color: #212121;
+  z-index: 0;
 }
 
 .customborder-body {
@@ -139,19 +154,17 @@ h3 {                   /*header for cards*/
   height:             100%; 
   position:           relative;
   background-color: white;
-  overflow:           hidden;
   border-color:     white;
   border-radius:      0 6px 6px 6px; 
 }
 
-.grid{
-  padding:            5px;
-  border:           #D9D9D9;
+.grid{ 
+  border-width:       2px;
+  border-color:     #D9D9D9;
   border-radius:      10px;
   height:             100%;
   width:              100%;
-  position:           relative;
-  overflow:           hidden;
+  position:           flex;
 }
 
 th {
@@ -159,14 +172,23 @@ th {
   font-size:          large;
   font-weight:        bold;
   background-color: white;
-  border:           #940000;
+  border-color:     #D9D9D9;
+  border-width:       1px;
+  border-top:         1px;
+  border-bottom:      1px;
+  border-left:        1px;
+  padding-top:        10px;
+  padding-bottom:     10px;
 }
 
 
 td {
   font:               var(--pt-sans-font);
   font-size:          small;
-  border:           #D9D9D9;
+  border-color:    #D9D9D9;
+  border-width:       1px;
+  border-bottom:      1px;
+  border-left:        1px;
 }
 
 .icon-cell {
