@@ -58,19 +58,25 @@ body {
 
 /* headers */
 
-h1 {
+h1 {                  /*header for page*/ 
   font-family: var(--roboto-font);
   font-size: 250%;
   color: #212121;
 }
 
-h2 {
+h2 {                   /*header for tabs*/ 
   display:             inline-block;
   position:            relative;
   top:                 1px; 
   margin:              auto;
-  font:                var(--source-sans-font);
+  font:                var(--source-sans-pro-font);
   font-size:           large;
+}
+
+h3 {                   /*header for cards*/ 
+  font-family:         var(--source-sans-pro-font); 
+  font-size:           x-large; 
+  color:             #212121;
 }
 
 /* dashboard*/
