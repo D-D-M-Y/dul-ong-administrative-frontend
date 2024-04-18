@@ -12,7 +12,13 @@ interface Entity {
 
 const entities: Entity[] = [
   // Populate entity data here
-  { name: "John Doe", email: "john.doe@example.com", username: "johndoe", dateAdded: new Date(), lastLogin: new Date(), editIcon: "/icons/edit.svg", deleteIcon: "/icons/trash.svg"}
+{ name: "John Doe", 
+  email: "john.doe@example.com", 
+  username: "johndoe", 
+  dateAdded: new Date(), 
+  lastLogin: new Date(), 
+  editIcon: "/icons/edit.svg", 
+  deleteIcon: "/icons/trash.svg"}
   // ... more entities
 ];
 
