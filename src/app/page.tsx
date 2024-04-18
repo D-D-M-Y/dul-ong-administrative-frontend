@@ -21,7 +21,7 @@ export default async function Page() {
 
   return (
     <main>
-      <h1 style={{ fontWeight: 'bold' }}>
+      <h1 className = "font-bold">
         Welcome back, Allana!
       </h1>
         
