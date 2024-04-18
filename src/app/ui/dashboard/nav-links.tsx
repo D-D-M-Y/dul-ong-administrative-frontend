@@ -7,7 +7,7 @@ import '@/app/ui/global.css';
 
 const links = [
   { name: 'Dashboard', href: '/', icon: '/icons/dashboard.svg' },
-  { name: 'Company Settings', href: '/company-settings/', icon: '/icons/settings.svg'},
+  { name: 'Company Settings', href: '/company-settings', icon: '/icons/settings.svg'},
   { name: 'Customer Data', href: '/customer-data', icon: '/icons/customer.svg' },
   { name: 'Generate Route', href: '/generate-route',  icon: '/icons/way.svg'},
   { name: 'Route History', href: '/route-history',  icon: '/icons/history.svg'},
