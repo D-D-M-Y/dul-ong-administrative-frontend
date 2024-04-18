@@ -1,4 +1,5 @@
 import React from 'react'; 
+import Link from 'next/link';
 
 interface Entity {
   customerID: string
@@ -85,14 +86,29 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="customborder-link">
-          <h2 className="pl-5 pr-5">Manage Customers</h2>
+        <div className="flex items-baseline"> 
+          <div className="customborder-active z-2">
+            <h2 className="pl-5 pr-5">Manage Customers</h2>
+          </div>
+          <div className="customborder-link">
+            <Link href="/customer-data/manage-packages" className="pl-2 pr-5 z-1">
+              <h2>Manage Packages</h2>
+            </Link>
+          </div>
+          <div className="customborder-link">
+            <Link href="/customer-data/new-package" className="pl-2 pr-5 z-0">
+              <h2>New Package</h2>
+            </Link>
+          </div>
         </div>
+        
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="grid">
+        <div className="p-5"> 
+          <div className="grid table">
             <MyGrid />
+            </div>
             </div>
           </div>
         </div>
