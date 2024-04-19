@@ -7,22 +7,18 @@
 }
 
 :root {
-  --dm-serif-font: var(--dmserif); 
-  --roboto-font: var(--roboto);
-  --source-sans-pro-font: var(--sourcesans);
-  --pt-sans-font: var(--ptsans);
+  --Roboto-Regular: var(--roboto);
+  --SourceSansPro-Regular: var(--sourcesans);
+  --PTSans-Regular: var(--ptsans);
 }
 
-.font-dmserif {
-  font-family: var(--dm-serif-font);
-}
 
 .font-roboto {
   font-family: var(--roboto-font);
 }
 
 .font-sourcesans {
-  font-family: var(--source-sans-pro-font);
+  font-family: var(--SourceSansPro-Regular);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -79,6 +75,13 @@ h3 {                   /*header for cards*/
   color:             #212121;
 }
 
+h4 {                   /*name in sidenav*/ 
+  font-family:         var(--roboto); 
+  font-size:           x-large;
+  font-weight:         bold;
+  color:             #212121;
+}
+
 /* dashboard*/
 
 .nav-links {
@@ -86,12 +89,12 @@ h3 {                   /*header for cards*/
   font-size:            medium;
   background-color:   #FFFFFF; 
   display:              flex;
-  height:               48px;
+  height:               3rem;
   flex-grow:            1;
   align-items:          center;
   justify-content:      center;
-  gap:                  2px;
-  border-radius:        15px;
+  gap:                  0.2rem;
+  border-radius:        1rem;
   background-color:     #F9FAFB; 
   transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
   font:                 var(--font-source-sans-pro);
@@ -129,10 +132,12 @@ h3 {                   /*header for cards*/
   height: 100%; 
   position: relative;
   background-color: white;
-  border-width: 2px;
+  border-width: 0.1rem;
   border-color: white;
-  border-radius: 6px 6px 0 0;  
+  border-radius:  1rem 1rem 0 0;  
   color: #6F42C1;
+  padding-left: 1rem;
+  padding-right: 1rem;
   z-index: 1;
 }
 
@@ -141,11 +146,13 @@ h3 {                   /*header for cards*/
   height: 100%; 
   position: relative;
   background-color: #F4F4F4;
-  border-width: 2px;
-  border-left: 2px;
+  border-width: 0.1rem;
   border-color: #D9D9D9;
-  border-radius: 6px 6px 0 0;  
+  border-bottom: 0;
+  border-radius:  1rem 1rem 0 0;  
   color: #212121;
+  padding-left: 1rem;
+  padding-right: 1rem;
   z-index: 0;
 }
 
@@ -155,43 +162,44 @@ h3 {                   /*header for cards*/
   position:           relative;
   background-color: white;
   border-color:     white;
-  border-radius:      0 6px 6px 6px; 
+  border-radius:      0 1rem 1rem 1rem; 
 }
 
-.grid{ 
-  border-width:       2px;
+.table{ 
+  border-width:       0.2rem;
   border-color:     #D9D9D9;
-  border-radius:      10px;
+  border-radius:      0.5rem;
   height:             100%;
   width:              100%;
   position:           flex;
 }
 
 th {
-  font:               var(--source-sans-font);
+  font:               var(--SourceSansPro-Regular);
   font-size:          large;
   font-weight:        bold;
   background-color: white;
   border-color:     #D9D9D9;
-  border-width:       1px;
-  border-top:         1px;
-  border-bottom:      1px;
-  border-left:        1px;
-  padding-top:        10px;
-  padding-bottom:     10px;
+  border-width:       0.05rem;
+  border-top:         0.05rem;
+  border-bottom:      0.05rem;
+  border-left:        0.05rem;
+  padding-top:        1rem;
+  padding-bottom:     1rem;
 }
 
 
 td {
-  font:               var(--pt-sans-font);
+  font:               var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
-  border-width:       1px;
-  border-bottom:      1px;
-  border-left:        1px;
+  border-width:       0.05rem;
+  border-bottom:      0.05rem;
+  border-left:        0.05rem;
+  text-align:         center;
 }
 
-.icon-cell {
-  justify-content:    center;
-  align-items:        center;
+td img {
+  display: block; /* Make the image a block-level element */
+  margin:  0 auto;  /* Center horizontally with equal margins */
 }
