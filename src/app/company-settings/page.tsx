@@ -13,20 +13,20 @@ interface Entity {
 
 const entities: Entity[] = [
   // Populate entity data here
-{ name: "John Doe", 
-  email: "john.doe@example.com", 
-  username: "johndoe", 
+{ name: "Angel Jude Diones", 
+  email: "angeljude.diones@lsprovder.com.ph", 
+  username: "ajdiones", 
+  dateAdded: new Date(), 
+  lastLogin: new Date(), 
+  editIcon: "/icons/edit.svg", 
+  deleteIcon: "/icons/trash.svg"} , 
+{ name: "Allana Yzabelle Diaz", 
+  email: "allanayzabelle.diaz@lsprovider.com.ph", 
+  username: "aydiaz", 
   dateAdded: new Date(), 
   lastLogin: new Date(), 
   editIcon: "/icons/edit.svg", 
   deleteIcon: "/icons/trash.svg"},
-{ name: "Jonas Doe", 
-  email: "Jonas.doe@example.com", 
-  username: "jonasdoe", 
-  dateAdded: new Date(), 
-  lastLogin: new Date(), 
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}  
   // ... more entities
 ];
 
@@ -60,7 +60,7 @@ const MyGrid = () => {
             </td>
             <td  >
               {entity.deleteIcon && (
-                <img src={entity.deleteIcon} alt="Delete" width="20" height="20" />
+                <img src={entity.deleteIcon} alt="Delete" width="20" height="20"/>
               )}
             </td>
           </tr>
@@ -75,17 +75,17 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 style = {{fontWeight: 'bold'}}>
+        <h1 className='font-bold'>
           Company Settings
         </h1>
 
         {/* Folder */}
         <div className="flex items-baseline"> 
           <div className="customborder-active">
-            <h2 className="pl-5 pr-5">Manage Admins</h2>
+            <h2>Manage Admins</h2>
           </div>
           <div className="customborder-link">
-            <Link href="/company-settings/manage-foos" className="pl-2 pr-5">
+            <Link href="/company-settings/manage-foos">
               <h2>Manage FOOs</h2>
             </Link>
           </div>
