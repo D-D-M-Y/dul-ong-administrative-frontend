@@ -1,4 +1,6 @@
-import React from 'react'; 
+"use client";
+import React, { useState } from 'react';
+import { Popup } from '../ui/dashboard/popup';
 import Link from 'next/link';
 
 interface Entity {
@@ -16,63 +18,71 @@ interface Entity {
 
 const entities: Entity[] = [
   // Populate entity data here
-  { 
-  customerID: "CUS000001", 
-  name: "John Doe", 
-  city: "Iloilo City", 
-  barangay: "Quezon", 
-  staddress: "8", 
-  longitude: 0.0, 
-  latitude: 0.0, 
-  waitingCost: 0.0,
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}
+  {
+    customerID: "CUS000001",
+    name: "John Doe",
+    city: "Iloilo City",
+    barangay: "Quezon",
+    staddress: "8",
+    longitude: 0.0,
+    latitude: 0.0,
+    waitingCost: 0.0,
+    editIcon: "/icons/edit.svg",
+    deleteIcon: "/icons/trash.svg"
+  }
   // ... more entities
 ];
 
 const MyGrid = () => {
+  // state variable to control popup visibility, initialized to false
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Customer ID</th>
-          <th>Name</th>
-          <th>City</th>
-          <th>Barangay</th>
-          <th>Street Address</th>
-          <th>Longitude</th>
-          <th>Latitude</th>
-          <th>Waiting Cost</th>
-          <th>Edit</th>
-          <th>Delete</th>
-          {/* Add table headers if needed */}
-        </tr>
-      </thead>
-      <tbody>
-        {entities.map((entity) => (
-          <tr key={entity.customerID}>
-            <td>{entity.customerID}</td>
-            <td>{entity.name}</td>
-            <td>{entity.city}</td>
-            <td>{entity.barangay}</td>
-            <td>{entity.staddress}</td>
-            <td>{entity.longitude}</td>
-            <td>{entity.latitude}</td>
-            <td>{entity.waitingCost}</td>
-            <td className="icon-cell">
-              {entity.editIcon && (
-                <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-              )}
-            </td>
-            <td className="icon-cell">
-              {entity.deleteIcon && (
-                <img src={entity.deleteIcon} alt="Delete" width="20" height="20" />
-              )}
-            </td>
+    <>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>City</th>
+            <th>Barangay</th>
+            <th>Street Address</th>
+            <th>Longitude</th>
+            <th>Latitude</th>
+            <th>Waiting Cost</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            {/* Add table headers if needed */}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {entities.map((entity) => (
+            <tr key={entity.customerID}>
+              <td>{entity.customerID}</td>
+              <td>{entity.name}</td>
+              <td>{entity.city}</td>
+              <td>{entity.barangay}</td>
+              <td>{entity.staddress}</td>
+              <td>{entity.longitude}</td>
+              <td>{entity.latitude}</td>
+              <td>{entity.waitingCost}</td>
+              <td className="icon-cell">
+                {entity.editIcon && (
+                  <img src={entity.editIcon} alt="Edit" width="20" height="20" />
+                )}
+              </td>
+              <td className="icon-cell">
+                {entity.deleteIcon && (
+                  //  added onClick handler for delete icon
+                  <img src={entity.deleteIcon} alt="Delete" width="20" height="20" onClick={() => setIsPopupOpen(true)} />
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* added check to render popup if open */}
+      {isPopupOpen && <Popup togglePopup={() => setIsPopupOpen(false)} />}
+    </>
   );
 };
 
@@ -81,12 +91,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 style = {{fontWeight: 'bold'}}>
+        <h1 style={{ fontWeight: 'bold' }}>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline"> 
+        <div className="flex items-baseline">
           <div className="customborder-active z-2">
             <h2 className="pl-5 pr-5">Manage Customers</h2>
           </div>
@@ -101,17 +111,17 @@ export default function Page() {
             </Link>
           </div>
         </div>
-        
+
 
         {/* Body */}
         <div className="customborder-body">
-        <div className="p-5"> 
-          <div className="grid table">
-            <MyGrid />
-            </div>
+          <div className="p-5">
+            <div className="grid table">
+              <MyGrid />
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }

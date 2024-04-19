@@ -1,4 +1,3 @@
-// 3rd commit
 import { Card } from '@/app/ui/dashboard/cards';
 
 export default function Page() {
