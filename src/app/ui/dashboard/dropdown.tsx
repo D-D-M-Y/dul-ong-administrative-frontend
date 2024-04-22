@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react"; // Import useState hook
+import { CiSquareChevDown } from "react-icons/ci";
 
 const Dropdown = ({ options = ["Daily", "Weekly", "Monthly", "Annually"] }) => {
   const [isOpen, setIsOpen] = useState(false); // Use state for dropdown visibility //shows the options
@@ -19,11 +20,7 @@ const Dropdown = ({ options = ["Daily", "Weekly", "Monthly", "Annually"] }) => {
     <div className="inline-block relative">
       <button onClick={handleClick} className="flex items-center">
         {selectedOption} {/* changes the word */}
-        <img
-          src="/icons/down-arrow.svg"
-          alt="Filler Image"
-          className="h-4 w-4 rounded-md ml-2"
-        />
+        <CiSquareChevDown className = "ml-1"/>
       </button>
       {isOpen && (
         <ul className="rounded-lg absolute top-full left-0 bg-white shadow-md mt-1 dropdown">

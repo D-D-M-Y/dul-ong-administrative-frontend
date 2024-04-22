@@ -2,6 +2,15 @@
 import React, { useState } from 'react';
 import { Popup } from '../ui/dashboard/popup';
 import Link from 'next/link';
+import { 
+  CiTrash,
+  CiEdit,
+  CiCircleChevDown,
+  CiCircleChevUp 
+} from "react-icons/ci";
+import Button from '@mui/material/Button';
+import SearchBar from '@/app/ui/tables/searchbar';
+
 
 interface Entity {
   customerID: string
@@ -12,8 +21,7 @@ interface Entity {
   longitude: number;
   latitude: number;
   waitingCost: number;
-  editIcon: string;
-  deleteIcon: string;
+  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
@@ -24,75 +32,112 @@ const entities: Entity[] = [
   city: "Iloilo City", 
   barangay: "So-oc", 
   staddress: "12", 
-  longitude: 10.687027, 
-  latitude: 122.517291, 
+  longitude: 122.517291, 
+  latitude: 10.687027,
   waitingCost: 0.0,
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"},
+  actions: [
+    <Button variant="outlined" color="primary" > 
+      <div className="button-content">
+        <CiEdit size ={24} />
+      </div>
+    </Button>,
+    <Button variant="outlined" color="error">
+      <div className="button-content">
+      <CiTrash size ={24}/>
+    </div>
+  </Button>
+  ],},
 { 
   customerID: "CUS0000002", 
   name: "Belle Mirasol", 
   city: "Iloilo City", 
   barangay: "Quezon", 
   staddress: "8", 
-  longitude: 10.687027, 
-  latitude: 122.517291, 
+  longitude: 122.517291, 
+  latitude: 10.687027,
   waitingCost: 0.0,
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}  
+  actions: [
+    <Button variant="outlined" color="primary" > 
+      <div className="button-content">
+        <CiEdit size ={24} />
+      </div>
+    </Button>,
+    <Button variant="outlined" color="error">
+      <div className="button-content">
+      <CiTrash size ={24}/>
+    </div>
+  </Button>
+  ],}  
   // ... more entities
 ];
 
 const MyGrid = () => {
-  // state variable to control popup visibility, initialized to false
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <th>Customer ID</th>
-            <th>Name</th>
-            <th>City</th>
-            <th>Barangay</th>
-            <th>Street Address</th>
-            <th>Longitude</th>
-            <th>Latitude</th>
-            <th>Waiting Cost</th>
-            <th>Edit</th>
-            <th>Delete</th>
-            {/* Add table headers if needed */}
-          </tr>
-        </thead>
-        <tbody>
-          {entities.map((entity) => (
-            <tr key={entity.customerID}>
-              <td>{entity.customerID}</td>
-              <td>{entity.name}</td>
-              <td>{entity.city}</td>
-              <td>{entity.barangay}</td>
-              <td>{entity.staddress}</td>
-              <td>{entity.longitude}</td>
-              <td>{entity.latitude}</td>
-              <td>{entity.waitingCost}</td>
-              <td className="icon-cell">
-                {entity.editIcon && (
-                  <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-                )}
-              </td>
-              <td className="icon-cell">
-                {entity.deleteIcon && (
-                  //  added onClick handler for delete icon
-                  <img src={entity.deleteIcon} alt="Delete" width="20" height="20" onClick={() => setIsPopupOpen(true)} />
-                )}
-              </td>
-            </tr>
+    // state variable to control popup visibility, initialized to false
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const headers = [
+    { name: 'Customer ID' },
+    { name: 'Name' },
+    { name: 'City' },
+    { name: 'Barangay' },
+    { name: 'Street No.' },
+    { name: 'Longitude' },
+    { name: 'Latitude' },
+    { name: 'Waiting Cost' },
+    { name: 'Actions' }, 
+  ];
+
+  /*const handleSortClick = (headerName: string) => {
+    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+      const newState = Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+      ) as 'idle' | 'ascending' | 'descending';
+      return newState;
+    });
+  };} */
+  
+  
+
+   return (
+    <table>
+      <thead>
+        <tr>
+          {headers.map((header) => (
+            <th key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+               /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                  {sortState[header.name] === 'idle' ? (
+                    <CiCircleChevDown />
+                  ) : sortState[header.name] === 'ascending' ? (
+                    <CiCircleChevUp />
+                  ) : (
+                    <CiCircleChevDown /> // Descending state (optional icon)
+                  )}
+                </button>*/
+              <button className='ml-1'> <CiCircleChevDown/></button>)}
+            </th>
           ))}
-        </tbody>
-      </table>
-      {/* added check to render popup if open */}
-      {isPopupOpen && <Popup togglePopup={() => setIsPopupOpen(false)} />}
-    </>
+        </tr>
+      </thead>
+
+      <tbody>
+        {entities.map((entity) => (
+          <tr key={entity.customerID}>
+            <td>{entity.customerID}</td>
+            <td>{entity.name}</td>
+            <td>{entity.city}</td>
+            <td>{entity.barangay}</td>
+            <td>{entity.staddress}</td>
+            <td>{entity.longitude}</td>
+            <td>{entity.latitude}</td>
+            <td>{entity.waitingCost}</td>
+            <td>{entity.actions?.map((action, index) => (
+              <span key={index}>{action}</span>))}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
@@ -121,13 +166,14 @@ export default function Page() {
             </Link>
           </div>
         </div>
-
+        
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5">
-            <div className="grid table">
-              <MyGrid />
+        <div className="p-5"> 
+          <SearchBar/>
+          <div className="grid table">
+            <MyGrid />
             </div>
             </div>
           </div>

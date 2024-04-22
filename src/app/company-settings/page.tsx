@@ -2,6 +2,16 @@
 import React, { useState } from 'react';
 import { Popup } from '../ui/dashboard/popup';
 import Link from 'next/link';
+import { 
+  CiTrash,
+  CiEdit,
+  CiCircleChevDown,
+  CiCircleChevUp 
+} from "react-icons/ci";
+import Button from '@mui/material/Button';
+import SearchBar from '../ui/tables/searchbar';
+
+
 
 interface Entity {
   name: string;
@@ -9,8 +19,7 @@ interface Entity {
   username: string;
   dateAdded: Date;
   lastLogin: Date;
-  editIcon: string;
-  deleteIcon: string;
+  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
@@ -20,62 +29,108 @@ const entities: Entity[] = [
   username: "ajdiones", 
   dateAdded: new Date(), 
   lastLogin: new Date(), 
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"} , 
+  actions: [
+    <Button variant="outlined" color="primary" > 
+    <div className="button-content">
+      <CiEdit size ={24} />
+    </div>
+  </Button>,
+  <Button variant="outlined" color="error">
+    <div className="button-content">
+    <CiTrash size ={24}/>
+  </div>
+</Button>
+  ],
+} , 
 { name: "Allana Yzabelle Diaz", 
   email: "allanayzabelle.diaz@lsprovider.com.ph", 
   username: "aydiaz", 
   dateAdded: new Date(), 
   lastLogin: new Date(), 
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"},
-  // ... more entities
+  actions: [
+    <Button variant="outlined" color="primary" > 
+    <div className="button-content">
+      <CiEdit size ={24} />
+    </div>
+  </Button>,
+  <Button variant="outlined" color="error">
+    <div className="button-content">
+    <CiTrash size ={24}/>
+  </div>
+</Button>
+  ],
+},
 ];
 
 const MyGrid = () => {
-  // state variable to control popup visibility, initialized to false
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  return (
-    <>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Date Added</th>
-            <th>Last Login</th>
-            <th>Edit</th>
-            <th>Delete</th>
-            {/* Add table headers if needed */}
-          </tr>
-        </thead>
-        <tbody>
-          {entities.map((entity) => (
-            <tr key={entity.email}>
-              <td>{entity.name}</td>
-              <td>{entity.email}</td>
-              <td>{entity.username}</td>
-              <td>{entity.dateAdded.toLocaleDateString()}</td>
-              <td>{entity.lastLogin.toLocaleDateString()}</td>
-              <td className="icon-cell">
-                {entity.editIcon && (
-                  //  added onClick handler for delete icon
-                  <img src={entity.editIcon} alt="Delete" width="20" height="20" />
-                )}
-              </td>
-              <td  >
-                {entity.deleteIcon && (
-                  //  added onClick handler for delete icon
-                  <img src={entity.deleteIcon} alt="Delete" width="20" height="20" onClick={() => setIsPopupOpen(true)} />)}
-              </td>
-            </tr>
+  /*
+  const [sortState, setSortState] = useState<'idle' | 'ascending' | 'descending'>({
+    name: 'idle',
+    email: 'idle',
+    username: 'idle',
+    dateAdded: 'idle',
+    lastLogin: 'idle',
+  }); 
+  */
+
+    const headers = [
+    { name: 'Name' },
+    { name: 'Email' },
+    { name: 'Username' },
+    { name: 'Date Added' },
+    { name: 'Last Login' },
+    { name: 'Actions' }, 
+  ];
+
+  /*const handleSortClick = (headerName: string) => {
+    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+      const newState = Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+      ) as 'idle' | 'ascending' | 'descending';
+      return newState;
+    });
+  };} */
+  
+  
+
+   return (
+    <table>
+      <thead>
+        <tr>
+          {headers.map((header) => (
+            <th key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+               /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                  {sortState[header.name] === 'idle' ? (
+                    <CiCircleChevDown />
+                  ) : sortState[header.name] === 'ascending' ? (
+                    <CiCircleChevUp />
+                  ) : (
+                    <CiCircleChevDown /> // Descending state (optional icon)
+                  )}
+                </button>*/
+              <button className='ml-1'> <CiCircleChevDown/></button>)}
+            </th>
           ))}
-        </tbody>
-      </table>
-      {/* added check to render popup if open */}
-      {isPopupOpen && <Popup togglePopup={() => setIsPopupOpen(false)} />}
-    </>
+        </tr>
+      </thead>
+
+      <tbody>
+        {entities.map((entity) => (
+          <tr key={entity.email}>
+            <td>{entity.name}</td>
+            <td>{entity.email}</td>
+            <td>{entity.username}</td>
+            <td>{entity.dateAdded.toLocaleDateString()}</td>
+            <td>{entity.lastLogin.toLocaleDateString()}</td>
+            <td>{entity.actions?.map((action, index) => (
+              <span key={index}>{action}</span>))}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
@@ -89,7 +144,7 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline">
+        <div className="flex items-baseline"> 
           <div className="customborder-active">
             <h2>Manage Admins</h2>
           </div>
@@ -102,13 +157,14 @@ export default function Page() {
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5">
-            <div className="grid table">
-              <MyGrid />
+          <div className="p-5"> 
+          <SearchBar/>
+          <div className="grid table">
+            <MyGrid />
+            </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }

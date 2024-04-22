@@ -63,7 +63,7 @@ h1 {                  /*header for page*/
 h2 {                   /*header for tabs*/ 
   display:             inline-block;
   position:            relative;
-  top:                 1px; 
+  top:                 0.2rem; 
   margin:              auto;
   font:                var(--source-sans-pro-font);
   font-size:           large;
@@ -98,6 +98,7 @@ h4 {                   /*name in sidenav*/
   background-color:     #F9FAFB; 
   transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
   font:                 var(--font-source-sans-pro);
+  
 
   &:hover {
     background-color: #E6E6FA; 
@@ -112,12 +113,16 @@ h4 {                   /*name in sidenav*/
   }
 }
 
+.icon{
+  padding-left: 0.5rem;
+}
+
 .nav-link-active {
   color: #FFFFFF; 
   background-color: #6F42C1; 
 }
 
-.nav-link-active img{
+.nav-link-active icon{
   fill: #FFFFFF;
 }
 
@@ -154,6 +159,7 @@ h4 {                   /*name in sidenav*/
   padding-left: 1rem;
   padding-right: 1rem;
   z-index: 0;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .customborder-body {
@@ -184,8 +190,17 @@ th {
   border-top:         0.05rem;
   border-bottom:      0.05rem;
   border-left:        0.05rem;
-  padding-top:        1rem;
+  padding-top:        1rem; 
   padding-bottom:     1rem;
+  align-items:        center;
+}
+
+
+th:hover button {
+  background-color: #E6E6FA; 
+  border:           #F4F4F4;
+  border-width:       0.5rem;
+  border-radius:      0.5rem;
 }
 
 
