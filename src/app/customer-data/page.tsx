@@ -18,18 +18,28 @@ interface Entity {
 
 const entities: Entity[] = [
   // Populate entity data here
-  {
-    customerID: "CUS000001",
-    name: "John Doe",
-    city: "Iloilo City",
-    barangay: "Quezon",
-    staddress: "8",
-    longitude: 0.0,
-    latitude: 0.0,
-    waitingCost: 0.0,
-    editIcon: "/icons/edit.svg",
-    deleteIcon: "/icons/trash.svg"
-  }
+  { 
+  customerID: "CUS0000001", 
+  name: "John Celiz", 
+  city: "Iloilo City", 
+  barangay: "So-oc", 
+  staddress: "12", 
+  longitude: 10.687027, 
+  latitude: 122.517291, 
+  waitingCost: 0.0,
+  editIcon: "/icons/edit.svg", 
+  deleteIcon: "/icons/trash.svg"},
+{ 
+  customerID: "CUS0000002", 
+  name: "Belle Mirasol", 
+  city: "Iloilo City", 
+  barangay: "Quezon", 
+  staddress: "8", 
+  longitude: 10.687027, 
+  latitude: 122.517291, 
+  waitingCost: 0.0,
+  editIcon: "/icons/edit.svg", 
+  deleteIcon: "/icons/trash.svg"}  
   // ... more entities
 ];
 
@@ -91,22 +101,22 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 style={{ fontWeight: 'bold' }}>
+        <h1 className='font-bold'>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline">
-          <div className="customborder-active z-2">
-            <h2 className="pl-5 pr-5">Manage Customers</h2>
+        <div className="flex items-baseline"> 
+          <div className="customborder-active">
+            <h2>Manage Customers</h2>
           </div>
           <div className="customborder-link">
-            <Link href="/customer-data/manage-packages" className="pl-2 pr-5 z-1">
+            <Link href="/customer-data/manage-packages">
               <h2>Manage Packages</h2>
             </Link>
           </div>
           <div className="customborder-link">
-            <Link href="/customer-data/new-package" className="pl-2 pr-5 z-0">
+            <Link href="/customer-data/new-package">
               <h2>New Package</h2>
             </Link>
           </div>
@@ -119,9 +129,9 @@ export default function Page() {
             <div className="grid table">
               <MyGrid />
             </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
