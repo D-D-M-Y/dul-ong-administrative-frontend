@@ -4,14 +4,24 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import '@/app/ui/global.css';
+import { 
+  CiGrid42, 
+  CiRoute,
+  CiSliderHorizontal,
+  CiDatabase,
+  CiLogout,
+  CiViewList 
+} from "react-icons/ci";
+
 
 const links = [
-  { name: 'Dashboard', href: '/', icon: '/icons/dashboard.svg' },
-  { name: 'Company Settings', href: '/company-settings/', icon: '/icons/settings.svg'},
-  { name: 'Customer Data', href: '/customer-data', icon: '/icons/customer.svg' },
-  { name: 'Generate Route', href: '/generate-route',  icon: '/icons/way.svg'},
-  { name: 'Route History', href: '/route-history',  icon: '/icons/history.svg'},
-  { name: 'Exit', href: '/exit',  icon: '/icons/log-out.svg'},
+  { name: 'Dashboard', href: '/', icon: <CiGrid42 className='icon' size={40} />},
+  { name: 'Company Settings', href: '/company-settings', icon: <CiSliderHorizontal className='icon' size={40} />},
+  { name: 'Customer Data', href: '/customer-data', icon: <CiDatabase className='icon' size={40} />},
+  { name: 'Generate Route', href: '/generate-route',  icon: <CiRoute className='icon' size={40}/>},
+  { name: 'Route History', href: '/route-history',  icon: <CiViewList  className='icon' size={40}/>},
+  { name: 'Exit', href: '/exit',  icon: <CiLogout className='icon' size={40} />
+},
 ];
 
 
@@ -31,10 +41,7 @@ export default function NavLinks() {
               pathname === link.href && 'nav-link-active ',
             )}
           >
-            <img className="ml-3 mr-2 h-6 w-6" // Adjust styles as needed 
-            aria-hidden="true" 
-            src={link.icon}
-            />
+            {link.icon} 
           <span className="image-overlay"></span>
              <p className="hidden md:block">{link.name}</p>
           </Link>

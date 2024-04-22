@@ -7,26 +7,37 @@ import {
   CiCircleChevUp 
 } from "react-icons/ci";
 import Button from '@mui/material/Button';
-import SearchBar from '../ui/tables/searchbar';
-
-
+import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
-  name: string;
-  email: string;
-  username: string;
-  dateAdded: Date;
-  lastLogin: Date;
+  packageID: string
+  dimensions: string;
+  weight: number;
+  costs: number;
+  transactionID: string;
+  paymentMethod: string;
+  amount: number;
+  date: Date;
+  type: string;
+  customerID: string;
+  routeID: string;
   actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
   // Populate entity data here
-{ name: "Angel Jude Diones", 
-  email: "angeljude.diones@lsprovder.com.ph", 
-  username: "ajdiones", 
-  dateAdded: new Date(), 
-  lastLogin: new Date(), 
+  { 
+  packageID: "PAC0000001",
+  dimensions: "20 x 15 x 10",
+  weight: 1,
+  costs: 100,
+  transactionID: "TRA0000001",
+  paymentMethod: "COD",
+  amount: 140,
+  date: new Date(),
+  type: "Successful",
+  customerID: "CUS0000001",
+  routeID: "ROU0000001",
   actions: [
     <Button variant="outlined" color="primary" > 
     <div className="button-content">
@@ -38,45 +49,23 @@ const entities: Entity[] = [
     <CiTrash size ={24}/>
   </div>
 </Button>
-  ],
-} , 
-{ name: "Allana Yzabelle Diaz", 
-  email: "allanayzabelle.diaz@lsprovider.com.ph", 
-  username: "aydiaz", 
-  dateAdded: new Date(), 
-  lastLogin: new Date(), 
-  actions: [
-    <Button variant="outlined" color="primary" > 
-    <div className="button-content">
-      <CiEdit size ={24} />
-    </div>
-  </Button>,
-  <Button variant="outlined" color="error">
-    <div className="button-content">
-    <CiTrash size ={24}/>
-  </div>
-</Button>
-  ],
-},
+  ],}
+  // ... more entities
 ];
 
 const MyGrid = () => {
-  /*
-  const [sortState, setSortState] = useState<'idle' | 'ascending' | 'descending'>({
-    name: 'idle',
-    email: 'idle',
-    username: 'idle',
-    dateAdded: 'idle',
-    lastLogin: 'idle',
-  }); 
-  */
-
-    const headers = [
-    { name: 'Name' },
-    { name: 'Email' },
-    { name: 'Username' },
-    { name: 'Date Added' },
-    { name: 'Last Login' },
+  const headers = [
+    { name: 'Package ID' },
+    { name: 'Dimensions' },
+    { name: 'Weight' },
+    { name: 'Costs' },
+    { name: 'Transaction ID' },
+    { name: 'Payment Method' },
+    { name: 'Amount' },
+    { name: 'Date' },
+    { name: 'Type' },
+    { name: 'Customer ID' },
+    { name: 'Route ID' },
     { name: 'Actions' }, 
   ];
 
@@ -113,15 +102,20 @@ const MyGrid = () => {
           ))}
         </tr>
       </thead>
-
       <tbody>
         {entities.map((entity) => (
-          <tr key={entity.email}>
-            <td>{entity.name}</td>
-            <td>{entity.email}</td>
-            <td>{entity.username}</td>
-            <td>{entity.dateAdded.toLocaleDateString()}</td>
-            <td>{entity.lastLogin.toLocaleDateString()}</td>
+          <tr key={entity.packageID}>
+            <td>{entity.packageID}</td>
+            <td>{entity.dimensions}</td>
+            <td>{entity.weight}</td>
+            <td>{entity.costs}</td>
+            <td>{entity.transactionID}</td>
+            <td>{entity.packageID}</td>
+            <td>{entity.amount}</td>
+            <td>{entity.date.toLocaleDateString()}</td>
+            <td>{entity.type}</td>
+            <td>{entity.customerID}</td>
+            <td>{entity.routeID}</td>
             <td>{entity.actions?.map((action, index) => (
               <span key={index}>{action}</span>))}
             </td>
@@ -137,25 +131,33 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold'>
-          Company Settings
+        <h1 style = {{fontWeight: 'bold'}}>
+          Customer Data
         </h1>
 
         {/* Folder */}
         <div className="flex items-baseline"> 
+          <div className="customborder-link">
+            <Link href="/customer-data">
+              <h2>Manage Customers</h2>
+            </Link>
+          </div>
           <div className="customborder-active">
-            <h2>Manage Admins</h2>
+            <Link href="/customer-data/manage-packages">
+              <h2>Manage Packages</h2>
+            </Link>
           </div>
           <div className="customborder-link">
-            <Link href="/company-settings/manage-foos">
-              <h2>Manage FOOs</h2>
+            <Link href="/customer-data/new-package">
+              <h2>New Package</h2>
             </Link>
           </div>
         </div>
+        
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5"> 
+        <div className="p-5"> 
           <SearchBar/>
           <div className="grid table">
             <MyGrid />
