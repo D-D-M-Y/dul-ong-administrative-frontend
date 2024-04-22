@@ -65,6 +65,11 @@ const MyGrid = () => {
             <td>{entity.gas}</td>
             <td>{entity.carryingCapacity}</td>
             <td className="icon-cell">
+              {entity.editIcon && (
+                <img src={entity.editIcon} alt="Edit" width="20" height="20" />
+              )}
+            </td>
+            <td className="icon-cell">
               {entity.deleteIcon && (
                 //  added onClick handler for delete icon
                 <img src={entity.deleteIcon} alt="Delete" width="20" height="20" onClick={() => setIsPopupOpen(true)} />
@@ -104,9 +109,5 @@ export default function Page() {
         </div>
       </div>
       </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
