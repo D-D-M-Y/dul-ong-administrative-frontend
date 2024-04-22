@@ -30,8 +30,8 @@ const entities: Entity[] = [
   city: "Iloilo City", 
   barangay: "So-oc", 
   staddress: "12", 
-  longitude: 10.687027, 
-  latitude: 122.517291, 
+  longitude: 122.517291, 
+  latitude: 10.687027,
   waitingCost: 0.0,
   actions: [
     <Button variant="outlined" color="primary" > 
@@ -51,8 +51,8 @@ const entities: Entity[] = [
   city: "Iloilo City", 
   barangay: "Quezon", 
   staddress: "8", 
-  longitude: 10.687027, 
-  latitude: 122.517291, 
+  longitude: 122.517291, 
+  latitude: 10.687027,
   waitingCost: 0.0,
   actions: [
     <Button variant="outlined" color="primary" > 

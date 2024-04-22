@@ -63,7 +63,7 @@ h1 {                  /*header for page*/
 h2 {                   /*header for tabs*/ 
   display:             inline-block;
   position:            relative;
-  top:                 1px; 
+  top:                 0.2rem; 
   margin:              auto;
   font:                var(--source-sans-pro-font);
   font-size:           large;
@@ -244,3 +244,13 @@ td {
   justify-content: center; /* Center content horizontally */
 }
 
+.card-header {
+  display: flex; /* Enable flexbox layout */
+  flex-direction: column; /* Stack content vertically */
+}
+
+.card-header-text {
+  text-overflow: ellipsis; /* Indicate truncation with ellipsis (...) */
+  white-space: nowrap; /* Prevent wrapping onto multiple lines */
+  overflow: hidden; /* Hide overflowing content */
+}
