@@ -30,12 +30,12 @@ export default function Page() {
 
         {/* Westside (Form) */}
         <div className='flex'>
-        <div className='w-1/3 px-5'>
-        <div className="customborder-body">
+          <div className='w-1/3'>
+          <div className="w-100% h-100% position-relative bg-white rounded-bl-lg">
           <div className="p-5">
-            <div className="grid table">
+            <div className="table">
               <div className="p-5">
-                <div className="border-b border-gray-900/10 pb-12">
+                <div className="pb-12">
                   <h2 className="text-base font-semibold leading-7 text-gray-900">Customer Data</h2>
                   <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
                     <div className="col-span-full">
@@ -237,9 +237,13 @@ export default function Page() {
             </div>
           </div>
         </div>
+          </div>
+          {/* Right Side Image */}
+        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
+          style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
         </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 }
