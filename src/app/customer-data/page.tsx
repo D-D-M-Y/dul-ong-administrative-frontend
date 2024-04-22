@@ -34,8 +34,16 @@ const entities: Entity[] = [
   latitude: 122.517291, 
   waitingCost: 0.0,
   actions: [
-    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
-    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+    <Button variant="outlined" color="primary" > 
+      <div className="button-content">
+        <CiEdit size ={24} />
+      </div>
+    </Button>,
+    <Button variant="outlined" color="error">
+      <div className="button-content">
+      <CiTrash size ={24}/>
+    </div>
+  </Button>
   ],},
 { 
   customerID: "CUS0000002", 
@@ -47,8 +55,16 @@ const entities: Entity[] = [
   latitude: 122.517291, 
   waitingCost: 0.0,
   actions: [
-    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
-    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+    <Button variant="outlined" color="primary" > 
+      <div className="button-content">
+        <CiEdit size ={24} />
+      </div>
+    </Button>,
+    <Button variant="outlined" color="error">
+      <div className="button-content">
+      <CiTrash size ={24}/>
+    </div>
+  </Button>
   ],}  
   // ... more entities
 ];

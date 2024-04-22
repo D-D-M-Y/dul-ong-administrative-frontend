@@ -26,8 +26,16 @@ const entities: Entity[] = [
   dateAdded: new Date(), 
   lastLogin: new Date(), 
   actions: [
-    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
-    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+    <Button variant="outlined" color="primary" > 
+      <div className="button-content">
+        <CiEdit size ={24} />
+      </div>
+    </Button>,
+    <Button variant="outlined" color="error">
+      <div className="button-content">
+      <CiTrash size ={24}/>
+    </div>
+  </Button>
   ],
 } , 
 { name: "John Celiz", 
@@ -36,8 +44,16 @@ const entities: Entity[] = [
   dateAdded: new Date(), 
   lastLogin: new Date(), 
   actions: [
-    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
-    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  <Button variant="outlined" color="primary" > 
+    <div className="button-content">
+      <CiEdit size ={24} />
+    </div>
+  </Button>,
+  <Button variant="outlined" color="error">
+    <div className="button-content">
+    <CiTrash size ={24}/>
+  </div>
+</Button>
   ],
 },
 ];

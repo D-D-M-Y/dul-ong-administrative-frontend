@@ -34,7 +34,11 @@ const entities: Entity[] = [
   gas: 50,
   carryingCapacity: 1000,
   actions: [
-    <Button variant="outlined" color="error" startIcon={<CiTrash />}> </Button>,
+  <Button variant="outlined" color="error" className ="square-button">
+    <div className="button-content">  
+    <CiTrash size ={24}/>
+  </div>
+</Button>
   ],}
   // ... more entities
 ];

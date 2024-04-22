@@ -39,8 +39,16 @@ const entities: Entity[] = [
   customerID: "CUS0000001",
   routeID: "ROU0000001",
   actions: [
-    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
-    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+    <Button variant="outlined" color="primary" > 
+    <div className="button-content">
+      <CiEdit size ={24} />
+    </div>
+  </Button>,
+  <Button variant="outlined" color="error">
+    <div className="button-content">
+    <CiTrash size ={24}/>
+  </div>
+</Button>
   ],}
   // ... more entities
 ];
