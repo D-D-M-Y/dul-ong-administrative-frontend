@@ -1,5 +1,14 @@
-import React from 'react'; 
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { 
+  CiTrash,
+  CiEdit,
+  CiCircleChevDown,
+  CiCircleChevUp 
+} from "react-icons/ci";
+import Button from '@mui/material/Button';
+import SearchBar from '../ui/tables/searchbar';
+
 
 interface Entity {
   customerID: string
@@ -10,8 +19,7 @@ interface Entity {
   longitude: number;
   latitude: number;
   waitingCost: number;
-  editIcon: string;
-  deleteIcon: string;
+  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
@@ -25,8 +33,10 @@ const entities: Entity[] = [
   longitude: 10.687027, 
   latitude: 122.517291, 
   waitingCost: 0.0,
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"},
+  actions: [
+    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
+    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  ],},
 { 
   customerID: "CUS0000002", 
   name: "Belle Mirasol", 
@@ -36,29 +46,60 @@ const entities: Entity[] = [
   longitude: 10.687027, 
   latitude: 122.517291, 
   waitingCost: 0.0,
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}  
+  actions: [
+    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
+    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  ],}  
   // ... more entities
 ];
 
 const MyGrid = () => {
-  return (
+  const headers = [
+    { name: 'Customer ID' },
+    { name: 'Name' },
+    { name: 'City' },
+    { name: 'Barangay' },
+    { name: 'Street No.' },
+    { name: 'Longitude' },
+    { name: 'Latitude' },
+    { name: 'Waiting Cost' },
+    { name: 'Actions' }, 
+  ];
+
+  /*const handleSortClick = (headerName: string) => {
+    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+      const newState = Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+      ) as 'idle' | 'ascending' | 'descending';
+      return newState;
+    });
+  };} */
+  
+  
+
+   return (
     <table>
       <thead>
         <tr>
-          <th>Customer ID</th>
-          <th>Name</th>
-          <th>City</th>
-          <th>Barangay</th>
-          <th>Street Address</th>
-          <th>Longitude</th>
-          <th>Latitude</th>
-          <th>Waiting Cost</th>
-          <th>Edit</th>
-          <th>Delete</th>
-          {/* Add table headers if needed */}
+          {headers.map((header) => (
+            <th key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+               /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                  {sortState[header.name] === 'idle' ? (
+                    <CiCircleChevDown />
+                  ) : sortState[header.name] === 'ascending' ? (
+                    <CiCircleChevUp />
+                  ) : (
+                    <CiCircleChevDown /> // Descending state (optional icon)
+                  )}
+                </button>*/
+              <button className='ml-1'> <CiCircleChevDown/></button>)}
+            </th>
+          ))}
         </tr>
       </thead>
+
       <tbody>
         {entities.map((entity) => (
           <tr key={entity.customerID}>
@@ -70,15 +111,8 @@ const MyGrid = () => {
             <td>{entity.longitude}</td>
             <td>{entity.latitude}</td>
             <td>{entity.waitingCost}</td>
-            <td className="icon-cell">
-              {entity.editIcon && (
-                <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-              )}
-            </td>
-            <td className="icon-cell">
-              {entity.deleteIcon && (
-                <img src={entity.deleteIcon} alt="Delete" width="20" height="20" />
-              )}
+            <td>{entity.actions?.map((action, index) => (
+              <span key={index}>{action}</span>))}
             </td>
           </tr>
         ))}
@@ -117,6 +151,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
         <div className="p-5"> 
+          <SearchBar/>
           <div className="grid table">
             <MyGrid />
             </div>

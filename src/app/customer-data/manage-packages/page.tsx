@@ -1,9 +1,17 @@
-import React from 'react'; 
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { 
+  CiTrash,
+  CiEdit,
+  CiCircleChevDown,
+  CiCircleChevUp 
+} from "react-icons/ci";
+import Button from '@mui/material/Button';
+import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
   packageID: string
-  dimension: string;
+  dimensions: string;
   weight: number;
   costs: number;
   transactionID: string;
@@ -13,15 +21,14 @@ interface Entity {
   type: string;
   customerID: string;
   routeID: string;
-  editIcon: string;
-  deleteIcon: string;
+  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
   // Populate entity data here
   { 
   packageID: "PAC0000001",
-  dimension: "20 x 15 x 10",
+  dimensions: "20 x 15 x 10",
   weight: 1,
   costs: 100,
   transactionID: "TRA0000001",
@@ -31,37 +38,67 @@ const entities: Entity[] = [
   type: "Successful",
   customerID: "CUS0000001",
   routeID: "ROU0000001",
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"}
+  actions: [
+    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
+    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  ],}
   // ... more entities
 ];
 
 const MyGrid = () => {
-  return (
+  const headers = [
+    { name: 'Package ID' },
+    { name: 'Dimensions' },
+    { name: 'Weight' },
+    { name: 'Costs' },
+    { name: 'Transaction ID' },
+    { name: 'Payment Method' },
+    { name: 'Amount' },
+    { name: 'Date' },
+    { name: 'Type' },
+    { name: 'Customer ID' },
+    { name: 'Route ID' },
+    { name: 'Actions' }, 
+  ];
+
+  /*const handleSortClick = (headerName: string) => {
+    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+      const newState = Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+      ) as 'idle' | 'ascending' | 'descending';
+      return newState;
+    });
+  };} */
+  
+  
+
+   return (
     <table>
       <thead>
         <tr>
-          <th>Package ID</th>
-          <th>Dimensions</th>
-          <th>Weight</th>
-          <th>Costs</th>
-          <th>Transaction ID</th>
-          <th>Payment ID</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Type</th>
-          <th>Customer ID</th>
-          <th>Route ID</th>
-          <th>Edit</th>
-          <th>Delete</th>
-          {/* Add table headers if needed */}
+          {headers.map((header) => (
+            <th key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+               /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                  {sortState[header.name] === 'idle' ? (
+                    <CiCircleChevDown />
+                  ) : sortState[header.name] === 'ascending' ? (
+                    <CiCircleChevUp />
+                  ) : (
+                    <CiCircleChevDown /> // Descending state (optional icon)
+                  )}
+                </button>*/
+              <button className='ml-1'> <CiCircleChevDown/></button>)}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
         {entities.map((entity) => (
           <tr key={entity.packageID}>
             <td>{entity.packageID}</td>
-            <td>{entity.dimension}</td>
+            <td>{entity.dimensions}</td>
             <td>{entity.weight}</td>
             <td>{entity.costs}</td>
             <td>{entity.transactionID}</td>
@@ -71,15 +108,8 @@ const MyGrid = () => {
             <td>{entity.type}</td>
             <td>{entity.customerID}</td>
             <td>{entity.routeID}</td>
-            <td className="icon-cell">
-              {entity.editIcon && (
-                <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-              )}
-            </td>
-            <td className="icon-cell">
-              {entity.deleteIcon && (
-                <img src={entity.deleteIcon} alt="Delete" width="20" height="20" />
-              )}
+            <td>{entity.actions?.map((action, index) => (
+              <span key={index}>{action}</span>))}
             </td>
           </tr>
         ))}
@@ -120,6 +150,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
         <div className="p-5"> 
+          <SearchBar/>
           <div className="grid table">
             <MyGrid />
             </div>

@@ -98,6 +98,7 @@ h4 {                   /*name in sidenav*/
   background-color:     #F9FAFB; 
   transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
   font:                 var(--font-source-sans-pro);
+  
 
   &:hover {
     background-color: #E6E6FA; 
@@ -112,12 +113,16 @@ h4 {                   /*name in sidenav*/
   }
 }
 
+.icon{
+  padding-left: 0.5rem;
+}
+
 .nav-link-active {
   color: #FFFFFF; 
   background-color: #6F42C1; 
 }
 
-.nav-link-active img{
+.nav-link-active icon{
   fill: #FFFFFF;
 }
 
@@ -184,13 +189,22 @@ th {
   border-top:         0.05rem;
   border-bottom:      0.05rem;
   border-left:        0.05rem;
-  padding-top:        1rem;
+  padding-top:        1rem; 
   padding-bottom:     1rem;
+  align-items:        center;
+}
+
+
+th:hover button {
+  background-color: #E6E6FA; 
+  border:           #F4F4F4;
+  border-width:       0.5rem;
+  border-radius:      0.5rem;
 }
 
 
 td {
-  font:               var(--PTSans-Regular);
+  font:                 var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
   border-width:       0.05rem;
@@ -199,7 +213,23 @@ td {
   text-align:         center;
 }
 
-td img {
-  display: block; /* Make the image a block-level element */
-  margin:  0 auto;  /* Center horizontally with equal margins */
+.searchbar {
+  display: flex; 
+  align-items: center; 
+  border: 0.2rem solid #d9d9d9; 
+  border-radius: 0.5rem; 
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+.search-input {
+  display: flex; 
+  align-items: center; 
+  padding-left: 0.5rem;
+}
+
+.search-input input {
+  padding-left: 0.5rem; 
+  flex: 1; 
 }

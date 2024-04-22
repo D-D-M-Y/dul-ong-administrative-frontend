@@ -1,5 +1,15 @@
-import React from 'react'; 
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { 
+  CiTrash,
+  CiEdit,
+  CiCircleChevDown,
+  CiCircleChevUp 
+} from "react-icons/ci";
+import Button from '@mui/material/Button';
+import SearchBar from '../ui/tables/searchbar';
+
+
 
 interface Entity {
   name: string;
@@ -7,8 +17,7 @@ interface Entity {
   username: string;
   dateAdded: Date;
   lastLogin: Date;
-  editIcon: string;
-  deleteIcon: string;
+  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
@@ -18,33 +27,77 @@ const entities: Entity[] = [
   username: "ajdiones", 
   dateAdded: new Date(), 
   lastLogin: new Date(), 
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"} , 
+  actions: [
+    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
+    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  ],
+} , 
 { name: "Allana Yzabelle Diaz", 
   email: "allanayzabelle.diaz@lsprovider.com.ph", 
   username: "aydiaz", 
   dateAdded: new Date(), 
   lastLogin: new Date(), 
-  editIcon: "/icons/edit.svg", 
-  deleteIcon: "/icons/trash.svg"},
-  // ... more entities
+  actions: [
+    <Button variant="outlined" color="primary"  startIcon={<CiEdit />}> </Button>,
+    <Button variant="outlined" color="error"  startIcon={<CiTrash />}> </Button>,
+  ],
+},
 ];
 
 const MyGrid = () => {
-  return (
+  /*
+  const [sortState, setSortState] = useState<'idle' | 'ascending' | 'descending'>({
+    name: 'idle',
+    email: 'idle',
+    username: 'idle',
+    dateAdded: 'idle',
+    lastLogin: 'idle',
+  }); 
+  */
+
+    const headers = [
+    { name: 'Name' },
+    { name: 'Email' },
+    { name: 'Username' },
+    { name: 'Date Added' },
+    { name: 'Last Login' },
+    { name: 'Actions' }, 
+  ];
+
+  /*const handleSortClick = (headerName: string) => {
+    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+      const newState = Object.fromEntries(
+        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+      ) as 'idle' | 'ascending' | 'descending';
+      return newState;
+    });
+  };} */
+  
+  
+
+   return (
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Username</th>
-          <th>Date Added</th>
-          <th>Last Login</th>
-          <th>Edit</th>
-          <th>Delete</th>
-          {/* Add table headers if needed */}
+          {headers.map((header) => (
+            <th key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+               /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                  {sortState[header.name] === 'idle' ? (
+                    <CiCircleChevDown />
+                  ) : sortState[header.name] === 'ascending' ? (
+                    <CiCircleChevUp />
+                  ) : (
+                    <CiCircleChevDown /> // Descending state (optional icon)
+                  )}
+                </button>*/
+              <button className='ml-1'> <CiCircleChevDown/></button>)}
+            </th>
+          ))}
         </tr>
       </thead>
+
       <tbody>
         {entities.map((entity) => (
           <tr key={entity.email}>
@@ -53,15 +106,8 @@ const MyGrid = () => {
             <td>{entity.username}</td>
             <td>{entity.dateAdded.toLocaleDateString()}</td>
             <td>{entity.lastLogin.toLocaleDateString()}</td>
-            <td className="icon-cell">
-              {entity.editIcon && (
-                <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-              )}
-            </td>
-            <td  >
-              {entity.deleteIcon && (
-                <img src={entity.deleteIcon} alt="Delete" width="20" height="20"/>
-              )}
+            <td>{entity.actions?.map((action, index) => (
+              <span key={index}>{action}</span>))}
             </td>
           </tr>
         ))}
@@ -94,6 +140,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5"> 
+          <SearchBar/>
           <div className="grid table">
             <MyGrid />
             </div>
