@@ -4,7 +4,7 @@ import { CiSearch } from "react-icons/ci";
 
 const SearchBar: React.FC = () => {
   return (
-    <div className="container">
+    <div className="searchbar">
         <CiSearch size={24}/>
       <input
         type="text"
