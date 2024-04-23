@@ -1,10 +1,19 @@
 "use client";
+import React, { useEffect } from 'react';
+import Map from '../components/Map'; // Assuming Map.js is in components folder
 import { Card } from '@/app/ui/dashboard/cards';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import "leaflet/dist/leaflet.css"
+import "leaflet-defaulticon-compatibility"
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css"
+
+
 
 export default function Page() {
-  const center = [10.7202, 122.5621]; // Iloilo coordinates
-  const zoom = 13; // Adjust zoom level as needed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Code that uses window object (e.g., react-leaflet initialization)
+    }
+  }, []);
   return (
     <main>
       <h1 className="font-bold"> Generate Route</h1>
@@ -27,12 +36,7 @@ export default function Page() {
 
         {/* Right Side Image */}
         <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain">
-          <MapContainer zoom={zoom} style={{ height: "100%" }}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-          </MapContainer>
+          <Map />
         </div>
       </div>
     </main>
