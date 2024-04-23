@@ -218,3 +218,8 @@ td img {
   display: block; /* Make the image a block-level element */
   margin:  0 auto;  /* Center horizontally with equal margins */
 }
+
+.map {
+  width: 100%;
+  height: 40rem;
+}
