@@ -1,5 +1,8 @@
+"use client";
 import React from 'react';
 import Link from 'next/link';
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("../../components/MapComponent"), { ssr: false });
 
 export default function Page() {
   return (
@@ -239,8 +242,8 @@ export default function Page() {
         </div>
           </div>
           {/* Right Side Image */}
-        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
-          style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
+          <div className="w-3/4 h-full flex space-y-3 p-4">
+          <DynamicMapComponent />
         </div>
         </div>
       </div>

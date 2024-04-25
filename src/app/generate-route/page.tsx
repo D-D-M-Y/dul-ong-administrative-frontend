@@ -1,15 +1,13 @@
+"use client";
 import { Card } from '@/app/ui/dashboard/cards';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS
-
-const DEFAULT_CENTER = [38.907132, -77.036546]; // Replace with your desired center coordinates
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("../components/MapComponent"), { ssr: false });
 
 export default function Page() {
   return (
-    <main>
+    <>
       <h1 className="font-bold"> Generate Route</h1>
-      <div className="w-full h-full relative bg-white rounded-xl">
-        {/* Left Side Content */}
+      <main className="flex">
         <div className="w-1/4 h-full flex flex-col space-y-3 p-4">
           <h2 className="font-bold"> Route Overview</h2>
 
@@ -22,21 +20,11 @@ export default function Page() {
           <button className="w-full h-[50px] bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2">Generate Route</button>
         </div>
 
-        {/* Right Side Image and Map */}
-        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain">
-          <MapContainer center={[38, -77]} zoom={12} style={{ height: '100%' }}> {/* Set map height */}
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={[38, -77]}>
-              <Popup>
-                A simple Leaflet popup.
-              </Popup>
-            </Marker>
-          </MapContainer>
+        <div className="w-3/4 h-full flex space-y-3 p-4">
+          <DynamicMapComponent />
         </div>
-      </div>
-    </main>
+      </main>
+    </>
+
   );
 }
