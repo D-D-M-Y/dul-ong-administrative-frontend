@@ -57,14 +57,14 @@ export default function Modal({ onToggle }) {
                 <div className="modal">
                     <div onClick={toggleModal} className="overlay"></div>
                     <div className="modal-content">
-                        <h2 className='font-roboto font-bold'>
+                        <h2 className='font-roboto font-bold text-[36px]'>
                             {modalType === "delete" ? "Delete" : "Edit Item"} {/* Dynamic heading */}
                         </h2>
                         <p>
                             {modalType === "delete" ? (
-                                <p className='font-source-sans-pro mt-4 mb-4'>Are you sure you want to delete this item?</p>
+                                <p className='font-source-sans-pro text-[24px] mt-4 mb-4'>Are you sure you want to delete this item?</p>
                             ) : (
-                                <p className='font-source-sans-pro mt-4 mb-4'>
+                                <p className='font-source-sans-pro text-[24px] mt-4 mb-4'>
                                     Do you wish to edit this item?
                                 </p>
                             )}
@@ -73,19 +73,19 @@ export default function Modal({ onToggle }) {
                             {modalType === "delete" ? (
                                 <>
                                     <Button className="cancel-modal" onClick={toggleModal}>
-                                        <p className="font-source-sans-pro text-[#808080] font-bold">Cancel</p>
+                                        <p className="font-source-sans-pro font-bold">Cancel</p>
                                     </Button>
                                     <Button className="delete-modal" onClick={handleDelete}>
-                                        <p className="font-source-sans-pro text-white font-bold">Delete</p>
+                                        <p className="font-source-sans-pro font-bold">Delete</p>
                                     </Button>
                                 </>
                             ) : (
                                 <>
                                     <Button className="cancel-modal" onClick={toggleModal}>
-                                        <p className="font-source-sans-pro text-[#808080] font-bold">Cancel</p>
+                                        <p className="font-source-sans-pro font-bold">Cancel</p>
                                     </Button>
                                     <Button className="edit-modal" onClick={handleEdit}>
-                                        <p className="font-source-sans-pro text-white font-bold">Edit</p>
+                                        <p className="font-source-sans-pro font-bold">Edit</p>
                                     </Button>
                                 </>
                             )}
