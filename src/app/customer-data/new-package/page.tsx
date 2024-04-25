@@ -1,7 +1,14 @@
+"use client";
 import React from 'react';
 import Link from 'next/link';
+import Modal from '../../components/Modal/Modal';
 
 export default function Page() {
+  const handleModalToggle = (isOpen: boolean) => {
+    // Perform any actions needed when modal opens/closes (optional)
+    console.log("Modal is", isOpen ? "Open" : "Closed");
+  };
+
   return (
     <div>
       {/* Header */}
@@ -234,7 +241,7 @@ export default function Page() {
                           </div>
                         </div>
                       </div>
-                      <button className="w-full bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 mt-10">Submit</button>
+                      <Modal onToggle={handleModalToggle} />
                     </div>
                   </div>
                 </div>
