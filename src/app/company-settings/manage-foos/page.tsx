@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Modal from '../../components/Modal/Modal.js';
+import Modal from '../../components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
 } from "react-icons/ci";
