@@ -20,7 +20,7 @@ const links = [
   { name: 'Customer Data', href: '/customer-data', icon: <CiDatabase className='icon' size={40} />},
   { name: 'Generate Route', href: '/generate-route',  icon: <CiRoute className='icon' size={40}/>},
   { name: 'Route History', href: '/route-history',  icon: <CiViewList  className='icon' size={40}/>},
-  { name: 'Exit', href: '/exit',  icon: <CiLogout className='icon' size={40} />
+  { name: 'Exit', href: '/login',  icon: <CiLogout className='icon' size={40} />
 },
 ];
 

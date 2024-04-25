@@ -4,22 +4,10 @@
 
 :root {
   --foreground: #F4F4F4;
-}
-
-:root {
   --Roboto-Regular: var(--roboto);
   --SourceSansPro-Regular: var(--sourcesans);
   --PTSans-Regular: var(--ptsans);
-}
-
-
-.font-roboto {
-  font-family: var(--roboto-font);
-}
-
-.font-sourcesans {
-  font-family: var(--SourceSansPro-Regular);
-}
+  }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -122,10 +110,6 @@ h4 {                   /*name in sidenav*/
   background-color: #6F42C1; 
 }
 
-.nav-link-active icon{
-  fill: #FFFFFF;
-}
-
 .dropdown {
   z-index: 1; /* Or a higher number if necessary | this puts dropdown in the front */
 }
@@ -224,29 +208,10 @@ td {
   width: fit-content;
 }
 
-.search-input {
-  display: flex; 
-  align-items: center; 
-  padding-left: 0.5rem;
-  border: 0;
-  width: 0;
-}
-
-.search-input input {
-  padding-left: 0.5rem; 
-  flex: 1; 
-  border: 0;
-}
-
 .button-content {
   display: flex; /* Enable flexbox layout */
   align-items: center; /* Align content vertically */
   justify-content: center; /* Center content horizontally */
-}
-
-.card-header {
-  display: flex; /* Enable flexbox layout */
-  flex-direction: column; /* Stack content vertically */
 }
 
 .card-header-text {

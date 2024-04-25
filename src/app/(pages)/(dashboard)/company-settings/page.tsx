@@ -7,8 +7,7 @@ import {
   CiCircleChevUp 
 } from "react-icons/ci";
 import Button from '@mui/material/Button';
-import SearchBar from '../ui/tables/searchbar';
-
+import SearchBar from '@/app/ui/tables/searchbar';
 
 
 interface Entity {
