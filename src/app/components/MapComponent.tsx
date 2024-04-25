@@ -81,64 +81,38 @@ const MapComponent: FC = () => {
         return null;
     };
 
-    //12. Function to handle form submission.
-    const handleSubmit = async () => {
-        setLoading(true);
-        try {
-            //13. Set loading state and clear the input.
-            setSubmittedQuestion(inputValue);
-            setInputValue("");
-
-            //14. Make the API request using fetch.
-            const response = await fetch("/api/Coordinates", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ value: inputValue }),
-            });
-
-            //15. Parse and set the response data.
-            const data = await response.json();
-            setMarkerData(data);
-        } catch (error) {
-            //16. Log errors.
-            console.error(error);
-        }
-    };
-
-    //17. Return the JSX for rendering.
+    //11. Return the JSX for rendering.
     return (
         <>
-            {/* 18. Show the loader if loading. */}
+            {/* 12. Show the loader if loading. */}
             {loading && <Loader />}
 
-            {/* 19. Conditionally render the title overlay. */}
+            {/* 13. Conditionally render the title overlay. */}
             {markerData && markerData.coordinates && (
                 <div className="flex items-center justify-center absolute top-3 right-3 z-[100000]">
                     <h1 className="text-3xl font-bold text-black p-2 bg-white rounded-md z-[100000]">{markerData.title}</h1>
                 </div>
             )}
 
-            {/* 20. Add the map container. */}
+            {/* 14. Add the map container. */}
             <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw" }}>
 
-                {/* 21. Set the tile layer for the map. */}
+                {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                {/* 22. Conditionally render the marker. */}
+                {/* 16. Conditionally render the marker. */}
                 {markerData && markerData.coordinates && (
                     <Marker position={markerData.coordinates}>
                         <Popup>{markerData.title}</Popup>
                     </Marker>
                 )}
 
-                {/* 23. Include the ZoomHandler for zoom events. */}
+                {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
         </>
     );
 };
 
-//25. Export the MapComponent.
+//18. Export the MapComponent.
 export default MapComponent;
