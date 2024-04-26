@@ -95,7 +95,7 @@ const MapComponent: FC = () => {
             )}
 
             {/* 14. Add the map container. */}
-            <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw" }}>
+            <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0"}}>
 
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

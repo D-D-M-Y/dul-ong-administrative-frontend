@@ -242,7 +242,7 @@ export default function Page() {
             </div>
           </div>
           {/* Right Side Image */}
-          <div className="w-2/3 h-full flex">
+          <div className="w-2/3 h-full flex rounded-r-lg">
             <DynamicMapComponent />
           </div>
         </div>
