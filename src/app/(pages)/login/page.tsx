@@ -10,7 +10,7 @@ export default function Page() {
           <img src="/dulong-white.svg" className="w-1/2" />
           <h1 className="text-white font-SourceSansPro">Made by Ilonggos, for Ilonggos</h1>
           <p className="text-white pt-sans font-normal text-xl">A route generating application for the people of Iloilo Province</p>
-          <img src="/3D-Route.svg" className="size-9/12 place-self-end" />
+          <img src="/3droute.svg" className="size-9/12 place-self-end" />
         </div>
 
         <div className="flex flex-col flex-grow bg-white rounded-l-3xl justify-center items-center h-screen">  {/* Second column: full width */}
