@@ -33,7 +33,7 @@ export default function NavLinks() {
     <div className="ml-3 text-neutral-800 text-sm font-normal">OVERVIEW </div>
       {links.map((link) => {
         return (
-          <Link
+          <a
             key={link.name}
             href={link.href}
             className={clsx(
@@ -44,7 +44,7 @@ export default function NavLinks() {
             {link.icon} 
           <span className="image-overlay"></span>
              <p className="hidden md:block">{link.name}</p>
-          </Link>
+          </a>
         );
       })}
     </>
