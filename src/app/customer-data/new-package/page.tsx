@@ -35,7 +35,7 @@ export default function Page() {
         </div>
 
 
-        {/* Westside (Form) */}
+        {/* Left Side Form */}
         <div className='flex'>
           <div className='w-1/3'>
             <div className="w-100% h-100% position-relative bg-white rounded-bl-lg">
@@ -248,7 +248,7 @@ export default function Page() {
               </div>
             </div>
           </div>
-          {/* Right Side Image */}
+          {/* Right Side Map */}
           <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
             style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
           </div>

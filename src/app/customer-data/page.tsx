@@ -1,14 +1,10 @@
 "use client";
 import React, { useState } from 'react';
-import { Popup } from '../ui/dashboard/popup';
 import Link from 'next/link';
+import Modal from '../components/Modal/ActionModal.js';
 import { 
-  CiTrash,
-  CiEdit,
   CiCircleChevDown,
-  CiCircleChevUp 
 } from "react-icons/ci";
-import Button from '@mui/material/Button';
 import SearchBar from '@/app/ui/tables/searchbar';
 
 
@@ -21,7 +17,6 @@ interface Entity {
   longitude: number;
   latitude: number;
   waitingCost: number;
-  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
@@ -35,18 +30,7 @@ const entities: Entity[] = [
   longitude: 122.517291, 
   latitude: 10.687027,
   waitingCost: 0.0,
-  actions: [
-    <Button variant="outlined" color="primary" > 
-      <div className="button-content">
-        <CiEdit size ={24} />
-      </div>
-    </Button>,
-    <Button variant="outlined" color="error">
-      <div className="button-content">
-      <CiTrash size ={24}/>
-    </div>
-  </Button>
-  ],},
+  },
 { 
   customerID: "CUS0000002", 
   name: "Belle Mirasol", 
@@ -56,24 +40,15 @@ const entities: Entity[] = [
   longitude: 122.517291, 
   latitude: 10.687027,
   waitingCost: 0.0,
-  actions: [
-    <Button variant="outlined" color="primary" > 
-      <div className="button-content">
-        <CiEdit size ={24} />
-      </div>
-    </Button>,
-    <Button variant="outlined" color="error">
-      <div className="button-content">
-      <CiTrash size ={24}/>
-    </div>
-  </Button>
-  ],}  
+}  
   // ... more entities
 ];
 
 const MyGrid = () => {
-    // state variable to control popup visibility, initialized to false
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleModalToggle = (isOpen: boolean) => {
+    // Perform any actions needed when modal opens/closes (optional)
+    console.log("Modal is", isOpen ? "Open" : "Closed");
+  };
   const headers = [
     { name: 'Customer ID' },
     { name: 'Name' },
@@ -131,9 +106,7 @@ const MyGrid = () => {
             <td>{entity.longitude}</td>
             <td>{entity.latitude}</td>
             <td>{entity.waitingCost}</td>
-            <td>{entity.actions?.map((action, index) => (
-              <span key={index}>{action}</span>))}
-            </td>
+            <td><Modal onToggle={handleModalToggle} /></td>
           </tr>
         ))}
       </tbody>

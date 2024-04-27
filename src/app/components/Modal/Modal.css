@@ -10,8 +10,20 @@ body.active-modal {
     font-size: 18px;
 }
 
-.modal,
+.modal {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    z-index: 1;
+
+}
+
 .overlay {
+    background: rgba(49, 49, 49, 0.8);
     width: 100vw;
     height: 100vh;
     top: 0;
@@ -21,20 +33,17 @@ body.active-modal {
     position: fixed;
 }
 
-.overlay {
-    background: rgba(49, 49, 49, 0.8);
-}
-
 .modal-content {
     border-radius: 20px;
     position: absolute;
     left: 50%;
     top: 50%;
-    margin-left: -150px;
+    margin-left: -250px;
     background-color: white;
     padding: 40px;
     transform: translateY(-50%);
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+    width: 35rem;
 }
 
 .modal-.modal-actions {
@@ -65,6 +74,10 @@ body.active-modal {
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
 }
 
+.cancel-modal:hover {
+    outline: 2px solid #808080;
+}
+
 .delete-modal {
     display: inline-block;
     background: red;
@@ -78,6 +91,12 @@ body.active-modal {
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
 }
 
+.delete-modal:hover {
+    background-color: white;
+    color: red;
+    outline: 2px solid red;
+}
+
 .edit-modal {
     display: inline-block;
     background: #1976D2;
@@ -89,4 +108,10 @@ body.active-modal {
     cursor: pointer;
     width: 150px;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+.edit-modal:hover {
+    background-color: white;
+    color: #1976D2;
+    outline: 2px solid #1976D2;
 }

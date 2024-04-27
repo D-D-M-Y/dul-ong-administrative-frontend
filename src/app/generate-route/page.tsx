@@ -23,19 +23,9 @@ export default function Page() {
         </div>
 
         {/* Right Side Image and Map */}
-        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain">
-          <MapContainer center={[38, -77]} zoom={12} style={{ height: '100%' }}> {/* Set map height */}
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={[38, -77]}>
-              <Popup>
-                A simple Leaflet popup.
-              </Popup>
-            </Marker>
-          </MapContainer>
-        </div>
+        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
+            style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
+          </div>
       </div>
     </main>
   );
