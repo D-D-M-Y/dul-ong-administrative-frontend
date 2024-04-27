@@ -1,7 +1,11 @@
 "use client";
 import React, { useState } from 'react';
-import { Popup } from '../../ui/dashboard/popup';
 import Link from 'next/link';
+import Modal from '../../components/Modal/ActionModal.js';
+import {
+  CiCircleChevDown,
+} from "react-icons/ci";
+import SearchBar from '../../ui/tables/searchbar';
 
 interface Entity {
   name: string;
@@ -9,8 +13,6 @@ interface Entity {
   username: string;
   dateAdded: Date;
   lastLogin: Date;
-  editIcon: string;
-  deleteIcon: string;
 }
 
 const entities: Entity[] = [
@@ -21,8 +23,6 @@ const entities: Entity[] = [
     username: "aexmundo",
     dateAdded: new Date(),
     lastLogin: new Date(),
-    editIcon: "/icons/edit.svg",
-    deleteIcon: "/icons/trash.svg"
   },
   {
     name: "Adam Chan",
@@ -30,28 +30,46 @@ const entities: Entity[] = [
     username: "achan",
     dateAdded: new Date(),
     lastLogin: new Date(),
-    editIcon: "/icons/edit.svg",
-    deleteIcon: "/icons/trash.svg"
   }
   // ... more entities
 ];
 
 const MyGrid = () => {
-  // state variable to control popup visibility, initialized to false
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const handleModalToggle = (isOpen: boolean) => {
+    // Perform any actions needed when modal opens/closes (optional)
+    console.log("Modal is", isOpen ? "Open" : "Closed");
+  };
+
+  const headers = [
+    { name: 'Name' },
+    { name: 'Email' },
+    { name: 'Username' },
+    { name: 'Date Added' },
+    { name: 'Last Login' },
+    { name: 'Actions' },
+  ];
+
   return (
     <>
       <table>
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Date Added</th>
-            <th>Last Login</th>
-            <th>Edit</th>
-            <th>Delete</th>
-            {/* Add table headers if needed */}
+            {headers.map((header) => (
+              <th key={header.name}>
+                {header.name}
+                {header.name !== 'Actions' && (
+                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                     {sortState[header.name] === 'idle' ? (
+                       <CiCircleChevDown />
+                     ) : sortState[header.name] === 'ascending' ? (
+                       <CiCircleChevUp />
+                     ) : (
+                       <CiCircleChevDown /> // Descending state (optional icon)
+                     )}
+                   </button>*/
+                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -62,22 +80,11 @@ const MyGrid = () => {
               <td>{entity.username}</td>
               <td>{entity.dateAdded.toLocaleDateString()}</td>
               <td>{entity.lastLogin.toLocaleDateString()}</td>
-              <td className="icon-cell">
-                {entity.editIcon && (
-                  <img src={entity.editIcon} alt="Edit" width="20" height="20" />
-                )}
-              </td>
-              <td>
-                {entity.deleteIcon && (
-                  //  added onClick handler for delete icon
-                  <img src={entity.deleteIcon} alt="Delete" width="20" height="20" onClick={() => setIsPopupOpen(true)} />)}
-              </td>
+              <td><Modal onToggle={handleModalToggle} /></td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* added check to render popup if open */}
-      {isPopupOpen && <Popup togglePopup={() => setIsPopupOpen(false)} />}
     </>
   );
 };
@@ -106,6 +113,8 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
+          <SearchBar/>
+
             <div className="grid table">
               <MyGrid />
             </div>
