@@ -205,7 +205,7 @@ th:hover button {
 
 
 td {
-  font:                 var(--PTSans-Regular);
+  font:               var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
   border-width:       0.05rem;
@@ -214,43 +214,7 @@ td {
   text-align:         center;
 }
 
-.searchbar {
-  display: flex; 
-  align-items: center; 
-  border: 0.2rem solid #d9d9d9; 
-  border-radius: 0.5rem; 
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
-  width: fit-content;
-}
-
-.search-input {
-  display: flex; 
-  align-items: center; 
-  padding-left: 0.5rem;
-  border: 0;
-  width: 0;
-}
-
-.search-input input {
-  padding-left: 0.5rem; 
-  flex: 1; 
-  border: 0;
-}
-
-.button-content {
-  display: flex; /* Enable flexbox layout */
-  align-items: center; /* Align content vertically */
-  justify-content: center; /* Center content horizontally */
-}
-
-.card-header {
-  display: flex; /* Enable flexbox layout */
-  flex-direction: column; /* Stack content vertically */
-}
-
-.card-header-text {
-  text-overflow: ellipsis; /* Indicate truncation with ellipsis (...) */
-  white-space: nowrap; /* Prevent wrapping onto multiple lines */
-  overflow: hidden; /* Hide overflowing content */
+td img {
+  display: block; /* Make the image a block-level element */
+  margin:  0 auto;  /* Center horizontally with equal margins */
 }
