@@ -1,5 +1,8 @@
+"use client";
 import { Card } from '@/app/ui/dashboard/cards';
 import Dropdown from '@/app/ui/dashboard/dropdown';
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("./components/MapComponent"), { ssr: false });
 
 /* imports from tutorial
     import {
@@ -61,8 +64,8 @@ export default async function Page() {
       <h1> Route Overview </h1>
       
       <div> 
-        <div className=" h-full w-auto rounded-xl bg-white p-2 shadow-sm">
-          <img src="/filler.png"                 alt="Filler Image"   className=" rounded-md "/>
+        <div className=" h-full w-auto rounded bg-white p-2 shadow-sm flex">
+        <DynamicMapComponent />
         </div>
       </div>
     </main>
