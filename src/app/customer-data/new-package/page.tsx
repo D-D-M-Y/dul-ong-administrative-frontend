@@ -31,14 +31,14 @@ export default function Page() {
         </div>
 
 
-        {/* Westside (Form) */}
+        {/* Left Side Form */}
         <div className='flex'>
-          <div className='w-1/3 h-fit'>
+          <div className='w-1/3 h-fit flex-none'>
             <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
                 <div className="table">
                   <div className="p-5">
-                    <div className="pb-10">
+                    <div className="pb-9">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">Customer Data</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
                         <div className="col-span-full">
@@ -241,8 +241,8 @@ export default function Page() {
               </div>
             </div>
           </div>
-          {/* Right Side Image */}
-          <div className="w-2/3 h-full flex">
+          {/* Right Side Map */}
+          <div className="w-2/3 h-fit flex">
             <DynamicMapComponent />
           </div>
         </div>
