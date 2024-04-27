@@ -2,6 +2,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Modal from '../../components/Modal/Modal';
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("../../components/MapComponent"), { ssr: false });
 
 export default function Page() {
   const handleModalToggle = (isOpen: boolean) => {
@@ -37,16 +39,13 @@ export default function Page() {
 
         {/* Left Side Form */}
         <div className='flex'>
-          <div className='w-1/3'>
-            <div className="w-100% h-100% position-relative bg-white rounded-bl-lg">
+          <div className='w-1/3 h-fit flex-none'>
+            <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
                 <div className="table">
                   <div className="p-5">
-                    <div className="pb-12">
-                      <div className="mt-2 flex items-center gap-x-3">
-                        <h2 className="w-2/3 text-base font-semibold leading-7 text-gray-900">Customer Data</h2>
-                        <button className='w-1/3 bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-1'>Clear</button>
-                      </div>
+                    <div className="pb-9">
+                      <h2 className="text-base font-semibold leading-7 text-gray-900">Customer Data</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
                         <div className="col-span-full">
                           <div className="mt-2">
@@ -249,8 +248,8 @@ export default function Page() {
             </div>
           </div>
           {/* Right Side Map */}
-          <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
-            style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
+          <div className="w-2/3 h-fit flex">
+            <DynamicMapComponent />
           </div>
         </div>
       </div>
