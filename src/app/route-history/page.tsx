@@ -50,7 +50,7 @@ const MyGrid = () => {
     { name: 'Actions' },
   ];
   return (
-    <><table>
+    <table>
       <thead>
         <tr>
           {headers.map((header) => (
@@ -87,7 +87,6 @@ const MyGrid = () => {
         ))}
       </tbody>
     </table>
-    </>
   );
 };
 

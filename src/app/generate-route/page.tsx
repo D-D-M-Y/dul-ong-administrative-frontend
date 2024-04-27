@@ -1,11 +1,13 @@
+"use client";
 import { Card } from '@/app/ui/dashboard/cards';
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("../components/MapComponent"), { ssr: false });
 
 export default function Page() {
   return (
-    <main>
+    <>
       <h1 className="font-bold"> Generate Route</h1>
-      <div className="w-full h-full relative bg-white rounded-xl">
-        {/* Left Side Content */}
+      <main className="flex">
         <div className="w-1/4 h-full flex flex-col space-y-3 p-4">
           <h2 className="font-bold"> Route Overview</h2>
 
@@ -18,11 +20,11 @@ export default function Page() {
           <button className="w-full h-[50px] bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2">Generate Route</button>
         </div>
 
-        {/* Right Side Image and Map */}
-        <div className="w-2/3 h-auto rounded-r-lg bg-contain md:bg-contain"
-            style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
-          </div>
-      </div>
-    </main>
+        <div className="w-3/4 h-full flex space-y-3 p-4">
+          <DynamicMapComponent />
+        </div>
+      </main>
+    </>
+
   );
 }

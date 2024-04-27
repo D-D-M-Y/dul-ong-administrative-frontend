@@ -70,8 +70,8 @@ const MyGrid = () => {
 
 
 
-  return (
-    <><table>
+   return (
+    <table>
       <thead>
         <tr>
           {headers.map((header) => (
@@ -111,7 +111,6 @@ const MyGrid = () => {
         ))}
       </tbody>
     </table>
-    </>
   );
 };
 
