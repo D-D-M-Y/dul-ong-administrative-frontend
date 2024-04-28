@@ -1,16 +1,21 @@
+
 //1. Import dependencies for React, Leaflet and other functionalities.
 import React, { useState, useEffect, useRef, FC } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+import "leaflet-routing-machine"; // Import Leaflet Routing Machine
+import L, { Routing } from "leaflet";
 
 //2. Define the interface for MarkerData.
 interface MarkerData {
     coordinates: [number, number];
     title: string;
 }
-
+interface RouteData {
+    coordinates: L.LatLngExpression[]; // Array of Leaflet LatLng objects
+}
 //3. Loader component for showing loading animation.
 const Loader = () => {
     return (
@@ -34,51 +39,79 @@ const Loader = () => {
         </div>
     );
 };
-
 //4. Main component definition.
 const MapComponent: FC = () => {
-
     //5. Initialize local state.
-    const [inputValue, setInputValue] = useState<string>("");
-    const [markerData, setMarkerData] = useState<MarkerData | null>(null);
+    const [markers, setMarkers] = useState<MarkerData[]>([]); // Array to store markers
+    const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number>(-1);
     const [loading, setLoading] = useState<boolean>(false);
-    const [submittedQuestion, setSubmittedQuestion] = useState<string | null>(null);
-
+    // State to store the route data
+    const [route, setRoute] = useState<RouteData | null>(null);
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
-
+    const routingControl = Routing.control({
+        waypoints: [], // Initially empty waypoints
+        // Other routing control options if needed
+    });
+    mapRef.current ? mapRef.current.addControl(routingControl) : null;
     //7. ZoomHandler component for handling map zoom events.
     const ZoomHandler: FC = () => {
-
         //8. Use Leaflet's useMap hook.
         const map = useMap();
-
         //9. Function to fly map to given coordinates.
         const flyToMarker = (coordinates: [number, number], zoom: number) => {
             if (coordinates && typeof coordinates[0] !== "undefined") {
-                map.flyTo(coordinates, zoom, {
-                    animate: true,
-                    duration: 1.5,
-                });
+                map.flyTo(coordinates, zoom, {});
             }
         };
         useMapEvents({
             zoomend: () => {
                 setLoading(false);
             },
-        });
+            click: (e) => {
+                setLoading(true); // Show loading indicator while processing click
+                const { lat, lng } = e.latlng;
+                setMarkers((prevMarkers) => {
+                    if (prevMarkers.length < 2) {
+                        return [...prevMarkers, { coordinates: [lat, lng], title: `Point ${prevMarkers.length + 1}` }];
+                    } else {
+                        return prevMarkers.slice(1).concat({ coordinates: [lat, lng], title: `Point ${prevMarkers.length + 1}` });
+                    }
+                });
+                setCurrentMarkerIndex(markers.length);
+                setLoading(false); // Hide loading indicator after setting marker
+            },
 
+        });
         //10. useEffect to trigger the map fly when markerData changes.
         useEffect(() => {
-            if (markerData) {
-                if (markerData.coordinates && typeof markerData.coordinates[0] !== "undefined") {
-                    flyToMarker(markerData.coordinates, 11);
-                }
+            if (currentMarkerIndex !== -1 && markers[currentMarkerIndex]) {
+                flyToMarker(markers[currentMarkerIndex].coordinates, 13);
             }
-        }, [markerData]);
-
+            if (mapRef.current) {
+                const routingControl = Routing.control({
+                    waypoints: [], // Initially empty waypoints
+                    // Other routing control options if needed
+                });
+                mapRef.current.addControl(routingControl);
+            }
+            if (markers.length > 1) { // Call createRoute only when markers length is more than 1
+                createRoute();
+            }
+        }, [currentMarkerIndex, markers, mapRef.current]);
         //11. Return null as we're not rendering anything in the DOM.
         return null;
+    };
+    const createRoute = () => {
+        if (markers.length < 2) {
+            console.error("Please add at least two markers to create a route.");
+            return;
+        }
+        const waypoints = markers.map((marker) => L.latLng(marker.coordinates[0], marker.coordinates[1]));
+        const routeData: RouteData = { coordinates: waypoints }; // Create RouteData object
+        setRoute(routeData);
+        // Update routing control waypoints
+        routingControl.setWaypoints(waypoints);
     };
 
     //11. Return the JSX for rendering.
@@ -86,33 +119,22 @@ const MapComponent: FC = () => {
         <>
             {/* 12. Show the loader if loading. */}
             {loading && <Loader />}
-
-            {/* 13. Conditionally render the title overlay. */}
-            {markerData && markerData.coordinates && (
-                <div className="flex items-center justify-center absolute top-3 right-3 z-[100000]">
-                    <h1 className="text-3xl font-bold text-black p-2 bg-white rounded-md z-[100000]">{markerData.title}</h1>
-                </div>
-            )}
-
             {/* 14. Add the map container. */}
-            <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0"}}>
-
+            <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
                 {/* 16. Conditionally render the marker. */}
-                {markerData && markerData.coordinates && (
-                    <Marker position={markerData.coordinates}>
-                        <Popup>{markerData.title}</Popup>
+                {markers.map((marker, index) => (
+                    <Marker key={marker.coordinates.join(",")} position={marker.coordinates}>
+                        <Popup>{`Point ${index + 1}`}</Popup>
                     </Marker>
-                )}
-
+                ))}
+                {/* Code to show drawn route */}
                 {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
         </>
     );
 };
-
 //18. Export the MapComponent.
 export default MapComponent;
