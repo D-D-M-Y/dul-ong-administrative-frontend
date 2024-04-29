@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import { TileLayer, MapContainer, LayersControl } from 'react-leaflet';
-import { Button } from '@material-ui/core';
+import "leaflet/dist/leaflet.css";
 
 // Import the JS and CSS:
 import 'leaflet-routing-machine';
@@ -57,14 +57,10 @@ const Map = () => {
 
   return (
     <>
-      <Button variant="contained" color="default">
-        Click To Change Waypoints
-      </Button>
       <MapContainer
         center={[10.7202, 122.5621]}
-        zoom={3}
-        zoomControl={false}
-        style={{ height: '100vh', width: '100%', padding: 0 }}
+        zoom={13}
+        style={{ height: '100vh', width: '100%', borderRadius: "0 20px 20px 0" }}
         // Set the map instance to state when ready:
         whenCreated={(map) => setMap(map)}
       >
