@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
+    "build": "next build",
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.14.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fontsource/roboto": "^5.0.12",
@@ -16,19 +17,20 @@
     "@material-ui/core": "^4.12.4",
     "@mui/material": "^5.15.15",
     "@react-icons/all-files": "^4.1.0",
+    "@react-leaflet/core": "1.1.0",
     "@types/leaflet-routing-machine": "^3.2.8",
     "@types/material-ui": "^0.21.17",
+    "@types/react": "17.0.9",
     "clsx": "^2.1.0",
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "leaflet-routing-machine": "^3.2.12",
+    "lrm-google": "^1.0.1",
     "next": "^14.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.1.0",
-    "react-leaflet": "^4.2.1",
-    "sass": "^1.75.0",
-    "styled-components": "^6.1.8"
+    "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.12",
@@ -38,6 +40,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.1",
     "postcss": "^8.4.38",
+    "react-scripts": "latest",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"
   }
