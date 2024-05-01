@@ -47,7 +47,7 @@ const Map = () => {
       // Save instance to state:
       setRoutingMachine(RoutingMachineRef.current)
     }
-  }, [map])
+  }, [end, map, start])
 
   // Once routing machine instance is ready, add to map:
   useEffect(() => {
@@ -55,7 +55,7 @@ const Map = () => {
     if (routingMachine) {
       routingMachine.addTo(map)
     }
-  }, [routingMachine])
+  }, [map, routingMachine])
 
 
   return (
