@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       fontFamily:{
         roboto: ['Roboto', 'sans-serif'],
-        source_sans_pro: ['SourceSansPro', 'sans-serif'],
+        source_sans_pro: ['Source Sans Pro', 'sans-serif'],
         ptsans: ['PT Sans'],
       },
       colors: {

@@ -95,7 +95,7 @@ const MyGrid = () => {
 
    return (
     <table>
-      <thead>
+      <thead className="font-source_sans_pro">
         <tr>
           {headers.map((header) => (
             <th key={header.name}>
@@ -116,7 +116,7 @@ const MyGrid = () => {
         </tr>
       </thead>
 
-      <tbody>
+      <tbody className="font-ptsans" >
         {entities.map((entity) => (
           <tr key={entity.customerID}>
             <td>{entity.customerID}</td>
@@ -142,12 +142,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold'>
+        <h1 className='font-roboto font-bold'>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline"> 
+        <div className="flex items-baseline font-source_sans_pro"> 
           <div className="customborder-active">
             <h2>Manage Customers</h2>
           </div>

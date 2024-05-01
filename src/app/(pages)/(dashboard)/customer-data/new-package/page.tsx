@@ -6,12 +6,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 style = {{fontWeight: 'bold'}}>
+        <h1 className='font-roboto font-bold'>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline"> 
+        <div className="flex items-baseline font-source_sans_pro"> 
           <div className="customborder-link">
             <Link href="/customer-data">
               <h2>Manage Customers</h2>

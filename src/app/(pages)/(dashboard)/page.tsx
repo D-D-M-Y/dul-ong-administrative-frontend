@@ -21,12 +21,12 @@ export default async function Page() {
 
   return (
     <main>
-      <h1 className = "font-bold">
+      <h1 className = "font-roboto font-bold">
         Welcome back, Allana!
       </h1>
         
           {/* Delivery Overview */}
-      <div className="flex items-baseline"> 
+      <div className="flex items-baseline font-roboto"> 
         <h1> Delivery Overview </h1>
           <div className="ml-4 relative">
             <Dropdown />
@@ -44,7 +44,7 @@ export default async function Page() {
 
       {/* FOO Management */}
 
-      <h1> FOO Management </h1>
+      <h1 className="font-roboto font-bold"> FOO Management </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card title="FOOs Available"              value={"1"}         type="fooavailable" />
@@ -58,7 +58,7 @@ export default async function Page() {
 
       {/* Route Overview */}
 
-      <h1> Route Overview </h1>
+      <h1 className="font-roboto font-bold"> Route Overview </h1>
       
       <div> 
         <div className=" h-full w-auto rounded-xl bg-white p-2 shadow-sm">

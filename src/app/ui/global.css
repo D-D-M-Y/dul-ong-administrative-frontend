@@ -4,9 +4,6 @@
 
 :root {
   --foreground: #F4F4F4;
-  --Roboto-Regular: var(--roboto);
-  --SourceSansPro-Regular: var(--sourcesans);
-  --PTSans-Regular: var(--ptsans);
   }
 
 @media (prefers-color-scheme: dark) {
@@ -165,7 +162,6 @@ h4 {                   /*name in sidenav*/
 }
 
 th {
-  font:               var(--SourceSansPro-Regular);
   font-size:          large;
   font-weight:        bold;
   background-color: white;
@@ -189,7 +185,6 @@ th:hover button {
 
 
 td {
-  font:                 var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
   border-width:       0.05rem;

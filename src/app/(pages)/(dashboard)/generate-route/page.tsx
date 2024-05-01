@@ -4,11 +4,11 @@ import { Card } from '@/app/ui/dashboard/cards';
 export default function Page() {
   return (
     <main>
-      <h1 className = "font-bold"> Generate Route</h1>
+      <h1 className = "font-roboto font-bold"> Generate Route</h1>
       <div className="w-full h-full relative bg-white rounded-xl">
         {/* Left Side Content */}
         <div className="w-1/4 h-full flex flex-col space-y-3 p-4 ">
-            <h2 className="font-bold">
+            <h2 className="font-roboto font-bold">
               Route Overview
             </h2>
 

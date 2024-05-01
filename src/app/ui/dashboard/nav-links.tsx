@@ -30,15 +30,16 @@ export default function NavLinks() {
 
   return (
     <>
-    <div className="ml-3 text-neutral-800 text-sm font-normal">OVERVIEW </div>
+    <div className="ml-3 text-neutral-800 text-sm font-roboto font-normal">OVERVIEW </div>
+    <div className ="font-source_sans_pro ">
       {links.map((link) => {
         return (
           <Link
             key={link.name}
             href={link.href}
             className={clsx(
-              'nav-links',
-              pathname === link.href && 'nav-link-active ',
+              "nav-links",
+              pathname === link.href && "nav-link-active ",
             )}
           >
             {link.icon} 
@@ -47,6 +48,7 @@ export default function NavLinks() {
           </Link>
         );
       })}
+      </div>
     </>
   );
 }
