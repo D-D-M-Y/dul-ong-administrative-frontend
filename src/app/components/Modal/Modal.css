@@ -22,6 +22,18 @@ body.active-modal {
 
 }
 
+.npmodal {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    z-index: 2000;
+
+}
+
 .overlay {
     background: rgba(49, 49, 49, 0.8);
     width: 100vw;
