@@ -43,22 +43,25 @@ const MapComponent: FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const getPolylineCoordinates = () => {
-        // Check if there are at least 2 markers to create a polyline
+        // Check if there are at least 2 markers
         if (markers.length < 2) return [];
-      
-        // Extract coordinates from the first and last marker
-        const startCoords = markers[0].coordinates;
-        const endCoords = markers[markers.length - 1].coordinates;
-      
-        // Return the coordinates as an array for the polyline
-        return [startCoords, endCoords];
-      };
 
-    const polyline: [number, number][] = getPolylineCoordinates();
+        const polylines = [];
+        // Loop through markers to create polylines between them
+        for (let i = 0; i < markers.length - 1; i++) {
+            const startCoords = markers[i].coordinates;
+            const endCoords = markers[i + 1].coordinates;
+            polylines.push([startCoords, endCoords]);
+        }
+
+        return polylines;
+    };
+
+    const polyline = getPolylineCoordinates();
 
 
-    const purpleOption = { color: 'purple'};
-    
+    const purpleOption = { color: 'purple' };
+
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
     //7. ZoomHandler component for handling map zoom events.
@@ -85,11 +88,7 @@ const MapComponent: FC = () => {
                 setLoading(true); // Show loading indicator while processing click
                 const { lat, lng } = e.latlng;
                 setMarkers((prevMarkers) => {
-                    if (prevMarkers.length < 2) {
-                        return [...prevMarkers, { coordinates: [lat, lng] }];
-                    } else {
-                        return prevMarkers.slice(1).concat({ coordinates: [lat, lng]});
-                    }
+                    return [...prevMarkers, { coordinates: [lat, lng] }];
                 });
                 setCurrentMarkerIndex(markers.length);
                 setLoading(false); // Hide loading indicator after setting marker
@@ -99,11 +98,11 @@ const MapComponent: FC = () => {
         //10. useEffect to trigger the map fly when markerData changes.
         useEffect(() => {
             if (markerData) {
-              if (markerData.coordinates && typeof markerData.coordinates[0] !== "undefined") {
-                flyToMarker(markerData.coordinates, 11);
-              }
+                if (markerData.coordinates && typeof markerData.coordinates[0] !== "undefined") {
+                    flyToMarker(markerData.coordinates, 11);
+                }
             }
-          }, [markerData]);
+        }, [markerData]);
         //11. Return null as we're not rendering anything in the DOM.
         return null;
     };
@@ -123,7 +122,7 @@ const MapComponent: FC = () => {
                         <Popup>{`Point ${index + 1}: ${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
-                <Polyline pathOptions={purpleOption} positions={polyline}/>
+                <Polyline pathOptions={purpleOption} positions={polyline} />
                 {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
