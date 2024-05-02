@@ -23,7 +23,7 @@ export default function Page() {
 
           <div className="flex items-center pb-2 mt-4">
             <div className="w-auto p-5 border-b border-lgray py-1"></div>
-            <span className="text-lgray px-2">or</span>
+            <span className="text-lgray font-source_sans_pro px-2">or</span>
             <div className="w-auto p-5 border-b border-lgray py-1"></div>
           </div>
 
