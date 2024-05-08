@@ -15,12 +15,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 style={{ fontWeight: 'bold' }}>
+        <h1 className='font-bold font-roboto'>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline">
+        <div className="flex items-baseline font-source_sans_pro">
           <div className="customborder-link">
             <Link href="/customer-data">
               <h2>Manage Customers</h2>
@@ -38,7 +38,7 @@ export default function Page() {
 
 
         {/* Left Side Form */}
-        <div className='flex'>
+        <div className='flex font-ptsans'>
           <div className='w-1/3 h-fit flex-none'>
             <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
