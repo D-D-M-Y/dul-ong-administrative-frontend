@@ -101,7 +101,17 @@ const MapComponent: FC = () => {
         //11. Return null as we're not rendering anything in the DOM.
         return null;
     };
-
+    // API Call
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            const query = await fetch("http://127.0.0.1:8000/api/");
+            const response = await query.json();
+            console.log('API says:', response);
+            setLoading(false);
+        };
+        fetchData();
+    }, []);
     //11. Return the JSX for rendering.
     return (
         <>
