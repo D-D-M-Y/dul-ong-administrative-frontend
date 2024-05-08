@@ -218,3 +218,13 @@ td img {
   display: block; /* Make the image a block-level element */
   margin:  0 auto;  /* Center horizontally with equal margins */
 }
+
+.searchbar {
+  display: flex; 
+  align-items: center; 
+  border: 0.2rem solid #d9d9d9; 
+  border-radius: 0.5rem; 
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}

@@ -58,8 +58,6 @@ const MapComponent: FC = () => {
     };
 
     const polyline = getPolylineCoordinates();
-
-
     const purpleOption = { color: 'purple' };
 
     //6. Declare useRef to reference map.
@@ -68,9 +66,6 @@ const MapComponent: FC = () => {
     const ZoomHandler: FC = () => {
         //8. Use Leaflet's useMap hook.
         const map = useMap();
-        const handleMarkerClick = (markerIndex: number) => {
-            setCurrentMarkerIndex(markerIndex);
-        };
         //9. Function to fly map to given coordinates.
         const flyToMarker = (coordinates: [number, number], zoom: number) => {
             if (coordinates && typeof coordinates[0] !== "undefined") {
