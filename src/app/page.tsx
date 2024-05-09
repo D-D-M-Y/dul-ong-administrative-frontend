@@ -2,7 +2,6 @@
 import { Card } from '@/app/ui/dashboard/cards';
 import Dropdown from '@/app/ui/dashboard/dropdown';
 import dynamic from "next/dynamic";
-
 const DynamicMapComponent = dynamic(() => import("./components/MapComponent"), { ssr: false });
 
 /* imports from tutorial

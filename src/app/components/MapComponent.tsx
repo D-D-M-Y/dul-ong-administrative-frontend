@@ -34,30 +34,17 @@ const Loader = () => {
         </div>
     );
 };
+
+const multiPolyline: any[] = [];
+
 //4. Main component definition.
 const MapComponent: FC = () => {
     //5. Initialize local state.
-    const [markers, setMarkers] = useState<MarkerData[]>([]); // Array to store markers
-    const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number>(-1);
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [convertedPolyline, setConvertedPolyline] = useState([]); // State for converted data
 
-    const getPolylineCoordinates = () => {
-        // Check if there are at least 2 markers
-        if (markers.length < 2) return [];
 
-        const polylines = [];
-        // Loop through markers to create polylines between them
-        for (let i = 0; i < markers.length - 1; i++) {
-            const startCoords = markers[i].coordinates;
-            const endCoords = markers[i + 1].coordinates;
-            polylines.push([startCoords, endCoords]);
-        }
-
-        return polylines;
-    };
-
-    const polyline = getPolylineCoordinates();
     const purpleOption = { color: 'purple' };
 
     //6. Declare useRef to reference map.
@@ -79,16 +66,6 @@ const MapComponent: FC = () => {
             zoomend: () => {
                 setLoading(false);
             },
-            click: (e) => {
-                setLoading(true); // Show loading indicator while processing click
-                const { lat, lng } = e.latlng;
-                setMarkers((prevMarkers) => {
-                    return [...prevMarkers, { coordinates: [lat, lng] }];
-                });
-                setCurrentMarkerIndex(markers.length);
-                setLoading(false); // Hide loading indicator after setting marker
-            },
-
         });
         //10. useEffect to trigger the map fly when markerData changes.
         useEffect(() => {
@@ -98,7 +75,7 @@ const MapComponent: FC = () => {
                 }
             }
         }, [markerData]);
-        //11. Return null as we're not rendering anything in the DOM.
+
         return null;
     };
     // API Call
@@ -108,8 +85,18 @@ const MapComponent: FC = () => {
             const query = await fetch("http://127.0.0.1:8000/api/");
             const response = await query.json();
             console.log('API says:', response);
+
+            // Extract coordinates from API response (modify based on your API structure)
+            const apiPolylines = response || []; // Assuming data is in "data.polylines" or "features"
+
+            const convertedData = apiPolylines.map((polyline: any[]) =>
+                polyline.map((latLng) => ({ lat: latLng[0], lng: latLng[1] }))
+            );
+
+            setConvertedPolyline(convertedData);
             setLoading(false);
         };
+
         fetchData();
     }, []);
     //11. Return the JSX for rendering.
@@ -118,16 +105,16 @@ const MapComponent: FC = () => {
             {/* 12. Show the loader if loading. */}
             {loading && <Loader />}
             {/* 14. Add the map container. */}
-            <MapContainer center={[10.7202, 122.5621]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
+            <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {/* 16. Render the markers */}
-                {markers.map((marker, index) => (
-                    <Marker key={marker.coordinates.join(",")} position={marker.coordinates}>
-                        <Popup>{`Point ${index + 1}: ${marker.coordinates.join(",")}`}</Popup>
-                    </Marker>
-                ))}
-                <Polyline pathOptions={purpleOption} positions={polyline} />
+                <Marker position={[10.6873430, 122.5166238]}>
+                    <Popup>
+                        Origin Depot
+                    </Popup>
+                </Marker>
+                <Polyline pathOptions={purpleOption} positions={convertedPolyline} />
                 {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
