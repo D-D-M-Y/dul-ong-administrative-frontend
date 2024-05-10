@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import Modal from '../../components/Modal/Modal';
 import dynamic from "next/dynamic";
-const DynamicMapComponent = dynamic(() => import("../../components/MapComponent"), { ssr: false });
+const DynamicMapComponent = dynamic(() => import("../../components/Maps/NewPackageMap"), { ssr: false });
 
 export default function Page() {
   const handleModalToggle = (isOpen: boolean) => {
@@ -98,20 +98,7 @@ export default function Page() {
                             />
                           </div>
                         </div>
-
-                        <div className="sm:col-span-3">
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              name="longitude"
-                              id="longitude"
-                              autoComplete="longitude"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Longitude'
-                            />
-                          </div>
-                        </div>
-
+                        {/* add latitude from coordinates */}
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
@@ -121,6 +108,19 @@ export default function Page() {
                               autoComplete="latitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Latitude'
+                            />
+                          </div>
+                        </div>
+                        {/* add longitude from coordinates */}
+                        <div className="sm:col-span-3">
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              name="longitude"
+                              id="longitude"
+                              autoComplete="longitude"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              placeholder='Longitude'
                             />
                           </div>
                         </div>
