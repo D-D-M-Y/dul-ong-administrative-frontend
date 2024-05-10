@@ -1,7 +1,7 @@
 "use client";
 import { Card } from '@/app/ui/dashboard/cards';
 import dynamic from "next/dynamic";
-const DynamicMapComponent = dynamic(() => import("../components/MapComponent"), { ssr: false });
+const DynamicMapComponent = dynamic(() => import("../components/Maps/MapComponent"), { ssr: false });
 
 export default function Page() {
   return (
