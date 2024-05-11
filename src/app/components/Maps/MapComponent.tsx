@@ -44,9 +44,6 @@ const MapComponent: FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [convertedPolyline, setConvertedPolyline] = useState([]); // State for converted data
 
-
-    const purpleOption = { color: 'purple' };
-
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
     //7. ZoomHandler component for handling map zoom events.
@@ -89,16 +86,19 @@ const MapComponent: FC = () => {
             // Extract coordinates from API response (modify based on your API structure)
             const apiPolylines = response || []; // Assuming data is in "data.polylines" or "features"
 
-            const convertedData = apiPolylines.map((polyline: any[]) =>
-                polyline.map((latLng) => ({ lat: latLng[0], lng: latLng[1] }))
-            );
-
+            const convertedData = apiPolylines.map((polyline: any[], index: number) => {
+                const color = index === 0 ? 'purple' : 'lime'; // Set color based on index
+                return polyline.map((latLng) => ({ lat: latLng[0], lng: latLng[1], color })); // Add color property
+                
+            });
+            
             setConvertedPolyline(convertedData);
             setLoading(false);
         };
 
         fetchData();
     }, []);
+
     //11. Return the JSX for rendering.
     return (
         <>
@@ -114,7 +114,7 @@ const MapComponent: FC = () => {
                         Origin Depot
                     </Popup>
                 </Marker>
-                <Polyline pathOptions={purpleOption} positions={convertedPolyline} />
+                <Polyline positions={convertedPolyline} />
                 {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
