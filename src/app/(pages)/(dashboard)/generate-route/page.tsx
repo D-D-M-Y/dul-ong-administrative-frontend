@@ -1,32 +1,30 @@
-// 3rd commit
+"use client";
 import { Card } from '@/app/ui/dashboard/cards';
+import dynamic from "next/dynamic";
+const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/MapComponent"), { ssr: false });
 
 export default function Page() {
   return (
-    <main>
-      <h1 className = "font-roboto font-bold"> Generate Route</h1>
-      <div className="w-full h-full relative bg-white rounded-xl">
-        {/* Left Side Content */}
-        <div className="w-1/4 h-full flex flex-col space-y-3 p-4 ">
-            <h2 className="font-roboto font-bold">
-              Route Overview
-            </h2>
+    <>
+      <h1 className="font-bold font-roboto"> Generate Route</h1>
+      <main className="flex">
+        <div className="w-1/4 h-full flex flex-col space-y-3 p-4">
+          <h2 className="font-bold font-roboto"> Route Overview</h2>
 
-            <div className="grid gap-6 sm:grid-rows-2 lg:grid-rows-3">
-              <Card title="Total Packages"              value={"200"}     type="total" />
-              <Card title="FOOs Available"              value={"11"}      type="fooavailable" />
-              <Card title="Routes Constructed"          value={"10"}      type="routegen" />
-            </div>
+          <div className="grid gap-6 sm:grid-rows-2 lg:grid-rows-3">
+            <Card title="Total Packages" value={"200"} type="total" />
+            <Card title="FOOs Available" value={"11"} type="fooavailable" />
+            <Card title="Routes Constructed" value={"10"} type="routegen" />
+          </div>
 
-          {/* Button */}
-            <button className="w-full h-[50px] bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2">Generate Route</button> 
+          <button className="w-full h-[50px] bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2">Generate Route</button>
         </div>
 
-        {/* Right Side Image */}
-        <div className="w-3/4 h-full absolute top-0 right-0 rounded-md bg-cover md:bg-contain"
-          style={{ backgroundImage: "url(https://www.ncgtp.com/NCGTP_Map_Images/map-main-placeholder.jpg)" }}>
+        <div className="w-3/4 h-full flex space-y-3 p-4">
+          <DynamicMapComponent />
         </div>
-      </div>
-    </main>
+      </main>
+    </>
+
   );
 }

@@ -1,12 +1,10 @@
+"use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { 
-  CiTrash,
-  CiEdit,
+import Modal from '@/app/components/Modal/ActionModal.js';
+import {
   CiCircleChevDown,
-  CiCircleChevUp 
 } from "react-icons/ci";
-import Button from '@mui/material/Button';
 import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
@@ -15,118 +13,79 @@ interface Entity {
   username: string;
   dateAdded: Date;
   lastLogin: Date;
-  actions: JSX.Element[];
 }
 
 const entities: Entity[] = [
   // Populate entity data here
-{ name: "Agustine Exmundo", 
-  email: "agustine.exmundo@lsprovder.com.ph", 
-  username: "aexmundo", 
-  dateAdded: new Date(), 
-  lastLogin: new Date(), 
-  actions: [
-    <Button variant="outlined" color="primary" > 
-      <div className="button-content">
-        <CiEdit size ={24} />
-      </div>
-    </Button>,
-    <Button variant="outlined" color="error">
-      <div className="button-content">
-      <CiTrash size ={24}/>
-    </div>
-  </Button>
-  ],
-} , 
-{ name: "John Celiz", 
-  email: "john.celiz@lsprovider.com.ph", 
-  username: "jceliz", 
-  dateAdded: new Date(), 
-  lastLogin: new Date(), 
-  actions: [
-  <Button variant="outlined" color="primary" > 
-    <div className="button-content">
-      <CiEdit size ={24} />
-    </div>
-  </Button>,
-  <Button variant="outlined" color="error">
-    <div className="button-content">
-    <CiTrash size ={24}/>
-  </div>
-</Button>
-  ],
-},
+  {
+    name: "Agustine Exmundo",
+    email: "agustine.exmundo@lsprovider.com.ph",
+    username: "aexmundo",
+    dateAdded: new Date(),
+    lastLogin: new Date(),
+  },
+  {
+    name: "Adam Chan",
+    email: "adam.chan@lsprovider.com.ph",
+    username: "achan",
+    dateAdded: new Date(),
+    lastLogin: new Date(),
+  }
+  // ... more entities
 ];
 
 const MyGrid = () => {
-  /*
-  const [sortState, setSortState] = useState<'idle' | 'ascending' | 'descending'>({
-    name: 'idle',
-    email: 'idle',
-    username: 'idle',
-    dateAdded: 'idle',
-    lastLogin: 'idle',
-  }); 
-  */
+  const handleModalToggle = (isOpen: boolean) => {
+    // Perform any actions needed when modal opens/closes (optional)
+    console.log("Modal is", isOpen ? "Open" : "Closed");
+  };
 
-    const headers = [
+  const headers = [
     { name: 'Name' },
     { name: 'Email' },
     { name: 'Username' },
     { name: 'Date Added' },
     { name: 'Last Login' },
-    { name: 'Actions' }, 
+    { name: 'Actions' },
   ];
 
-  /*const handleSortClick = (headerName: string) => {
-    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
-      const newState = Object.fromEntries(
-        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
-      ) as 'idle' | 'ascending' | 'descending';
-      return newState;
-    });
-  };} */
-  
-  
-
-   return (
-    <table>
-      <thead className="font-source_sans_pro">
-        <tr>
-          {headers.map((header) => (
-            <th key={header.name}>
-              {header.name}
-              {header.name !== 'Actions' && (
-               /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                  {sortState[header.name] === 'idle' ? (
-                    <CiCircleChevDown />
-                  ) : sortState[header.name] === 'ascending' ? (
-                    <CiCircleChevUp />
-                  ) : (
-                    <CiCircleChevDown /> // Descending state (optional icon)
-                  )}
-                </button>*/
-              <button className='ml-1'> <CiCircleChevDown/></button>)}
-            </th>
-          ))}
-        </tr>
-      </thead>
-
-      <tbody className="font-ptsans" >
-        {entities.map((entity) => (
-          <tr key={entity.email}>
-            <td>{entity.name}</td>
-            <td>{entity.email}</td>
-            <td>{entity.username}</td>
-            <td>{entity.dateAdded.toLocaleDateString()}</td>
-            <td>{entity.lastLogin.toLocaleDateString()}</td>
-            <td>{entity.actions?.map((action, index) => (
-              <span key={index}>{action}</span>))}
-            </td>
+  return (
+    <>
+      <table>
+      <thead className='font-source_sans_pro'>
+          <tr>
+            {headers.map((header) => (
+              <th key={header.name}>
+                {header.name}
+                {header.name !== 'Actions' && (
+                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                     {sortState[header.name] === 'idle' ? (
+                       <CiCircleChevDown />
+                     ) : sortState[header.name] === 'ascending' ? (
+                       <CiCircleChevUp />
+                     ) : (
+                       <CiCircleChevDown /> // Descending state (optional icon)
+                     )}
+                   </button>*/
+                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+              </th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className='font-ptsans'>
+          {entities.map((entity) => (
+            <tr key={entity.email}>
+              <td>{entity.name}</td>
+              <td>{entity.email}</td>
+              <td>{entity.username}</td>
+              <td>{entity.dateAdded.toLocaleDateString()}</td>
+              <td>{entity.lastLogin.toLocaleDateString()}</td>
+              <td><Modal onToggle={handleModalToggle} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 };
 
@@ -135,33 +94,33 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-roboto font-bold'>
+        <h1 className='font-bold font-roboto'>
           Company Settings
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro"> 
+        <div className="flex items-baseline font-source_sans_pro">
           <div className="customborder-link">
-          <Link href="/company-settings">
-
-            <h2>Manage Admins</h2>
+            <Link href="/company-settings">
+              <h2>Manage Admins</h2>
             </Link>
           </div>
           <div className="customborder-active">
-              <h2>Manage FOOs</h2>
+            <h2>Manage FOOs</h2>
           </div>
         </div>
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5"> 
+          <div className="p-5">
           <SearchBar/>
-          <div className="grid table">
-            <MyGrid />
-            </div>
+
+            <div className="grid table">
+              <MyGrid />
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }
