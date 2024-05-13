@@ -16,6 +16,7 @@ const config: Config = {
       fontFamily:{
         roboto: ['Roboto', 'sans-serif'],
         source_sans_pro: ['Source Sans Pro', 'sans-serif'],
+        ptsans: ['PT Sans', 'sans-serif'],
       }
     },
   },

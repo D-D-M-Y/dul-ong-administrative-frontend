@@ -51,7 +51,7 @@ const MyGrid = () => {
   ];
   return (
     <table>
-      <thead>
+      <thead className='font-source_sans_pro'>
         <tr>
           {headers.map((header) => (
             <th key={header.name}>
@@ -71,7 +71,7 @@ const MyGrid = () => {
           ))}
         </tr>
       </thead>
-      <tbody>
+      <tbody className='font-ptsans'>
         {entities.map((entity) => (
           <tr key={entity.routeID}>
             <td>{entity.routeID}</td>
@@ -95,12 +95,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold'>
+        <h1 className='font-bold font-roboto'>
           Route History
         </h1>
 
         {/* Folder */}
-        <div className="customborder-active">
+        <div className="customborder-active font-source_sans_pro">
           <h2>Manage Routes</h2>
         </div>
 
