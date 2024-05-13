@@ -89,9 +89,9 @@ const MapComponent: FC = () => {
             const convertedData = apiPolylines.map((polyline: any[], index: number) => {
                 const color = index === 0 ? 'purple' : 'lime'; // Set color based on index
                 return polyline.map((latLng) => ({ lat: latLng[0], lng: latLng[1], color })); // Add color property
-                
+
             });
-            
+
             setConvertedPolyline(convertedData);
             setLoading(false);
         };
@@ -114,8 +114,10 @@ const MapComponent: FC = () => {
                         Origin Depot
                     </Popup>
                 </Marker>
-                <Polyline positions={convertedPolyline} />
-                {/* 17. Include the ZoomHandler for zoom events. */}
+                {/* Render each Polyline separately with its color */}
+                {convertedPolyline.map((coords, index) => (
+                    <Polyline key={index} positions={coords} color={index === 0 ? 'purple' : 'lime'} />
+                ))}                {/* 17. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
         </>
