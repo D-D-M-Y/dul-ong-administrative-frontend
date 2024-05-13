@@ -52,7 +52,7 @@ const MyGrid = () => {
   return (
     <>
       <table>
-      <thead className='font-source_sans_pro'>
+        <thead>
           <tr>
             {headers.map((header) => (
               <th key={header.name}>
@@ -72,7 +72,7 @@ const MyGrid = () => {
             ))}
           </tr>
         </thead>
-        <tbody className='font-ptsans'>
+        <tbody>
           {entities.map((entity) => (
             <tr key={entity.email}>
               <td>{entity.name}</td>
@@ -94,12 +94,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
+        <h1 className='font-bold'>
           Company Settings
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro">
+        <div className="flex items-baseline">
           <div className="customborder-link">
             <Link href="/company-settings">
               <h2>Manage Admins</h2>

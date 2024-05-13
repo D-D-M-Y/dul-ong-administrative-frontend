@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import Modal from '../../components/Modal/Modal';
 import dynamic from "next/dynamic";
-const DynamicMapComponent = dynamic(() => import("../../components/Maps/NewPackageMap"), { ssr: false });
+const DynamicMapComponent = dynamic(() => import("../../components/MapComponent"), { ssr: false });
 
 export default function Page() {
   const handleModalToggle = (isOpen: boolean) => {
@@ -15,12 +15,12 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
+        <h1 style={{ fontWeight: 'bold' }}>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro">
+        <div className="flex items-baseline">
           <div className="customborder-link">
             <Link href="/customer-data">
               <h2>Manage Customers</h2>
@@ -38,7 +38,7 @@ export default function Page() {
 
 
         {/* Left Side Form */}
-        <div className='flex font-ptsans'>
+        <div className='flex'>
           <div className='w-1/3 h-fit flex-none'>
             <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
@@ -98,20 +98,7 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                        {/* add latitude from coordinates */}
-                        <div className="sm:col-span-3">
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              name="latitude"
-                              id="latitude"
-                              autoComplete="latitude"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Latitude'
-                            />
-                          </div>
-                        </div>
-                        {/* add longitude from coordinates */}
+
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
@@ -121,6 +108,19 @@ export default function Page() {
                               autoComplete="longitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Longitude'
+                            />
+                          </div>
+                        </div>
+
+                        <div className="sm:col-span-3">
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              name="latitude"
+                              id="latitude"
+                              autoComplete="latitude"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              placeholder='Latitude'
                             />
                           </div>
                         </div>
