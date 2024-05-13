@@ -4,22 +4,7 @@
 
 :root {
   --foreground: #F4F4F4;
-}
-
-:root {
-  --Roboto-Regular: var(--roboto);
-  --SourceSansPro-Regular: var(--sourcesans);
-  --PTSans-Regular: var(--ptsans);
-}
-
-
-.font-roboto {
-  font-family: var(--roboto-font);
-}
-
-.font-sourcesans {
-  font-family: var(--SourceSansPro-Regular);
-}
+  }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -122,10 +107,6 @@ h4 {                   /*name in sidenav*/
   background-color: #6F42C1; 
 }
 
-.nav-link-active icon{
-  fill: #FFFFFF;
-}
-
 .dropdown {
   z-index: 1; /* Or a higher number if necessary | this puts dropdown in the front */
 }
@@ -181,7 +162,6 @@ h4 {                   /*name in sidenav*/
 }
 
 th {
-  font:               var(--SourceSansPro-Regular);
   font-size:          large;
   font-weight:        bold;
   background-color: white;
@@ -205,7 +185,6 @@ th:hover button {
 
 
 td {
-  font:               var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
   border-width:       0.05rem;
@@ -214,7 +193,24 @@ td {
   text-align:         center;
 }
 
-td img {
-  display: block; /* Make the image a block-level element */
-  margin:  0 auto;  /* Center horizontally with equal margins */
+.searchbar {
+  display: flex; 
+  align-items: center; 
+  border: 0.2rem solid #d9d9d9; 
+  border-radius: 0.5rem; 
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+.button-content {
+  display: flex; /* Enable flexbox layout */
+  align-items: center; /* Align content vertically */
+  justify-content: center; /* Center content horizontally */
+}
+
+.card-header-text {
+  text-overflow: ellipsis; /* Indicate truncation with ellipsis (...) */
+  white-space: nowrap; /* Prevent wrapping onto multiple lines */
+  overflow: hidden; /* Hide overflowing content */
 }
