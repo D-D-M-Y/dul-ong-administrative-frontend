@@ -75,7 +75,7 @@ const MapComponent: FC = () => {
 
         return null;
     };
-    // API Call
+    //11. API Call
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -83,8 +83,8 @@ const MapComponent: FC = () => {
             const response = await query.json();
             console.log('API says:', response);
 
-            // Extract coordinates from API response (modify based on your API structure)
-            const apiPolylines = response || []; // Assuming data is in "data.polylines" or "features"
+            //12. Extract coordinates from API response
+            const apiPolylines = response || [];
 
             const convertedData = apiPolylines.map((polyline: any[], index: number) => {
                 const color = index === 0 ? 'purple' : 'lime'; // Set color based on index
@@ -99,29 +99,30 @@ const MapComponent: FC = () => {
         fetchData();
     }, []);
 
-    //11. Return the JSX for rendering.
+    //13. Return the JSX for rendering.
     return (
         <>
-            {/* 12. Show the loader if loading. */}
+            {/* 14. Show the loader if loading. */}
             {loading && <Loader />}
-            {/* 14. Add the map container. */}
+            {/* 15. Add the map container. */}
             <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
-                {/* 15. Set the tile layer for the map. */}
+                {/* 16. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {/* 16. Render the markers */}
+                {/* 17. Render the markers */}
                 <Marker position={[10.6873430, 122.5166238]}>
                     <Popup>
                         Origin Depot
                     </Popup>
                 </Marker>
-                {/* Render each Polyline separately with its color */}
+                {/* 18. Render each Polyline separately with its color */}
                 {convertedPolyline.map((coords, index) => (
                     <Polyline key={index} positions={coords} color={index === 0 ? 'purple' : 'lime'} />
-                ))}                {/* 17. Include the ZoomHandler for zoom events. */}
+                ))}
+                {/* 19. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
         </>
     );
 };
-//18. Export the MapComponent.
+//20. Export the MapComponent.
 export default MapComponent;
