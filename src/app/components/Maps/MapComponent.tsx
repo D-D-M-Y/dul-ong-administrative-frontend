@@ -1,15 +1,34 @@
 
 //1. Import dependencies for React, Leaflet and other functionalities.
 import React, { useState, useEffect, useRef, FC } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents, useMap, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+import L from "leaflet";
 
 //2. Define the interface for MarkerData.
 interface MarkerData {
     coordinates: [number, number];
+    finalcolor: L.Icon;
 }
+
+const purpleIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
+const limeIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
+
 
 //3. Loader component for showing loading animation.
 const Loader = () => {
@@ -40,9 +59,10 @@ const multiPolyline: any[] = [];
 //4. Main component definition.
 const MapComponent: FC = () => {
     //5. Initialize local state.
+    const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [convertedPolyline, setConvertedPolyline] = useState([]); // State for converted data
+    const [convertedPolyline, setConvertedPolyline] = useState([]);
 
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
@@ -75,54 +95,84 @@ const MapComponent: FC = () => {
 
         return null;
     };
-    //11. API Call
+
     useEffect(() => {
-        const fetchData = async () => {
+        //11. API Call for Customer Nodes
+        const fetchMarkers = async () => {
+            setLoading(true);
+            const query = await fetch("http://127.0.0.1:8000/api/customers");
+            const response = await query.json();
+            console.log("Customer Nodes:", response);
+            setMarkers(response.map((data: { latitude: string, longitude: string, vehicleid: string }) => ({
+                coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
+                finalcolor: data.vehicleid === '0' ? purpleIcon : limeIcon
+            })));
+
+
+            setLoading(false);
+        };
+        fetchMarkers();
+
+        //12. API Call for Routes
+        const fetchRoutes = async () => {
             setLoading(true);
             const query = await fetch("http://127.0.0.1:8000/api/");
             const response = await query.json();
-            console.log('API says:', response);
-
-            //12. Extract coordinates from API response
+            console.log('Routes for Vehicles:', response);
             const apiPolylines = response || [];
+            const convertedData = apiPolylines.reduce((finalData: any[], coordinates: any) => {
+                const finalcolor = coordinates.vehicleid === '0' ? 'purple' : 'lime';
+                (finalData[coordinates.vehicleid] = finalData[coordinates.vehicleid] || []).push({
+                    lat: coordinates.latitude, lng:
+                        coordinates.longitude, finalcolor
+                });
+                return finalData
+            }, {})
 
-            const convertedData = apiPolylines.map((polyline: any[], index: number) => {
-                const color = index === 0 ? 'purple' : 'lime'; // Set color based on index
-                return polyline.map((latLng) => ({ lat: latLng[0], lng: latLng[1], color })); // Add color property
+            console.log('Converted Data:', convertedData);
 
-            });
+            const finalData: any = (Object.values(convertedData))
+            console.log('Final Data:', finalData);
+            setConvertedPolyline(finalData);
 
-            setConvertedPolyline(convertedData);
             setLoading(false);
         };
 
-        fetchData();
+        fetchRoutes();
     }, []);
 
-    //13. Return the JSX for rendering.
     return (
         <>
-            {/* 14. Show the loader if loading. */}
+            {/* 13. Show the loader if loading. */}
             {loading && <Loader />}
-            {/* 15. Add the map container. */}
+            {/* 14. Add the map container. */}
             <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
-                {/* 16. Set the tile layer for the map. */}
+                {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {/* 17. Render the markers */}
+                {/* 16. Render the markers */}
+                {markers.map((marker, index) => (
+                    <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
+                        <Tooltip direction="bottom" permanent>{`Customer ${index + 1}`}</Tooltip>
+
+                        <Popup>{`${marker.coordinates.join(",")}`}</Popup>
+                    </Marker>
+                ))}
                 <Marker position={[10.6873430, 122.5166238]}>
+                <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
+
                     <Popup>
                         Origin Depot
                     </Popup>
                 </Marker>
-                {/* 18. Render each Polyline separately with its color */}
+                {/* 17. Render each Polyline separately with its color */}
                 {convertedPolyline.map((coords, index) => (
                     <Polyline key={index} positions={coords} color={index === 0 ? 'purple' : 'lime'} />
                 ))}
-                {/* 19. Include the ZoomHandler for zoom events. */}
+                {/* 18. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
             </MapContainer>
         </>
     );
 };
-//20. Export the MapComponent.
+//19. Export the MapComponent.
 export default MapComponent;
