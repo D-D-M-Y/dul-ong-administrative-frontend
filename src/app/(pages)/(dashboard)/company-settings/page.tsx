@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Modal from '../../components/Modal/ActionModal.js';
+import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
 } from "react-icons/ci";
-import SearchBar from '../../ui/tables/searchbar';
+import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
   name: string;
@@ -18,16 +18,16 @@ interface Entity {
 const entities: Entity[] = [
   // Populate entity data here
   {
-    name: "Agustine Exmundo",
-    email: "agustine.exmundo@lsprovider.com.ph",
-    username: "aexmundo",
+    name: "Angel Jude Diones",
+    email: "angeljude.diones@lsprovider.com.ph",
+    username: "ajdiones",
     dateAdded: new Date(),
     lastLogin: new Date(),
   },
   {
-    name: "Adam Chan",
-    email: "adam.chan@lsprovider.com.ph",
-    username: "achan",
+    name: "Allana Yzabelle Diaz",
+    email: "allanayzabelle.diaz@lsprovider.com.ph",
+    username: "aydiaz",
     dateAdded: new Date(),
     lastLogin: new Date(),
   }
@@ -52,7 +52,7 @@ const MyGrid = () => {
   return (
     <>
       <table>
-      <thead className='font-source_sans_pro'>
+        <thead className='font-source_sans_pro'>
           <tr>
             {headers.map((header) => (
               <th key={header.name}>
@@ -99,28 +99,28 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro">
-          <div className="customborder-link">
-            <Link href="/company-settings">
-              <h2>Manage Admins</h2>
-            </Link>
+        <div className="flex items-baseline font-source_sans_pro"> 
+          <div className="customborder-active ">
+            <h2>Manage Admins</h2>
           </div>
-          <div className="customborder-active">
-            <h2>Manage FOOs</h2>
+          <div className="customborder-link">
+            <Link href="/company-settings/manage-foos">
+              <h2>Manage FOOs</h2>
+            </Link>
           </div>
         </div>
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5">
+          <div className="p-5"> 
           <SearchBar/>
-
-            <div className="grid table">
-              <MyGrid />
+          <div className="grid table">
+            <MyGrid />
+            </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
+

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Modal from '../components/Modal/ActionModal.js';
+import Modal from '@/app/components/Modal/ActionModal.js';
 import { 
   CiCircleChevDown,
 } from "react-icons/ci";
@@ -74,7 +74,7 @@ const MyGrid = () => {
 
    return (
     <table>
-      <thead className='font-source_sans_pro'>
+      <thead className="font-source_sans_pro">
         <tr>
           {headers.map((header) => (
             <th key={header.name}>
@@ -95,7 +95,7 @@ const MyGrid = () => {
         </tr>
       </thead>
 
-      <tbody className='font-ptsans'>
+      <tbody className="font-ptsans" >
         {entities.map((entity) => (
           <tr key={entity.customerID}>
             <td>{entity.customerID}</td>
@@ -119,7 +119,7 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
+        <h1 className='font-roboto font-bold'>
           Customer Data
         </h1>
 

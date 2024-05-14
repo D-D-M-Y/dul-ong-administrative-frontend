@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Modal from '../../components/Modal/ActionModal.js';
+import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
 } from "react-icons/ci";
@@ -58,7 +58,6 @@ const MyGrid = () => {
     { name: 'Route ID' },
     { name: 'Actions' },
   ];
-
   /*const handleSortClick = (headerName: string) => {
     setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
       const newState = Object.fromEntries(
@@ -72,27 +71,27 @@ const MyGrid = () => {
 
    return (
     <table>
-      <thead className='font-source_sans_pro'>
-        <tr>
-          {headers.map((header) => (
-            <th key={header.name}>
-              {header.name}
-              {header.name !== 'Actions' && (
-                /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                   {sortState[header.name] === 'idle' ? (
-                     <CiCircleChevDown />
-                   ) : sortState[header.name] === 'ascending' ? (
-                     <CiCircleChevUp />
-                   ) : (
-                     <CiCircleChevDown /> // Descending state (optional icon)
-                   )}
-                 </button>*/
-                <button className='ml-1'> <CiCircleChevDown /></button>)}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className='font-ptsans'>
+    <thead className="font-source_sans_pro">
+      <tr>
+        {headers.map((header) => (
+          <th key={header.name}>
+            {header.name}
+            {header.name !== 'Actions' && (
+             /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                {sortState[header.name] === 'idle' ? (
+                  <CiCircleChevDown />
+                ) : sortState[header.name] === 'ascending' ? (
+                  <CiCircleChevUp />
+                ) : (
+                  <CiCircleChevDown /> // Descending state (optional icon)
+                )}
+              </button>*/
+            <button className='ml-1'> <CiCircleChevDown/></button>)}
+          </th>
+        ))}
+      </tr>
+    </thead>
+      <tbody className="font-ptsans" >
         {entities.map((entity) => (
           <tr key={entity.packageID}>
             <td>{entity.packageID}</td>

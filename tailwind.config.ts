@@ -8,16 +8,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
       fontFamily:{
         roboto: ['Roboto', 'sans-serif'],
         source_sans_pro: ['Source Sans Pro', 'sans-serif'],
-        ptsans: ['PT Sans', 'sans-serif'],
-      }
+        ptsans: ['PT Sans'],
+      },
+      colors: {
+        'purple': '#6F42C1',
+        'textC': '#212121',
+        'highlight': '#E6E6FA',
+        'lgray': '#808080',
+      },
     },
   },
   plugins: [],

@@ -1,9 +1,9 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
-import Modal from '../../components/Modal/Modal';
+import Modal from '@/app/components/Modal/Modal';
 import dynamic from "next/dynamic";
-const DynamicMapComponent = dynamic(() => import("../../components/Maps/NewPackageMap"), { ssr: false });
+const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPackageMap"), { ssr: false });
 
 export default function Page() {
   const handleModalToggle = (isOpen: boolean) => {
