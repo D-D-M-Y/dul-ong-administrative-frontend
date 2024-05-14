@@ -59,10 +59,10 @@ const multiPolyline: any[] = [];
 //4. Main component definition.
 const MapComponent: FC = () => {
     //5. Initialize local state.
-    const [markers, setMarkers] = useState<MarkerData[]>([]); // Array to store markers
+    const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [convertedPolyline, setConvertedPolyline] = useState([]); // State for converted data
+    const [convertedPolyline, setConvertedPolyline] = useState([]);
 
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
@@ -154,11 +154,13 @@ const MapComponent: FC = () => {
                     <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
                         <Tooltip direction="bottom" permanent>{`Customer ${index + 1}`}</Tooltip>
 
-                        <Popup autoClose={false} closeOnClick={false}>{`${marker.coordinates.join(",")}`}</Popup>
+                        <Popup>{`${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
                 <Marker position={[10.6873430, 122.5166238]}>
-                    <Popup autoClose={false} closeOnClick={false}>
+                <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
+
+                    <Popup>
                         Origin Depot
                     </Popup>
                 </Marker>
