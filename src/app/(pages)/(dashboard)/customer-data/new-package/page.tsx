@@ -1,11 +1,13 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect, useRef, FC } from "react";
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/Modal';
 import dynamic from "next/dynamic";
 const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPackageMap"), { ssr: false });
 
 export default function Page() {
+  const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
+
   const handleModalToggle = (isOpen: boolean) => {
     // Perform any actions needed when modal opens/closes (optional)
     console.log("Modal is", isOpen ? "Open" : "Closed");
@@ -108,6 +110,8 @@ export default function Page() {
                               autoComplete="latitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Latitude'
+                              value={markerCoords?.[0] || ""} // Access latitude from coordinates
+                              readOnly
                             />
                           </div>
                         </div>
@@ -121,6 +125,8 @@ export default function Page() {
                               autoComplete="longitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Longitude'
+                              value={markerCoords?.[1] || ""} // Access longitude from coordinates
+                              readOnly
                             />
                           </div>
                         </div>
@@ -240,6 +246,21 @@ export default function Page() {
                           </div>
                         </div>
                       </div>
+                      <div className="col-span-full">
+                        <div className="mt-2">
+                          <select
+                            name="preferred-delivery"
+                            id="preferred-delivery"
+                            autoComplete="preferred-delivery"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                          >
+                            <option defaultValue={"Preferred Delivery"}hidden style={{ color: "#999" }}>Preferred Delivery</option>
+                            <option value="priority" style={{ color: "text-gray-900" }}>Priority Shipping</option>
+                            <option value="economy" style={{ color: "text-gray-900" }}>Economy Shipping</option>
+                          </select>
+
+                        </div>
+                      </div>
                       <Modal onToggle={handleModalToggle} />
                     </div>
                   </div>
@@ -249,7 +270,7 @@ export default function Page() {
           </div>
           {/* Right Side Map */}
           <div className="w-2/3 h-fit flex">
-            <DynamicMapComponent />
+            <DynamicMapComponent onMarkerChange={(coords) => setMarkerCoords(coords)} />
           </div>
         </div>
       </div>
