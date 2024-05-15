@@ -11,7 +11,7 @@ const config: Config = {
       fontFamily:{
         roboto: ['Roboto', 'sans-serif'],
         source_sans_pro: ['Source Sans Pro', 'sans-serif'],
-        ptsans: ['PT Sans'],
+        ptsans: ['PT Sans', 'sans-serif'],
       },
       colors: {
         'purple': '#6F42C1',
