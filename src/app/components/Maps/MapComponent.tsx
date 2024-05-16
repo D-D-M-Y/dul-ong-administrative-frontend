@@ -29,7 +29,13 @@ const limeIcon = new L.Icon({
     popupAnchor: [1, -34],
 });
 
-
+const fooIcon = new L.Icon({
+    iconUrl: 'https://img.icons8.com/fluency/48/user-location.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [41, 41],
+    iconAnchor: [18, 41],
+    popupAnchor: [2, -34],
+});
 
 //3. Loader component for showing loading animation.
 const Loader = () => {
@@ -167,17 +173,16 @@ const MapComponent: FC = () => {
                 {/* 16. Render the markers */}
                 {markers.map((marker, index) => (
                     <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
-                        {/* Show customer number */}
                         <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
                         <Popup>{`${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
+                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
+                    <Popup>Field Operations Officer</Popup>
+                </Marker>
                 <Marker position={[10.6873430, 122.5166238]}>
                     <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
-
-                    <Popup>
-                        Origin Depot
-                    </Popup>
+                    <Popup>Origin Depot</Popup>
                 </Marker>
                 {/* 17. Render each Polyline separately with its color */}
                 {convertedPolyline.map((coords, index) => (
