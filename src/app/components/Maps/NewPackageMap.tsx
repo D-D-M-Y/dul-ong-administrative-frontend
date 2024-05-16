@@ -9,6 +9,9 @@ import "leaflet-defaulticon-compatibility";
 interface MarkerData {
     coordinates: [number, number];
 }
+interface MapComponentProps{
+    onMarkerChange?: (coordinates: number[]) => void;
+}
 //3. Loader component for showing loading animation.
 const Loader = () => {
     return (
@@ -33,13 +36,12 @@ const Loader = () => {
     );
 };
 //4. Main component definition.
-const MapComponent: FC = () => {
+const MapComponent: FC<MapComponentProps> = ({onMarkerChange}) => {
     //5. Initialize local state.
     const [markers, setMarkers] = useState<MarkerData[]>([]); // Array to store markers
     const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number>(-1);
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
     //7. ZoomHandler component for handling map zoom events.
@@ -64,6 +66,7 @@ const MapComponent: FC = () => {
                     setLoading(true);
                     const { lat, lng } = e.latlng;
                     setMarkers([{ coordinates: [lat, lng] }]);
+                    
                     setCurrentMarkerIndex(0);
                     setLoading(false);
                 }
@@ -73,19 +76,23 @@ const MapComponent: FC = () => {
         useEffect(() => {
             if (markerData) {
                 if (markerData.coordinates && typeof markerData.coordinates[0] !== "undefined") {
-                    flyToMarker(markerData.coordinates, 11);
+                    flyToMarker(markerData.coordinates, 13);
                 }
             }
-        }, [markerData]);
+            if (markers.length > 0) {
+                setMarkerData(markers[0]); // Set initial marker data
+                onMarkerChange?.(markers[0].coordinates); // Call onMarkerChange with initial coordinates
+              }
+        }, [markerData, markers]);
         return null;
     };
     // coordinates update when marker is dragged to a new position
     const updateMarkerPosition = (newLatLng: L.LatLng) => {
         setMarkers((prevMarkers) => {
+            onMarkerChange?.([newLatLng.lat, newLatLng.lng]);
             return [{ coordinates: [newLatLng.lat, newLatLng.lng] }];
         });
     };
-
     //11. Return the JSX for rendering.
     return (
         <>
@@ -113,7 +120,6 @@ const MapComponent: FC = () => {
                         }}
                     >
                         <Tooltip sticky>Drag me to change location!</Tooltip>
-
                         <Popup>{`You are currently at: ${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
