@@ -11,6 +11,7 @@ import L from "leaflet";
 interface MarkerData {
     coordinates: [number, number];
     finalcolor: L.Icon;
+    customerNumber: number;
 }
 
 const purpleIcon = new L.Icon({
@@ -63,6 +64,7 @@ const MapComponent: FC = () => {
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [convertedPolyline, setConvertedPolyline] = useState([]);
+    const customerCounts: { [vehicleId: string]: number } = {};
 
     //6. Declare useRef to reference map.
     const mapRef = useRef<any | null>(null);
@@ -97,18 +99,31 @@ const MapComponent: FC = () => {
     };
 
     useEffect(() => {
+        const customerCounts: { [vehicleId: string]: number } = {};
+        
         //11. API Call for Customer Nodes
         const fetchMarkers = async () => {
             setLoading(true);
             const query = await fetch("http://127.0.0.1:8000/api/customers");
             const response = await query.json();
             console.log("Customer Nodes:", response);
-            setMarkers(response.map((data: { latitude: string, longitude: string, vehicleid: string }) => ({
-                coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
-                finalcolor: data.vehicleid === '0' ? purpleIcon : limeIcon
-            })));
-
-
+    
+            response.forEach((data: { vehicleid: string }) => {
+                if (!customerCounts[data.vehicleid]) {
+                    customerCounts[data.vehicleid] = 1;
+                }
+            });
+    
+            setMarkers(response.map((data: { latitude: string, longitude: string, vehicleid: string }) => {
+                const customerNumber = customerCounts[data.vehicleid];
+                customerCounts[data.vehicleid]++;    
+                return {
+                    coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
+                    finalcolor: data.vehicleid === '0' ? purpleIcon : limeIcon,
+                    customerNumber
+                };
+            }));
+    
             setLoading(false);
         };
         fetchMarkers();
@@ -152,13 +167,13 @@ const MapComponent: FC = () => {
                 {/* 16. Render the markers */}
                 {markers.map((marker, index) => (
                     <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
-                        <Tooltip direction="bottom" permanent>{`Customer ${index + 1}`}</Tooltip>
-
+                        {/* Show customer number */}
+                        <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
                         <Popup>{`${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
                 <Marker position={[10.6873430, 122.5166238]}>
-                <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
+                    <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
 
                     <Popup>
                         Origin Depot
