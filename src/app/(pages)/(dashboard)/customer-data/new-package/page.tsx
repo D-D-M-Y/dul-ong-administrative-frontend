@@ -9,7 +9,6 @@ export default function Page() {
   const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
 
   const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
     console.log("Modal is", isOpen ? "Open" : "Closed");
   };
 
