@@ -14,6 +14,9 @@ interface MarkerData {
     customerNumber: number;
 }
 
+type PolylineData = { lat: number; lng: number; finalcolor: string }[][];
+
+
 const purpleIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
     iconSize: [25, 41],
@@ -29,7 +32,13 @@ const limeIcon = new L.Icon({
     popupAnchor: [1, -34],
 });
 
-
+const fooIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
 
 //3. Loader component for showing loading animation.
 const Loader = () => {
@@ -63,7 +72,7 @@ const MapComponent: FC = () => {
     const [markers, setMarkers] = useState<MarkerData[]>([]);
     const [markerData, setMarkerData] = useState<MarkerData | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const [convertedPolyline, setConvertedPolyline] = useState([]);
+    const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
     const customerCounts: { [vehicleId: string]: number } = {};
 
     //6. Declare useRef to reference map.
@@ -119,7 +128,7 @@ const MapComponent: FC = () => {
                 customerCounts[data.vehicleid]++;    
                 return {
                     coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
-                    finalcolor: data.vehicleid === '0' ? purpleIcon : limeIcon,
+                    finalcolor: parseInt(data.vehicleid) === 1 ? purpleIcon : limeIcon,
                     customerNumber
                 };
             }));
@@ -136,7 +145,7 @@ const MapComponent: FC = () => {
             console.log('Routes for Vehicles:', response);
             const apiPolylines = response || [];
             const convertedData = apiPolylines.reduce((finalData: any[], coordinates: any) => {
-                const finalcolor = coordinates.vehicleid === '0' ? 'purple' : 'lime';
+                const finalcolor = parseInt(coordinates.vehicleid) === 1 ? 'purple' : 'lime';
                 (finalData[coordinates.vehicleid] = finalData[coordinates.vehicleid] || []).push({
                     lat: coordinates.latitude, lng:
                         coordinates.longitude, finalcolor
@@ -167,21 +176,22 @@ const MapComponent: FC = () => {
                 {/* 16. Render the markers */}
                 {markers.map((marker, index) => (
                     <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
-                        {/* Show customer number */}
                         <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
                         <Popup>{`${marker.coordinates.join(",")}`}</Popup>
                     </Marker>
                 ))}
+                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
+                <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
+
+                    <Popup>Field Operations Officer</Popup>
+                </Marker>
                 <Marker position={[10.6873430, 122.5166238]}>
                     <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
-
-                    <Popup>
-                        Origin Depot
-                    </Popup>
+                    <Popup>Origin Depot</Popup>
                 </Marker>
                 {/* 17. Render each Polyline separately with its color */}
                 {convertedPolyline.map((coords, index) => (
-                    <Polyline key={index} positions={coords} color={index === 0 ? 'purple' : 'lime'} />
+                    <Polyline key={index} positions={coords} color={coords[1].finalcolor} />
                 ))}
                 {/* 18. Include the ZoomHandler for zoom events. */}
                 <ZoomHandler />
