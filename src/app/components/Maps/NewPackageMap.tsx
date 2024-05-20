@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Tooltip }
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
+import L from "leaflet";
+
 //2. Define the interface for MarkerData.
 interface MarkerData {
     coordinates: [number, number];
@@ -12,6 +14,23 @@ interface MarkerData {
 interface MapComponentProps{
     onMarkerChange?: (coordinates: number[]) => void;
 }
+
+const limeIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
+const fooIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
 //3. Loader component for showing loading animation.
 const Loader = () => {
     return (
@@ -103,12 +122,21 @@ const MapComponent: FC<MapComponentProps> = ({onMarkerChange}) => {
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {/* 16. Render the markers */}
+                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
+                <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
+                    <Popup>Field Operations Officer</Popup>
+                </Marker>
+                <Marker position={[10.6873430, 122.5166238]}>
+                    <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
+                    <Popup>Origin Depot</Popup>
+                </Marker>
                 {markers.map((marker, index) => (
                     <Marker
                         key={markers[0].coordinates.join(",")}
                         position={markers[0].coordinates}
                         draggable={true}
-                        ref={mapRef} // Assign the ref to the marker
+                        ref={mapRef}
+                        icon={limeIcon}
                         eventHandlers={{
                             dragend: () => {
                                 const marker = mapRef.current;

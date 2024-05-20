@@ -99,7 +99,6 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                        {/* add latitude from coordinates */}
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
@@ -114,7 +113,6 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                        {/* add longitude from coordinates */}
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
@@ -168,7 +166,7 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                        <div className="sm:col-span-3">
+                        <div className="sm:col-span-full">
                           <div className="mt-2">
                             <input
                               type="text"
@@ -177,19 +175,6 @@ export default function Page() {
                               autoComplete="package-weight"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Package Weight'
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-3">
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              name="cost"
-                              id="cost"
-                              autoComplete="cost"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Cost'
                             />
                           </div>
                         </div>
@@ -244,20 +229,20 @@ export default function Page() {
                             />
                           </div>
                         </div>
-                      </div>
-                      <div className="col-span-full">
-                        <div className="mt-2">
-                          <select
-                            name="preferred-delivery"
-                            id="preferred-delivery"
-                            autoComplete="preferred-delivery"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                          >
-                            <option defaultValue={"Preferred Delivery"}hidden style={{ color: "#999" }}>Preferred Delivery</option>
-                            <option value="priority" style={{ color: "text-gray-900" }}>Priority Shipping</option>
-                            <option value="economy" style={{ color: "text-gray-900" }}>Economy Shipping</option>
-                          </select>
-
+                        <div className="col-span-full">
+                          <div className="mt-2">
+                            <select
+                              name="preferred-delivery"
+                              id="preferred-delivery"
+                              autoComplete="preferred-delivery"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              style={{ height: '2.3rem' }}
+                            >
+                              <option defaultValue={"Preferred Delivery"} hidden style={{ color: "#999" }}>Preferred Delivery</option>
+                              <option value="priority" style={{ color: "text-gray-900" }}>Priority Shipping</option>
+                              <option value="economy" style={{ color: "text-gray-900" }}>Economy Shipping</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
                       <Modal onToggle={handleModalToggle} />
