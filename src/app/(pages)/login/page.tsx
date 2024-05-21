@@ -9,7 +9,7 @@ export default function Page() {
         <div className="flex flex-col flex-grow pt-20 pl-20 h-screen">  {/* First column: full width */}
           <img src="/dulong-white.svg" className="w-1/2" />
           <h1 className="text-white">Made by Ilonggos, for Ilonggos</h1>
-          <p>A route generating application for the people of Iloilo Province</p>
+          <p className="text-white">A route generating application for the people of Iloilo Province</p>
           <img src="/3droute.svg" className="size-9/12 place-self-end" />
         </div>
 
