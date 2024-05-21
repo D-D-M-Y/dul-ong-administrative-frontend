@@ -14,9 +14,10 @@ interface Entity {
   city: string;
   barangay: string;
   staddress: string;
+  zip: number;
   longitude: number;
   latitude: number;
-  waitingCost: number;
+  timeWindow: string;
 }
 
 const entities: Entity[] = [
@@ -27,9 +28,10 @@ const entities: Entity[] = [
   city: "Iloilo City", 
   barangay: "So-oc", 
   staddress: "12", 
+  zip: 5000,
   longitude: 122.517291, 
   latitude: 10.687027,
-  waitingCost: 0.0,
+  timeWindow: "NA",
   },
 { 
   customerID: "CUS0000002", 
@@ -37,9 +39,10 @@ const entities: Entity[] = [
   city: "Iloilo City", 
   barangay: "Quezon", 
   staddress: "8", 
+  zip: 5000,
   longitude: 122.517291, 
   latitude: 10.687027,
-  waitingCost: 0.0,
+  timeWindow: "NA",
 }  
   // ... more entities
 ];
@@ -52,12 +55,13 @@ const MyGrid = () => {
   const headers = [
     { name: 'Customer ID' },
     { name: 'Name' },
-    { name: 'City' },
+    { name: 'City/Municipality' },
     { name: 'Barangay' },
     { name: 'Street No.' },
+    { name: 'Zip' },
     { name: 'Longitude' },
     { name: 'Latitude' },
-    { name: 'Waiting Cost' },
+    { name: 'Time Window' },
     { name: 'Actions' }, 
   ];
 
@@ -103,9 +107,10 @@ const MyGrid = () => {
             <td>{entity.city}</td>
             <td>{entity.barangay}</td>
             <td>{entity.staddress}</td>
+            <td>{entity.zip}</td>
             <td>{entity.longitude}</td>
             <td>{entity.latitude}</td>
-            <td>{entity.waitingCost}</td>
+            <td>{entity.timeWindow}</td>
             <td><Modal onToggle={handleModalToggle} /></td>
           </tr>
         ))}
@@ -124,13 +129,18 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro"> 
+        <div className="flex items-baseline"> 
           <div className="customborder-active">
             <h2>Manage Customers</h2>
           </div>
           <div className="customborder-link">
             <Link href="/customer-data/manage-packages">
               <h2>Manage Packages</h2>
+            </Link>
+          </div>
+          <div className="customborder-link">
+            <Link href="/customer-data/view-transactions">
+              <h2>View Transactions</h2>
             </Link>
           </div>
           <div className="customborder-link">

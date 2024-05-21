@@ -30,8 +30,7 @@ export default function NavLinks() {
 
   return (
     <>
-    <div className="ml-3 text-neutral-800 text-sm font-roboto font-normal">OVERVIEW </div>
-    <div className ="font-source_sans_pro ">
+    <h5 className="ml-3">OVERVIEW </h5>
       {links.map((link) => {
         return (
           <Link
@@ -48,7 +47,6 @@ export default function NavLinks() {
           </Link>
         );
       })}
-      </div>
     </>
   );
 }
