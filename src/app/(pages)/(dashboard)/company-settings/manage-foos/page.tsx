@@ -8,31 +8,42 @@ import {
 import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
+  pk: number;
+  fname: string;
+  mname: string;
+  lname: string;
   name: string;
   email: string;
   username: string;
-  dateAdded: Date;
-  lastLogin: Date;
+  date_registered: string;
+  last_login: string;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  {
-    name: "Agustine Exmundo",
-    email: "agustine.exmundo@lsprovider.com.ph",
-    username: "aexmundo",
-    dateAdded: new Date(),
-    lastLogin: new Date(),
-  },
-  {
-    name: "Adam Chan",
-    email: "adam.chan@lsprovider.com.ph",
-    username: "achan",
-    dateAdded: new Date(),
-    lastLogin: new Date(),
+function generateName(entity: Entity): string {
+  return entity.fname + ' ' + entity.mname + ' ' + entity.lname;
+}
+
+const entities: Entity[] = [];
+
+async function fetchEntities() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch entities: ${response.statusText}`);
+    }
+    const data = await response.json();
+    data.forEach((entity: Entity) => {
+      entity.name = generateName(entity);
+    });
+    entities.push(...data);
+  } catch (error) {
+    console.error('Error fetching entities:', error);
   }
-  // ... more entities
-];
+}
+
+fetchEntities().then(() => {
+  console.log(entities);
+});
 
 const MyGrid = () => {
   const handleModalToggle = (isOpen: boolean) => {
@@ -41,6 +52,7 @@ const MyGrid = () => {
   };
 
   const headers = [
+    { name: 'ID' },
     { name: 'Name' },
     { name: 'Email' },
     { name: 'Username' },
@@ -52,7 +64,7 @@ const MyGrid = () => {
   return (
     <>
       <table>
-      <thead className='font-source_sans_pro'>
+        <thead className='font-source_sans_pro'>
           <tr>
             {headers.map((header) => (
               <th key={header.name}>
@@ -75,11 +87,12 @@ const MyGrid = () => {
         <tbody className='font-ptsans'>
           {entities.map((entity) => (
             <tr key={entity.email}>
+              <td>{entity.pk}</td>
               <td>{entity.name}</td>
               <td>{entity.email}</td>
               <td>{entity.username}</td>
-              <td>{entity.dateAdded.toLocaleDateString()}</td>
-              <td>{entity.lastLogin.toLocaleDateString()}</td>
+              <td>{entity.date_registered}</td>
+              <td>{entity.last_login}</td>
               <td><Modal onToggle={handleModalToggle} /></td>
             </tr>
           ))}
@@ -113,7 +126,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
-          <SearchBar/>
+            <SearchBar />
 
             <div className="grid table">
               <MyGrid />

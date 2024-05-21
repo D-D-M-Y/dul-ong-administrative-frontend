@@ -8,39 +8,50 @@ import {
 import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
+  pk: number;
+  fname: string;
+  mname: string;
+  lname: string;
   name: string;
   email: string;
   username: string;
-  dateAdded: Date;
-  lastLogin: Date;
+  date_registered: string;
+  last_login: string;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  {
-    name: "Angel Jude Diones",
-    email: "angeljude.diones@lsprovider.com.ph",
-    username: "ajdiones",
-    dateAdded: new Date(),
-    lastLogin: new Date(),
-  },
-  {
-    name: "Allana Yzabelle Diaz",
-    email: "allanayzabelle.diaz@lsprovider.com.ph",
-    username: "aydiaz",
-    dateAdded: new Date(),
-    lastLogin: new Date(),
+function generateName(entity: Entity): string {
+  return entity.fname + ' ' + entity.mname + ' ' + entity.lname;
+}
+
+const entities: Entity[] = [];
+
+async function fetchEntities() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/users/admin');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch entities: ${response.statusText}`);
+    }
+    const data = await response.json();
+    data.forEach((entity: Entity) => {
+      entity.name = generateName(entity);
+    });
+    entities.push(...data);
+  } catch (error) {
+    console.error('Error fetching entities:', error);
   }
-  // ... more entities
-];
+}
+
+fetchEntities().then(() => {
+  console.log(entities);
+});
 
 const MyGrid = () => {
   const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
     console.log("Modal is", isOpen ? "Open" : "Closed");
   };
 
   const headers = [
+    { name: 'ID' },
     { name: 'Name' },
     { name: 'Email' },
     { name: 'Username' },
@@ -58,16 +69,8 @@ const MyGrid = () => {
               <th key={header.name}>
                 {header.name}
                 {header.name !== 'Actions' && (
-                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                     {sortState[header.name] === 'idle' ? (
-                       <CiCircleChevDown />
-                     ) : sortState[header.name] === 'ascending' ? (
-                       <CiCircleChevUp />
-                     ) : (
-                       <CiCircleChevDown /> // Descending state (optional icon)
-                     )}
-                   </button>*/
-                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+                  <button className='ml-1'> <CiCircleChevDown /></button>
+                )}
               </th>
             ))}
           </tr>
@@ -75,11 +78,12 @@ const MyGrid = () => {
         <tbody className='font-ptsans'>
           {entities.map((entity) => (
             <tr key={entity.email}>
+              <td>{entity.pk}</td>
               <td>{entity.name}</td>
               <td>{entity.email}</td>
               <td>{entity.username}</td>
-              <td>{entity.dateAdded.toLocaleDateString()}</td>
-              <td>{entity.lastLogin.toLocaleDateString()}</td>
+              <td>{entity.date_registered}</td>
+              <td>{entity.last_login}</td>
               <td><Modal onToggle={handleModalToggle} /></td>
             </tr>
           ))}
@@ -99,7 +103,7 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro"> 
+        <div className="flex items-baseline font-source_sans_pro">
           <div className="customborder-active ">
             <h2>Manage Admins</h2>
           </div>
@@ -112,15 +116,15 @@ export default function Page() {
 
         {/* Body */}
         <div className="customborder-body">
-          <div className="p-5"> 
-          <SearchBar/>
-          <div className="grid table">
-            <MyGrid />
-            </div>
+          <div className="p-5">
+            <SearchBar />
+            <div className="grid table">
+              <MyGrid />
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 
