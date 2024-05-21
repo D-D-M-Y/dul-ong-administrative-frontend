@@ -11,15 +11,6 @@ dependencies:
   '@emotion/styled':
     specifier: ^11.11.5
     version: 11.11.5(@emotion/react@11.11.4)(@types/react@17.0.9)(react@18.2.0)
-  '@fontsource/pt-sans':
-    specifier: ^5.0.13
-    version: 5.0.13
-  '@fontsource/roboto':
-    specifier: ^5.0.13
-    version: 5.0.13
-  '@fontsource/source-sans-pro':
-    specifier: ^5.0.8
-    version: 5.0.8
   '@mui/material':
     specifier: ^5.15.15
     version: 5.15.17(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(@types/react@17.0.9)(react-dom@18.2.0)(react@18.2.0)
