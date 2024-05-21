@@ -8,26 +8,34 @@ import {
 import SearchBar from '@/app/ui/tables/searchbar';
 
 interface Entity {
-  packageID: string
-  dimensions: string;
-  weight: number;
-  costs: number;
+  pk: number
+  name: string;
+  size: number;
+  cost: string;
+  amount: number;
+  payment_method: string;
   status: string;
-  customerID: string;
+  customerid: string;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  {
-    packageID: "PAC0000001",
-    dimensions: "20 x 15 x 10",
-    weight: 1,
-    costs: 100,
-    status: "Delivering",
-    customerID: "CUS0000001",
+const entities: Entity[] = [];
+
+async function fetchEntities() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/packages');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch entities: ${response.statusText}`);
+    }
+    const data = await response.json();
+    entities.push(...data);
+  } catch (error) {
+    console.error('Error fetching entities:', error);
   }
-  // ... more entities
-];
+}
+
+fetchEntities().then(() => {
+  console.log(entities);
+});
 
 const MyGrid = () => {
   const handleModalToggle = (isOpen: boolean) => {
@@ -36,9 +44,11 @@ const MyGrid = () => {
   };
   const headers = [
     { name: 'Package ID' },
-    { name: 'Dimensions' },
-    { name: 'Weight' },
+    { name: 'Name' },
+    { name: 'Size' },
     { name: 'Costs' },
+    { name: 'Amount' },
+    { name: 'Payment Method' },
     { name: 'Status' },
     { name: 'Customer ID' },
     { name: 'Actions' },
@@ -51,8 +61,6 @@ const MyGrid = () => {
       return newState;
     });
   };} */
-
-
 
    return (
     <table>
@@ -78,13 +86,15 @@ const MyGrid = () => {
     </thead>
       <tbody className="font-ptsans" >
         {entities.map((entity) => (
-          <tr key={entity.packageID}>
-            <td>{entity.packageID}</td>
-            <td>{entity.dimensions}</td>
-            <td>{entity.weight}</td>
-            <td>{entity.costs}</td>
+          <tr key={entity.pk}>
+            <td>{entity.pk}</td>
+            <td>{entity.name}</td>
+            <td>{entity.size}</td>
+            <td>{entity.cost}</td>
+            <td>{entity.amount}</td>
+            <td>{entity.payment_method}</td>
             <td>{entity.status}</td>
-            <td>{entity.customerID}</td>
+            <td>{entity.customerid}</td>
             <td><Modal onToggle={handleModalToggle} /></td>
           </tr>
         ))}
