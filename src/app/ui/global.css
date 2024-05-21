@@ -18,6 +18,11 @@
   }
 }
 
+@font-face {
+  font-family: 'Roboto';
+  src: url('/public/Roboto/Roboto-Regular.ttf') format('.ttf'),
+}
+
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
