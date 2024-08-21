@@ -53,7 +53,7 @@ export default function Page() {
           {/* Display error message conditionally */}
           { !emailState.isValidEmail && <span className="text-red-500 text-sm">{emailState.errorMessage}</span> }
           <div className = "py-2"></div>
-          <Link href ="/login/new-password"><button
+          <Link href ="/login/forgot-password/confirmed-submission"><button
             className="border rounded-lg p2 w-full bg-indigo-100 rounded-3xl text-center font-bold font-roboto py-3"
             type="submit"
             disabled={!emailState.isValidEmail} // Button initially disabled and updates on change

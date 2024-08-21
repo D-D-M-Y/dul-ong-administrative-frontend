@@ -21,19 +21,24 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro">
+        <div className="flex items-baseline"> 
           <div className="customborder-link">
-            <Link href="/customer-data">
-              <h2>Manage Customers</h2>
-            </Link>
+          <Link href="/customer-data">
+            <h2>Manage Customers</h2>
+          </Link>
           </div>
           <div className="customborder-link">
             <Link href="/customer-data/manage-packages">
               <h2>Manage Packages</h2>
             </Link>
           </div>
+          <div className="customborder-link">
+            <Link href="/customer-data/view-transactions">
+              <h2>View Transactions</h2>
+            </Link>
+          </div>
           <div className="customborder-active">
-            <h2>New Package</h2>
+              <h2>New Package</h2>
           </div>
         </div>
 
@@ -69,7 +74,7 @@ export default function Page() {
                               id="city"
                               autoComplete="city"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='City'
+                              placeholder='City/Municipality'
                             />
                           </div>
                         </div>
@@ -86,8 +91,7 @@ export default function Page() {
                             />
                           </div>
                         </div>
-
-                        <div className="col-span-full">
+                        <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
                               type="text"
@@ -96,6 +100,18 @@ export default function Page() {
                               autoComplete="street-address"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Street Address'
+                            />
+                          </div>
+                        </div>
+                        <div className="sm:col-span-3">
+                          <div className="mt-2">
+                            <input
+                              type="number"
+                              name="zip"
+                              id="zip"
+                              autoComplete="zip"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              placeholder='Zip Code'
                             />
                           </div>
                         </div>
@@ -197,11 +213,11 @@ export default function Page() {
                           <div className="mt-2">
                             <input
                               type="text"
-                              name="amount"
-                              id="amount"
-                              autoComplete="amount"
+                              name="payment-amount"
+                              id="payment-amount"
+                              autoComplete="payment-amount"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Amount'
+                              placeholder='Payment Amount'
                             />
                           </div>
                         </div>
@@ -218,18 +234,6 @@ export default function Page() {
                           </div>
                         </div>
                         <div className="sm:col-span-3">
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              name="Type"
-                              id="Type"
-                              autoComplete="Type"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Type'
-                            />
-                          </div>
-                        </div>
-                        <div className="col-span-full">
                           <div className="mt-2">
                             <select
                               name="preferred-delivery"
