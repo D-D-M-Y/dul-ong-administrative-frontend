@@ -9,43 +9,37 @@ import SearchBar from '@/app/ui/tables/searchbar';
 
 
 interface Entity {
-  customerID: string
+  pk: number;
   name: string;
+  province: string;
   city: string;
   barangay: string;
-  staddress: string;
+  street_address: string;
+  longitude: string;
+  latitude: string;
+  time_window_start: number;
+  time_window_end: number;
   zip: number;
-  longitude: number;
-  latitude: number;
-  timeWindow: string;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  { 
-  customerID: "CUS0000001", 
-  name: "John Celiz", 
-  city: "Iloilo City", 
-  barangay: "So-oc", 
-  staddress: "12", 
-  zip: 5000,
-  longitude: 122.517291, 
-  latitude: 10.687027,
-  timeWindow: "NA",
-  },
-{ 
-  customerID: "CUS0000002", 
-  name: "Belle Mirasol", 
-  city: "Iloilo City", 
-  barangay: "Quezon", 
-  staddress: "8", 
-  zip: 5000,
-  longitude: 122.517291, 
-  latitude: 10.687027,
-  timeWindow: "NA",
-}  
-  // ... more entities
-];
+const entities: Entity[] = [];
+
+async function fetchEntities() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/customer_data');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch entities: ${response.statusText}`);
+    }
+    const data = await response.json();
+    entities.push(...data);
+  } catch (error) {
+    console.error('Error fetching entities:', error);
+  }
+}
+
+fetchEntities().then(() => {
+  console.log(entities);
+});
 
 const MyGrid = () => {
   const handleModalToggle = (isOpen: boolean) => {
@@ -55,13 +49,15 @@ const MyGrid = () => {
   const headers = [
     { name: 'Customer ID' },
     { name: 'Name' },
+    { name: 'Province' },
     { name: 'City/Municipality' },
     { name: 'Barangay' },
-    { name: 'Street No.' },
-    { name: 'Zip' },
+    { name: 'Street Address' },
     { name: 'Longitude' },
     { name: 'Latitude' },
-    { name: 'Time Window' },
+    { name: 'Start of Time Window' },
+    { name: 'End of Time Window' },
+    { name: 'Zip' },
     { name: 'Actions' }, 
   ];
 
@@ -101,16 +97,18 @@ const MyGrid = () => {
 
       <tbody className="font-ptsans" >
         {entities.map((entity) => (
-          <tr key={entity.customerID}>
-            <td>{entity.customerID}</td>
+          <tr key={entity.pk}>
+            <td>{entity.pk}</td>
             <td>{entity.name}</td>
+            <td>{entity.province}</td>
             <td>{entity.city}</td>
             <td>{entity.barangay}</td>
-            <td>{entity.staddress}</td>
-            <td>{entity.zip}</td>
+            <td>{entity.street_address}</td>
             <td>{entity.longitude}</td>
             <td>{entity.latitude}</td>
-            <td>{entity.timeWindow}</td>
+            <td>{entity.time_window_start}</td>
+            <td>{entity.time_window_end}</td>
+            <td>{entity.zip}</td>
             <td><Modal onToggle={handleModalToggle} /></td>
           </tr>
         ))}
