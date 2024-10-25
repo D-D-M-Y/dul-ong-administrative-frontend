@@ -31,7 +31,7 @@
         <h3 className='ml-3 card-header-text' >{title}</h3>
         </div>
         <div className="card-header">
-        <h1 className='font-bold py-8 text-center mb-2 '> {value} </h1>
+        <h1 className='font-bold py-8 text-center mb-2'> {value} </h1>
         </div>
       </div>
     );

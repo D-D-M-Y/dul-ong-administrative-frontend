@@ -20,7 +20,7 @@ const links = [
   { name: 'Customer Data', href: '/customer-data', icon: <CiDatabase className='icon' size={40} />},
   { name: 'Generate Route', href: '/generate-route',  icon: <CiRoute className='icon' size={40}/>},
   { name: 'Route History', href: '/route-history',  icon: <CiViewList  className='icon' size={40}/>},
-  { name: 'Exit', href: '/exit',  icon: <CiLogout className='icon' size={40} />
+  { name: 'Exit', href: '/login',  icon: <CiLogout className='icon' size={40} />
 },
 ];
 
@@ -30,21 +30,21 @@ export default function NavLinks() {
 
   return (
     <>
-    <div className="ml-3 text-neutral-800 text-sm font-normal">OVERVIEW </div>
+    <h5 className="ml-3">OVERVIEW </h5>
       {links.map((link) => {
         return (
-          <a
+          <Link
             key={link.name}
             href={link.href}
             className={clsx(
-              'nav-links',
-              pathname === link.href && 'nav-link-active ',
+              "nav-links",
+              pathname === link.href && "nav-link-active ",
             )}
           >
             {link.icon} 
           <span className="image-overlay"></span>
              <p className="hidden md:block">{link.name}</p>
-          </a>
+          </Link>
         );
       })}
     </>

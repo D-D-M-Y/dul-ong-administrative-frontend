@@ -18,12 +18,12 @@ const Dropdown = ({ options = ["Daily", "Weekly", "Monthly", "Annually"] }) => {
 
   return (
     <div className="inline-block relative">
-      <button onClick={handleClick} className="flex items-center">
+      <button onClick={handleClick} className="flex items-center dropdown">
         {selectedOption} {/* changes the word */}
         <CiSquareChevDown className = "ml-1"/>
       </button>
       {isOpen && (
-        <ul className="rounded-lg absolute top-full left-0 bg-white shadow-md mt-1 dropdown">
+        <ul className="rounded-lg absolute top-full left-0 bg-white shadow-md mt-1">
           {options.map((option) => (
             <li
               key={option}

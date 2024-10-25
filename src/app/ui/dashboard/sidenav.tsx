@@ -8,11 +8,11 @@ export default function SideNav() {
       </div>
       <div className="flex font-roboto justify-center mb-5">  
       <img src="/filler-image.jpg" alt="Filler Image" className="mr-2 h-8 w-8 rounded-md "/>
-        <h4> 
+        <h4 className ="font-roboto"> 
           Allana, D.
         </h4>
       </div>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2 ">
         <NavLinks />
         <div className="hidden h-auto w-full grow rounded-md md:block"></div>
       </div>

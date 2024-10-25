@@ -4,22 +4,7 @@
 
 :root {
   --foreground: #F4F4F4;
-}
-
-:root {
-  --Roboto-Regular: var(--roboto);
-  --SourceSansPro-Regular: var(--sourcesans);
-  --PTSans-Regular: var(--ptsans);
-}
-
-
-.font-roboto {
-  font-family: var(--roboto-font);
-}
-
-.font-sourcesans {
-  font-family: var(--SourceSansPro-Regular);
-}
+  }
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -31,6 +16,21 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-Regular.ttf') format('truetype'),
+}
+
+@font-face {
+  font-family: 'PT Sans';
+  src: url('/fonts/PTSans-Regular.ttf') format('truetype'),
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  src: url('/fonts/SourceSansPro-Regular.otf') format('opentype'),
 }
 
 input[type='number'] {
@@ -55,33 +55,54 @@ body {
 /* headers */
 
 h1 {                  /*header for page*/ 
-  font-family: var(--roboto-font);
-  font-size: 250%;
+  font-family:    "Roboto";
+  font-size:      250%;
   color: #212121;
 }
 
 h2 {                   /*header for tabs*/ 
   display:             inline-block;
-  position:            relative;
   top:                 0.2rem; 
   margin:              auto;
-  font:                var(--source-sans-pro-font);
+  font-family:         "Source Sans Pro";
   font-size:           large;
 }
 
 h3 {                   /*header for cards*/ 
-  font-family:         var(--source-sans-pro-font); 
+  font-family:         "Source Sans Pro"; 
   font-size:           x-large; 
   color:             #212121;
 }
 
 h4 {                   /*name in sidenav*/ 
-  font-family:         var(--roboto); 
+  font-family:         "Roboto"; 
   font-size:           x-large;
   font-weight:         bold;
   color:             #212121;
 }
 
+h5 {
+  font-family:         "Roboto"; 
+  font-size:           small;
+  color:             #212121;
+}
+
+p {
+  font-family:         "PT Sans"; 
+  font-size:           medium;
+}
+
+.font-roboto {
+  font-family:    "Roboto";
+}
+
+.font-source-sans-pro {
+  font-family:    "Source Sans Pro";
+}
+
+.font-ptsans {
+  font-family:    "PT Sans";
+}
 /* dashboard*/
 
 .nav-links {
@@ -97,7 +118,7 @@ h4 {                   /*name in sidenav*/
   border-radius:        1rem;
   background-color:     #F9FAFB; 
   transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
-  font:                 var(--font-source-sans-pro);
+  font-family:          "Source Sans Pro";
   
 
   &:hover {
@@ -122,12 +143,9 @@ h4 {                   /*name in sidenav*/
   background-color: #6F42C1; 
 }
 
-.nav-link-active icon{
-  fill: #FFFFFF;
-}
-
 .dropdown {
   z-index: 1; /* Or a higher number if necessary | this puts dropdown in the front */
+  font-family:          "PT Sans";
 }
 
 /* company settings */
@@ -181,7 +199,6 @@ h4 {                   /*name in sidenav*/
 }
 
 th {
-  font:               var(--SourceSansPro-Regular);
   font-size:          large;
   font-weight:        bold;
   background-color: white;
@@ -193,6 +210,8 @@ th {
   padding-top:        1rem; 
   padding-bottom:     1rem;
   align-items:        center;
+  font-family:        "Source Sans Pro";
+
 }
 
 
@@ -205,18 +224,13 @@ th:hover button {
 
 
 td {
-  font:               var(--PTSans-Regular);
   font-size:          small;
   border-color:    #D9D9D9;
   border-width:       0.05rem;
   border-bottom:      0.05rem;
   border-left:        0.05rem;
   text-align:         center;
-}
-
-td img {
-  display: block; /* Make the image a block-level element */
-  margin:  0 auto;  /* Center horizontally with equal margins */
+  font-family:        "PT Sans";
 }
 
 .searchbar {
@@ -227,4 +241,17 @@ td img {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   width: fit-content;
+  font-family:        "PT Sans";
+}
+
+.button-content {
+  display: flex; /* Enable flexbox layout */
+  align-items: center; /* Align content vertically */
+  justify-content: center; /* Center content horizontally */
+}
+
+.card-header-text {
+  text-overflow: ellipsis; /* Indicate truncation with ellipsis (...) */
+  white-space: nowrap; /* Prevent wrapping onto multiple lines */
+  overflow: hidden; /* Hide overflowing content */
 }
