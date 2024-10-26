@@ -7,6 +7,35 @@ const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPacka
 
 export default function Page() {
   const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
+  const [name, setName] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  useEffect(() => {
+    // Fetch suggestions based on the name input
+    const fetchSuggestions = async () => {
+      if (name.length > 1) { // Only fetch if input length is more than 1 character
+        try {
+          const response = await fetch(`/api/customer-data=${name}`);
+          const data = await response.json();
+          setSuggestions(data.suggestions || []);
+          setShowSuggestions(true);
+        } catch (error) {
+          console.error("Error fetching suggestions:", error);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [name]);
+
+  const handleSuggestionClick = (suggestedName: string) => {
+    setName(suggestedName);
+    setShowSuggestions(false); // Hide suggestions after selection
+  };
 
   const handleModalToggle = (isOpen: boolean) => {
     console.log("Modal is", isOpen ? "Open" : "Closed");
@@ -59,10 +88,25 @@ export default function Page() {
                               type="text"
                               name="customer-name"
                               id="customer-name"
-                              autoComplete="customer-name"
+                              autoComplete="off"
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Name'
                             />
+                            {showSuggestions && (
+                              <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md w-full mt-1">
+                                {suggestions.map((suggestion, index) => (
+                                  <div
+                                    key={index}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                  >
+                                    {suggestion}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
 
