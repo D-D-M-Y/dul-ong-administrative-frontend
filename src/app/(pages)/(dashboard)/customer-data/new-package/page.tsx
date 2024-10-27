@@ -66,24 +66,32 @@ export default function Page() {
     preferredDelivery: ''
   });
 
-  useEffect(() => {
-    // Fetch suggestions based on the name input
-    const fetchSuggestions = async () => {
-      if (name.length > 1) { // Only fetch if input length is more than 1 character
-        try {
-          const response = await fetch(`/api/customer-data=${name}`);
-          const data = await response.json();
-          setSuggestions(data.suggestions || []);
-          setShowSuggestions(true);
-        } catch (error) {
-          console.error("Error fetching suggestions:", error);
-        }
-      } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-      }
-    };
+  const fetchSuggestions = async () => {
+    if (formValues.customerName.length > 1) {
+      try {
+        // Corrected API URL with query parameter for customerName
+        const response = await fetch(`http://127.0.0.1:8000/api/customer_data?name=${formValues.customerName}`);
+        const data = await response.json();
 
+        // Filter data based on partial match
+        const filteredSuggestions = data
+          .filter((customer: { name: string }) =>
+            customer.name.toLowerCase().includes(formValues.customerName.toLowerCase())
+          )
+          .map((customer: { name: string }) => customer.name);
+
+        setSuggestions(filteredSuggestions);
+        setShowSuggestions(filteredSuggestions.length > 0);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
     fetchSuggestions();
 
     if (
@@ -101,7 +109,7 @@ export default function Page() {
     if (submitted) {
       validateForm();
     }
-  }, [name, formValues, markerCoords, submitted]);
+  }, [formValues, formValues.customerName, markerCoords, submitted]);
 
   // Validate form
   const validateForm = () => {
@@ -147,7 +155,7 @@ export default function Page() {
   };
 
   const handleSuggestionClick = (suggestedName: string) => {
-    setName(suggestedName);
+    setFormValues((prev) => ({ ...prev, customerName: suggestedName }));
     setShowSuggestions(false); // Hide suggestions after selection
   };
 
@@ -223,6 +231,19 @@ export default function Page() {
                               onChange={(e) => setFormValues({ ...formValues, customerName: e.target.value })}
                             />
                             {submitted && errors.customerName && <p className="text-red-500">{errors.customerName}</p>}
+                            {showSuggestions && (
+                              <div className="absolute z-10 bg-white border border-gray-300 rounded-md shadow-md w-fit mt-1">
+                                {suggestions.map((suggestion, index) => (
+                                  <div
+                                    key={index}
+                                    onClick={() => handleSuggestionClick(suggestion)}
+                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                  >
+                                    {suggestion}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
 
