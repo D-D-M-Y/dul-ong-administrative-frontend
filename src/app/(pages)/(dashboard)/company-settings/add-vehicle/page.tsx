@@ -261,7 +261,7 @@ export default function Page() {
                       <div className="flex justify-center items-center">
                         {/* Submit Button */}
                         <button onClick={handleSubmit} type="submit" className="w-fit h-fit align-center bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 px-4">
-                          Submit Package
+                          Submit
                         </button>
                       </div>
                     </div>
