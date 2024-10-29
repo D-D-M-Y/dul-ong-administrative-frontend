@@ -28,10 +28,10 @@
     return (
       <div className="rounded-xl border border-#D9D9D9 bg-white p-2 shadow-sm card-header">
         <div>
-        <h3 className='ml-3 card-header-text font-source_sans_pro' >{title}</h3>
+        <h3 className='ml-3 card-header-text' >{title}</h3>
         </div>
         <div className="card-header">
-        <h1 className='font-bold py-8 text-center mb-2 font-roboto'> {value} </h1>
+        <h1 className='font-bold py-8 text-center mb-2'> {value} </h1>
         </div>
       </div>
     );

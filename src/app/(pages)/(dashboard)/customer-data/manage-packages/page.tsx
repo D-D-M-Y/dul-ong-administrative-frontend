@@ -11,36 +11,37 @@ import SearchBar from '@/app/ui/tables/searchbar';
 import Button from '@mui/material/Button';
 
 interface Entity {
-  packageID: string
-  dimensions: string;
-  weight: number;
-  costs: number;
-  transactionID: string;
-  paymentMethod: string;
+  pk: number
+  name: string;
+  size: number;
+  cost: string;
   amount: number;
   date: Date;
   type: string;
   customerID: string;
   routeID: string;
+  payment_method: string;
+  status: string;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  {
-    packageID: "PAC0000001",
-    dimensions: "20 x 15 x 10",
-    weight: 1,
-    costs: 100,
-    transactionID: "TRA0000001",
-    paymentMethod: "COD",
-    amount: 140,
-    date: new Date(),
-    type: "Successful",
-    customerID: "CUS0000001",
-    routeID: "ROU0000001",
+const entities: Entity[] = [];
+
+async function fetchEntities() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/packages');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch entities: ${response.statusText}`);
+    }
+    const data = await response.json();
+    entities.push(...data);
+  } catch (error) {
+    console.error('Error fetching entities:', error);
   }
-  // ... more entities
-];
+}
+
+fetchEntities().then(() => {
+  console.log(entities);
+});
 
 const fields = [
   { label: "Dimensions", name: "dimensions", type: "text" },
@@ -71,16 +72,15 @@ const MyGrid = () => {
   };
   const headers = [
     { name: 'Package ID' },
-    { name: 'Dimensions' },
-    { name: 'Weight' },
+    { name: 'Name' },
+    { name: 'Size' },
     { name: 'Costs' },
-    { name: 'Transaction ID' },
-    { name: 'Payment Method' },
     { name: 'Amount' },
     { name: 'Date' },
     { name: 'Type' },
     { name: 'Customer ID' },
     { name: 'Route ID' },
+    { name: 'Status' },
     { name: 'Actions' },
   ];
   /*const handleSortClick = (headerName: string) => {
@@ -91,8 +91,6 @@ const MyGrid = () => {
       return newState;
     });
   };} */
-
-
 
    return (
     <>
@@ -119,24 +117,24 @@ const MyGrid = () => {
     </thead>
       <tbody className="font-ptsans" >
         {entities.map((entity) => (
-          <tr key={entity.packageID}>
-            <td>{entity.packageID}</td>
-            <td>{entity.dimensions}</td>
-            <td>{entity.weight}</td>
-            <td>{entity.costs}</td>
-            <td>{entity.transactionID}</td>
-            <td>{entity.packageID}</td>
+          <tr key={entity.pk}>
+            <td>{entity.pk}</td>
+            <td>{entity.name}</td>
+            <td>{entity.size}</td>
+            <td>{entity.cost}</td>
             <td>{entity.amount}</td>
             <td>{entity.date.toLocaleDateString()}</td>
             <td>{entity.type}</td>
             <td>{entity.customerID}</td>
             <td>{entity.routeID}</td>
+            <td>{entity.payment_method}</td>
+            <td>{entity.status}</td>
             <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
-                    <CiEdit size={24} />
-                </div></Button>
-                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
-                  <CiTrash size={24} />
-                </div></Button></td>
+            <CiEdit size={24} />
+        </div></Button>
+        <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
+          <CiTrash size={24} />
+        </div></Button></td>
           </tr>
         ))}
       </tbody>
@@ -158,20 +156,23 @@ export default function Page() {
     <div>
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
+        <h1 className='font-bold'>
           Customer Data
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline font-source_sans_pro">
+        <div className="flex items-baseline"> 
           <div className="customborder-link">
-            <Link href="/customer-data">
-              <h2>Manage Customers</h2>
-            </Link>
+           <Link href="/customer-data">
+            <h2>Manage Customers</h2>
+          </Link>
           </div>
           <div className="customborder-active">
-            <Link href="/customer-data/manage-packages">
               <h2>Manage Packages</h2>
+          </div>
+          <div className="customborder-link">
+            <Link href="/customer-data/view-transactions">
+              <h2>View Transactions</h2>
             </Link>
           </div>
           <div className="customborder-link">

@@ -18,6 +18,21 @@
   }
 }
 
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto-Regular.ttf') format('truetype'),
+}
+
+@font-face {
+  font-family: 'PT Sans';
+  src: url('/fonts/PTSans-Regular.ttf') format('truetype'),
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  src: url('/fonts/SourceSansPro-Regular.otf') format('opentype'),
+}
+
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
@@ -40,33 +55,54 @@ body {
 /* headers */
 
 h1 {                  /*header for page*/ 
-  font-family: var(--roboto-font);
-  font-size: 250%;
+  font-family:    "Roboto";
+  font-size:      250%;
   color: #212121;
 }
 
 h2 {                   /*header for tabs*/ 
   display:             inline-block;
-  position:            relative;
   top:                 0.2rem; 
   margin:              auto;
-  font:                var(--source-sans-pro-font);
+  font-family:         "Source Sans Pro";
   font-size:           large;
 }
 
 h3 {                   /*header for cards*/ 
-  font-family:         var(--source-sans-pro-font); 
+  font-family:         "Source Sans Pro"; 
   font-size:           x-large; 
   color:             #212121;
 }
 
 h4 {                   /*name in sidenav*/ 
-  font-family:         var(--roboto); 
+  font-family:         "Roboto"; 
   font-size:           x-large;
   font-weight:         bold;
   color:             #212121;
 }
 
+h5 {
+  font-family:         "Roboto"; 
+  font-size:           small;
+  color:             #212121;
+}
+
+p {
+  font-family:         "PT Sans"; 
+  font-size:           medium;
+}
+
+.font-roboto {
+  font-family:    "Roboto";
+}
+
+.font-source-sans-pro {
+  font-family:    "Source Sans Pro";
+}
+
+.font-ptsans {
+  font-family:    "PT Sans";
+}
 /* dashboard*/
 
 .nav-links {
@@ -82,7 +118,7 @@ h4 {                   /*name in sidenav*/
   border-radius:        1rem;
   background-color:     #F9FAFB; 
   transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
-  font:                 var(--font-source-sans-pro);
+  font-family:          "Source Sans Pro";
   
 
   &:hover {
@@ -109,6 +145,7 @@ h4 {                   /*name in sidenav*/
 
 .dropdown {
   z-index: 1; /* Or a higher number if necessary | this puts dropdown in the front */
+  font-family:          "PT Sans";
 }
 
 /* company settings */
@@ -173,6 +210,8 @@ th {
   padding-top:        1rem; 
   padding-bottom:     1rem;
   align-items:        center;
+  font-family:        "Source Sans Pro";
+
 }
 
 
@@ -191,6 +230,7 @@ td {
   border-bottom:      0.05rem;
   border-left:        0.05rem;
   text-align:         center;
+  font-family:        "PT Sans";
 }
 
 .searchbar {
@@ -201,6 +241,7 @@ td {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   width: fit-content;
+  font-family:        "PT Sans";
 }
 
 .button-content {
