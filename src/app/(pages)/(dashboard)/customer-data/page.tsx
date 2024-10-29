@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import { 
@@ -9,7 +9,6 @@ import {
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
 import Button from '@mui/material/Button';
-
 
 interface Entity {
   pk: number;
@@ -25,25 +24,6 @@ interface Entity {
   zip: number;
 }
 
-const entities: Entity[] = [];
-
-async function fetchEntities() {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/customer_data');
-    if (!response.ok) {
-      throw new Error(`Failed to fetch entities: ${response.statusText}`);
-    }
-    const data = await response.json();
-    entities.push(...data);
-  } catch (error) {
-    console.error('Error fetching entities:', error);
-  }
-}
-
-fetchEntities().then(() => {
-  console.log(entities);
-});
-
 const fields = [
   { label: "Name", name: "name", type: "text" },
   { label: "Province", name: "province", type: "text" },
@@ -57,7 +37,10 @@ const fields = [
   { label: "Zip", name: "zip", type: "number" },
 ];
 
-const MyGrid = () => {
+const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: string }) => {
+  const filteredEntities = entities.filter(entity =>
+    entity.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
@@ -71,6 +54,7 @@ const MyGrid = () => {
     setModalType(type); // Set the modal type
     setIsModalOpen(true);
   };
+  
   const headers = [
     { name: 'Customer ID' },
     { name: 'Name' },
@@ -83,19 +67,8 @@ const MyGrid = () => {
     { name: 'Start of Time Window' },
     { name: 'End of Time Window' },
     { name: 'Zip' },
-    { name: 'Actions' }, 
+    { name: 'Actions' },
   ];
-
-  /*const handleSortClick = (headerName: string) => {
-    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
-      const newState = Object.fromEntries(
-        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
-      ) as 'idle' | 'ascending' | 'descending';
-      return newState;
-    });
-  };} */
-  
-  
 
    return (
     <>
@@ -103,39 +76,31 @@ const MyGrid = () => {
       <thead className="font-source_sans_pro">
         <tr>
           {headers.map((header) => (
-            <th key={header.name}>
+            <th className="p-4" key={header.name}>
               {header.name}
               {header.name !== 'Actions' && (
-               /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                  {sortState[header.name] === 'idle' ? (
-                    <CiCircleChevDown />
-                  ) : sortState[header.name] === 'ascending' ? (
-                    <CiCircleChevUp />
-                  ) : (
-                    <CiCircleChevDown /> // Descending state (optional icon)
-                  )}
-                </button>*/
-              <button className='ml-1'> <CiCircleChevDown/></button>)}
+                <button className='ml-1'><CiCircleChevDown /></button>
+              )}
             </th>
           ))}
         </tr>
       </thead>
 
-      <tbody className="font-ptsans" >
-        {entities.map((entity) => (
+      <tbody className="font-ptsans">
+        {filteredEntities.map((entity) => (
           <tr key={entity.pk}>
-            <td>{entity.pk}</td>
-            <td>{entity.name}</td>
-            <td>{entity.province}</td>
-            <td>{entity.city}</td>
-            <td>{entity.barangay}</td>
-            <td>{entity.street_address}</td>
-            <td>{entity.longitude}</td>
-            <td>{entity.latitude}</td>
-            <td>{entity.time_window_start}</td>
-            <td>{entity.time_window_end}</td>
-            <td>{entity.zip}</td>
-            <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
+            <td className='p-4'>{entity.pk}</td>
+            <td className='p-4'>{entity.name}</td>
+            <td className='p-4'>{entity.province}</td>
+            <td className='p-4'>{entity.city}</td>
+            <td className='p-4'>{entity.barangay}</td>
+            <td className='p-4'>{entity.street_address}</td>
+            <td className='p-4'>{entity.longitude}</td>
+            <td className='p-4'>{entity.latitude}</td>
+            <td className='p-4'>{entity.time_window_start}</td>
+            <td className='p-4'>{entity.time_window_end}</td>
+            <td className='p-4'>{entity.zip}</td>
+             <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
                     <CiEdit size={24} />
                 </div></Button>
                 <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
@@ -159,47 +124,49 @@ const MyGrid = () => {
 };
 
 export default function Page() {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchEntities = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/customer_data');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entities: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setEntities(data); // Set the entities state
+      } catch (error) {
+        console.error('Error fetching entities:', error);
+      }
+    };
+
+    fetchEntities();
+  }, []);
+
   return (
     <div>
-      {/* Header */}
-      <div>
-        <h1 className='font-roboto font-bold'>
-          Customer Data
-        </h1>
+      <h1 className='font-roboto font-bold'>Customer Data</h1>
 
-        {/* Folder */}
-        <div className="flex items-baseline"> 
-          <div className="customborder-active">
-            <h2>Manage Customers</h2>
-          </div>
-          <div className="customborder-link">
-            <Link href="/customer-data/manage-packages">
-              <h2>Manage Packages</h2>
-            </Link>
-          </div>
-          <div className="customborder-link">
-            <Link href="/customer-data/view-transactions">
-              <h2>View Transactions</h2>
-            </Link>
-          </div>
-          <div className="customborder-link">
-            <Link href="/customer-data/new-package">
-              <h2>New Package</h2>
-            </Link>
-          </div>
+      <div className="flex items-baseline">
+        <div className="customborder-active"><h2>Manage Customers</h2></div>
+        <div className="customborder-link">
+          <Link href="/customer-data/manage-packages"><h2>Manage Packages</h2></Link>
         </div>
-        
-
-        {/* Body */}
-        <div className="customborder-body">
-        <div className="p-5"> 
-          <SearchBar/>
-          <div className="grid table">
-            <MyGrid />
-            </div>
-            </div>
-          </div>
+        <div className="customborder-link">
+          <Link href="/customer-data/view-transactions"><h2>View Transactions</h2></Link>
+        </div>
+        <div className="customborder-link">
+          <Link href="/customer-data/new-package"><h2>New Package</h2></Link>
         </div>
       </div>
+
+      <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
+        <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+        <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
+          <MyGrid entities={entities} searchQuery={searchQuery} />
+        </div>
+      </div>
+    </div>
   );
 }
