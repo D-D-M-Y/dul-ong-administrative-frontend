@@ -46,9 +46,10 @@ fetchEntities().then(() => {
 
 const fields = [
   { label: "Name", name: "name", type: "text" },
+  { label: "Province", name: "province", type: "text" },
   { label: "City", name: "city", type: "text" },
   { label: "Barangay", name: "barangay", type: "text" },
-  { label: "Street No.", name: "staddress", type: "text" },
+  { label: "Street No.", name: "street_address", type: "text" },
   { label: "Longitude", name: "longitude", type: "number" },
   { label: "Latitude", name: "latitude", type: "number" },
   { label: "Start of Time Window", name: "time_window_start", type: "number" },
