@@ -4,8 +4,11 @@ import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
+  CiTrash,
+  CiEdit,
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
+import Button from '@mui/material/Button';
 
 
 interface Entity {
@@ -33,11 +36,31 @@ const entities: Entity[] = [
   }  // ... more entities
 ];
 
+const fields = [
+  { label: "Date", name: "date", type: "date" }, // Use type "date" for date input
+  { label: "Route", name: "route", type: "text" },
+  { label: "Cargo Quantity", name: "cargoQuantity", type: "number" },
+  { label: "Transportation Cost", name: "transportationCost", type: "text" }, // Keeping as text for currency
+  { label: "Vehicle ID", name: "vehicleID", type: "text" },
+  { label: "Gas", name: "gas", type: "number" },
+  { label: "Carrying Capacity", name: "carryingCapacity", type: "number" },
+];
+
 const MyGrid = () => {
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
+
   const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
-    console.log("Modal is", isOpen ? "Open" : "Closed");
+    setIsModalOpen(isOpen);
   };
+
+  const openModal = (entity: Entity, type: "edit" | "delete") => {
+    setSelectedEntity(entity);
+    setModalType(type); // Set the modal type
+    setIsModalOpen(true);
+  };
+
   const headers = [
     { name: 'Route ID' },
     { name: 'Date' },
@@ -50,6 +73,7 @@ const MyGrid = () => {
     { name: 'Actions' },
   ];
   return (
+    <>
     <table>
       <thead className='font-source_sans_pro'>
         <tr>
@@ -82,11 +106,26 @@ const MyGrid = () => {
             <td>{entity.vehicleID}</td>
             <td>{entity.gas}</td>
             <td>{entity.carryingCapacity}</td>
-            <td><Modal onToggle={handleModalToggle} /></td>
+             <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
+                    <CiEdit size={24} />
+                </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
+                  <CiTrash size={24} />
+                </div></Button>
+                </td>
           </tr>
         ))}
       </tbody>
     </table>
+    {isModalOpen && selectedEntity && (
+        <Modal
+          onToggle={handleModalToggle}
+          selectedEntity={selectedEntity}
+          modalType={modalType}
+          fields = {fields}
+        />
+      )}
+          </>
   );
 };
 

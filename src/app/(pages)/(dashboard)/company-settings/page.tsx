@@ -4,8 +4,11 @@ import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
+  CiTrash,
+  CiEdit,
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
+import Button from '@mui/material/Button';
 
 interface Entity {
   pk: number;
@@ -45,11 +48,30 @@ fetchEntities().then(() => {
   console.log(entities);
 });
 
+const fields = [
+  { label: "First Name", name: "fname", type: "text" },
+  { label: "Middle Name", name: "mname", type: "text" },
+  { label: "Last Name", name: "lname", type: "text" },
+  { label: "Email", name: "email", type: "text" },
+  { label: "Username", name: "username", type: "text" },
+  { label: "Date Registered", name: "date_registered", type: "text" },
+  { label: "Last Login", name: "last_login", type: "text" },
+];
+
 const MyGrid = () => {
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
+
   const handleModalToggle = (isOpen: boolean) => {
-    console.log("Modal is", isOpen ? "Open" : "Closed");
+    setIsModalOpen(isOpen);
   };
 
+  const openModal = (entity: Entity, type: "edit" | "delete") => {
+    setSelectedEntity(entity);
+    setModalType(type); // Set the modal type
+    setIsModalOpen(true);
+  };
   const headers = [
     { name: 'ID' },
     { name: 'Name' },
@@ -84,11 +106,24 @@ const MyGrid = () => {
               <td>{entity.username}</td>
               <td>{entity.date_registered}</td>
               <td>{entity.last_login}</td>
-              <td><Modal onToggle={handleModalToggle} /></td>
+              <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
+                    <CiEdit size={24} />
+                </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
+                  <CiTrash size={24} />
+                </div></Button></td>
             </tr>
           ))}
         </tbody>
       </table>
+      {isModalOpen && selectedEntity && (
+        <Modal
+          onToggle={handleModalToggle}
+          selectedEntity={selectedEntity}
+          modalType={modalType}
+          fields = {fields}
+        />
+      )}
     </>
   );
 };

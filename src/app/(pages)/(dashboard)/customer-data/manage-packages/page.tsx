@@ -4,8 +4,11 @@ import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
+  CiTrash,
+  CiEdit,
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
+import Button from '@mui/material/Button';
 
 interface Entity {
   packageID: string
@@ -39,10 +42,32 @@ const entities: Entity[] = [
   // ... more entities
 ];
 
+const fields = [
+  { label: "Dimensions", name: "dimensions", type: "text" },
+  { label: "Weight", name: "weight", type: "number" },
+  { label: "Costs", name: "costs", type: "number" },
+  { label: "Payment Method No.", name: "paymentMethod", type: "text" },
+  { label: "Amount", name: "amount", type: "number" },
+  { label: "Date", name: "date", type: "date" },
+  { label: "Type", name: "type", type: "text" },
+  { label: "Preferred Delivery", name: "Preferred Delivery", type: "dropdown", options: ["Priority Shipping", "Economy Shipping"] },
+  { label: "Customer ID", name: "customerID", type: "text" },
+  { label: "Route ID", name: "routeID", type: "text" },
+];
+
 const MyGrid = () => {
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
+
   const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
-    console.log("Modal is", isOpen ? "Open" : "Closed");
+    setIsModalOpen(isOpen);
+  };
+
+  const openModal = (entity: Entity, type: "edit" | "delete") => {
+    setSelectedEntity(entity);
+    setModalType(type); // Set the modal type
+    setIsModalOpen(true);
   };
   const headers = [
     { name: 'Package ID' },
@@ -70,6 +95,7 @@ const MyGrid = () => {
 
 
    return (
+    <>
     <table>
     <thead className="font-source_sans_pro">
       <tr>
@@ -105,11 +131,25 @@ const MyGrid = () => {
             <td>{entity.type}</td>
             <td>{entity.customerID}</td>
             <td>{entity.routeID}</td>
-            <td><Modal onToggle={handleModalToggle} /></td>
+            <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
+                    <CiEdit size={24} />
+                </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
+                  <CiTrash size={24} />
+                </div></Button></td>
           </tr>
         ))}
       </tbody>
     </table>
+        {isModalOpen && selectedEntity && (
+          <Modal
+            onToggle={handleModalToggle}
+            selectedEntity={selectedEntity}
+            modalType={modalType}
+            fields = {fields}
+          />
+        )}
+        </>
   );
 };
 
