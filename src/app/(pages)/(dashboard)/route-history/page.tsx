@@ -41,7 +41,6 @@ const fields = [
   { label: "Route", name: "route", type: "text" },
   { label: "Cargo Quantity", name: "cargoQuantity", type: "number" },
   { label: "Transportation Cost", name: "transportationCost", type: "text" }, // Keeping as text for currency
-  { label: "Vehicle ID", name: "vehicleID", type: "text" },
   { label: "Gas", name: "gas", type: "number" },
   { label: "Carrying Capacity", name: "carryingCapacity", type: "number" },
 ];
@@ -146,7 +145,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className='p-5'>
-            <SearchBar />
+            {/* <SearchBar /> */}
             <div className="grid table">
               <MyGrid />
             </div>

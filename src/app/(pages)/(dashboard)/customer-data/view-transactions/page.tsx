@@ -45,11 +45,6 @@ const fields = [
   { label: "Payment Amount", name: "paymentAmount", type: "number" },
   { label: "Payment Date", name: "paymentDate", type: "date" }, // Use type "date" for date input
   { label: "Status", name: "status", type: "text" },
-  { label: "Delivery ID", name: "deliveryID", type: "text" },
-  { label: "Vehicle ID", name: "vehicleID", type: "text" },
-  { label: "FOO ID", name: "fooID", type: "text" },
-  { label: "Route ID", name: "routeID", type: "text" },
-  { label: "Customer ID", name: "customerID", type: "text" },
 ];
 
 const MyGrid = () => {
@@ -182,7 +177,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
-            <SearchBar />
+            {/*<SearchBar />*/}
             <div className="grid table">
               <MyGrid />
             </div>

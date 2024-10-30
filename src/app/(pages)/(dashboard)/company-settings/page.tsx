@@ -157,7 +157,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
-            <SearchBar />
+               {/*<SearchBar />*/}
             <div className="grid table">
               <MyGrid />
             </div>

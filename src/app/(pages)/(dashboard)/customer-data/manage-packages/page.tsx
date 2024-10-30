@@ -52,8 +52,6 @@ const fields = [
   { label: "Date", name: "date", type: "date" },
   { label: "Type", name: "type", type: "text" },
   { label: "Preferred Delivery", name: "Preferred Delivery", type: "dropdown", options: ["Priority Shipping", "Economy Shipping"] },
-  { label: "Customer ID", name: "customerID", type: "text" },
-  { label: "Route ID", name: "routeID", type: "text" },
 ];
 
 const MyGrid = () => {
@@ -186,7 +184,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
-            <SearchBar />
+             {/*<SearchBar />*/}
             <div className="grid table">
               <MyGrid />
             </div>
