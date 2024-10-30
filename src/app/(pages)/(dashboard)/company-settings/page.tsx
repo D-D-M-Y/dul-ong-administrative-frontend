@@ -112,6 +112,11 @@ export default function Page() {
               <h2>Manage FOOs</h2>
             </Link>
           </div>
+          <div className="customborder-link">
+            <Link href="/company-settings/add-vehicle">
+              <h2>Add Vehicle</h2>
+            </Link>
+          </div>
         </div>
 
         {/* Body */}
