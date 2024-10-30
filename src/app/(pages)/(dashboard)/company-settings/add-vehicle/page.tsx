@@ -1,39 +1,44 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from 'next/link';
-import dynamic from "next/dynamic";
 
 interface FormValues {
-  customerName: string;
+  vehicleName: string;
   vehicle: string;
   fuelType: string;
   consumption: string;
-  foo: string;
+  foo: number;
   weight: string;
   area: string;
 }
 
 interface FormErrors {
-  customerName?: string;
+  vehicleName?: string;
   vehicle?: string;
   fuelType?: string;
   consumption?: string;
-  foo?: string;
+  foo?: number;
   weight?: string;
   area?: string;
 }
 
+interface FOO {
+  pk: number;
+  fname: string;
+  mname: string;
+  lname: string;
+}
+
 export default function Page() {
-  const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
+  const [fooOptions, setFooOptions] = useState<FOO[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isFormValid, setIsFormValid] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formValues, setFormValues] = useState<FormValues>({
-    customerName: '',
+    vehicleName: '',
     vehicle: '',
     fuelType: '',
     consumption: '',
-    foo: '',
+    foo: 0,
     weight: '',
     area: ''
   });
@@ -43,30 +48,70 @@ export default function Page() {
     if (submitted) {
       validateForm();
     }
-  }, [formValues, submitted]);
+  }, [formValues]);
 
   // Validate form
-  const validateForm = () => {
+  const validateForm = async () => {
     let errors: { [key: string]: string } = {};
-    if (!formValues.customerName) errors.customerName = 'Name is required.';
-    if (!formValues.vehicle) errors.vehicle = 'Vehicle selection is required.';
-    if (!formValues.fuelType) errors.fuelType = 'Fuel type is required.';
-    if (!formValues.consumption) errors.consumption = 'Consumption is required.';
-    if (!formValues.foo) errors.foo = 'FOO is required.';
-    if (!formValues.weight) errors.weight = 'Weight is required.';
-    if (!formValues.area) errors.area = 'Area is required.';
+    if (!formValues.vehicleName) errors.vehicleName = 'Please enter the vehicle name.';
+    if (!formValues.vehicle) errors.vehicle = 'Please select a vehicle class.';
+    if (!formValues.fuelType) errors.fuelType = 'Please select a fuel type.';
+    if (!formValues.consumption) errors.consumption = "Please enter the vehicle's fuel consumption.";
+    if (!formValues.foo) errors.foo = 'Please enter the name of the Field Operations Officer.';
+    if (!formValues.weight) errors.weight = "Please enter the vehicle's weight.";
+    if (!formValues.area) errors.area = "Please enter the vehicle's area.";
 
     setErrors(errors);
-    setIsFormValid(Object.keys(errors).length === 0);
+    // Check if there are any errors
+    const isValid = Object.keys(errors).length === 0;
+    setSubmitted(true); // Track submission attempt
+
+    if (isValid) {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/vehicles/add_vehicle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formValues),
+        });
+
+        if (response.ok) {
+          console.log('Form submitted successfully!');
+          alert('Vehicle added successfully!');
+          // Clear the form after successful submission
+          setFormValues({
+            vehicleName: '',
+            vehicle: '',
+            fuelType: '',
+            consumption: '',
+            foo: 0,
+            weight: '',
+            area: ''
+          });
+          setErrors({});
+          setSubmitted(false);
+        } else {
+          console.error('Failed to submit form:', await response.text());
+          alert('Failed to add vehicle. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while adding the vehicle. Please try again.');
+      }
+    } else {
+      console.log('Form has errors. Please correct them.');
+      alert('The form has blank fields. Please complete the form before submitting.');
+    }
   };
 
   const handleClear = () => {
     setFormValues({
-      customerName: '',
+      vehicleName: '',
       vehicle: '',
       fuelType: '',
       consumption: '',
-      foo: '',
+      foo: 0,
       weight: '',
       area: ''
     });
@@ -74,16 +119,25 @@ export default function Page() {
     setSubmitted(false);
   };
 
-  // Submit
-  const handleSubmit = () => {
-    setSubmitted(true);
-    validateForm();
-    if (isFormValid) {
-      console.log('Form submitted successfully!');
-    } else {
-      console.log('Form has errors. Please correct them.');
-    }
-  };
+  // Fetch foo options on component mount
+  useEffect(() => {
+    const fetchFooOptions = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+        if (response.ok) {
+          const data = await response.json();
+          setFooOptions(data); // Assuming data is an array of { id, name }
+        } else {
+          console.error('Failed to fetch FOO options:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error fetching FOO options:', error);
+      }
+    };
+
+    fetchFooOptions();
+  }, []);
+
 
   return (
     <div>
@@ -135,15 +189,15 @@ export default function Page() {
                               <input
                                 required
                                 type="text"
-                                name="customerName"
-                                id="customerName"
-                                autoComplete="customerName"
+                                name="vehicleName"
+                                id="vehicleName"
+                                autoComplete="vehicleName"
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                placeholder='Name'
-                                value={formValues.customerName}
-                                onChange={(e) => setFormValues({ ...formValues, customerName: e.target.value })}
+                                placeholder='Vehicle Name'
+                                value={formValues.vehicleName}
+                                onChange={(e) => setFormValues({ ...formValues, vehicleName: e.target.value })}
                               />
-                              {submitted && errors.customerName && <p className="text-red-500">{errors.customerName}</p>}
+                              {submitted && errors.vehicleName && <p className="text-red-500">{errors.vehicleName}</p>}
                             </div>
                           </div>
 
@@ -160,8 +214,9 @@ export default function Page() {
                                 onChange={(e) => setFormValues({ ...formValues, vehicle: e.target.value })}
                               >
                                 <option defaultValue="" hidden style={{ color: "#999" }}>Vehicle</option>
-                                <option value="truck">Truck</option>
-                                <option value="van">Van</option>
+                                <option value="TRU">Truck</option>
+                                <option value="VAN">Van</option>
+                                <option value="TWO">Motorcycle</option>
                               </select>
                               {submitted && errors.vehicle && <p className="text-red-500">{errors.vehicle}</p>}
                             </div>
@@ -181,7 +236,7 @@ export default function Page() {
                               >
                                 <option defaultValue="" hidden style={{ color: "#999" }}>Fuel Type</option>
                                 <option value="diesel">Diesel</option>
-                                <option value="unleaded">Unleaded</option>
+                                <option value="gas">Unleaded</option>
                               </select>
                               {submitted && errors.fuelType && <p className="text-red-500">{errors.fuelType}</p>}
 
@@ -189,33 +244,43 @@ export default function Page() {
                           </div>
                           <div className="sm:col-span-3">
                             <div className="mt-2">
-                              <input
-                                required
-                                type="text"
-                                name="consumption"
-                                id="consumption"
-                                autoComplete="consumption"
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                placeholder='Consumption'
-                                value={formValues.consumption}
-                                onChange={(e) => setFormValues({ ...formValues, consumption: e.target.value })}
-                              />
+                              <div className="relative flex items-center">
+                                <input
+                                  required
+                                  type="number"
+                                  name="consumption"
+                                  id="consumption"
+                                  autoComplete="consumption"
+                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                  placeholder='Fuel Consumption'
+                                  value={formValues.consumption}
+                                  onChange={(e) => setFormValues({ ...formValues, consumption: e.target.value })}
+                                />
+                                <span className="absolute right-3 text-gray-500 sm:text-sm pointer-events-none">
+                                  km/l
+                                </span>
+                              </div>
                               {submitted && errors.consumption && <p className="text-red-500">{errors.consumption}</p>}
                             </div>
                           </div>
                           <div className="sm:col-span-3">
                             <div className="mt-2">
-                              <input
+                              <select
                                 required
-                                type="text"
                                 name="foo"
                                 id="foo"
                                 autoComplete="foo"
                                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                placeholder='FOO'
+                                style={{ height: '2.3rem' }}
                                 value={formValues.foo}
-                                onChange={(e) => setFormValues({ ...formValues, foo: e.target.value })}
-                              />
+                                onChange={(e) => setFormValues({ ...formValues, foo: parseInt(e.target.value) })}
+                              >
+                                <option defaultValue="" hidden style={{ color: "#999" }}>Field Operations Officer</option>
+                                {fooOptions.map(FOO => (
+                                  <option key={FOO.pk} value={FOO.pk}>
+                                    {`${FOO.fname} ${FOO.mname} ${FOO.lname}`.trim()}
+                                  </option>))}
+                              </select>
                               {submitted && errors.foo && <p className="text-red-500">{errors.foo}</p>}
                             </div>
                           </div>
@@ -226,25 +291,32 @@ export default function Page() {
                         <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
                           <div className="sm:col-span-3">
                             <div className="mt-2">
-                              <input
-                                required
-                                type="text"
-                                name="weight"
-                                id="weight"
-                                autoComplete="weight"
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                placeholder='Weight'
-                                value={formValues.weight}
-                                onChange={(e) => setFormValues({ ...formValues, weight: e.target.value })}
-                              />
-                              {submitted && errors.weight && <p className="text-red-500">{errors.weight}</p>}
+                              <div className="relative flex items-center">
+                                <input
+                                  required
+                                  type="number"
+                                  name="weight"
+                                  id="weight"
+                                  autoComplete="weight"
+                                  className="block w-full rounded-md border border-gray-300 py-2 pl-4 pr-10 text-gray-900 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  placeholder="Gross Vehicle Weight"
+                                  value={formValues.weight}
+                                  onChange={(e) => setFormValues({ ...formValues, weight: e.target.value })}
+                                />
+                                <span className="absolute right-3 text-gray-500 sm:text-sm pointer-events-none">
+                                  kg.
+                                </span>
+                              </div>
+                              {submitted && errors.weight && (
+                                <p className="text-red-500 text-sm mt-1">{errors.weight}</p>
+                              )}
                             </div>
                           </div>
                           <div className="sm:col-span-3">
                             <div className="mt-2">
                               <input
                                 required
-                                type="text"
+                                type="number"
                                 name="area"
                                 id="area"
                                 autoComplete="area"
@@ -260,7 +332,7 @@ export default function Page() {
                       </div>
                       <div className="flex justify-center items-center">
                         {/* Submit Button */}
-                        <button onClick={handleSubmit} type="submit" className="w-fit h-fit align-center bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 px-4">
+                        <button onClick={validateForm} type="submit" className="w-1/2 h-fit align-center bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 px-4">
                           Submit
                         </button>
                       </div>
