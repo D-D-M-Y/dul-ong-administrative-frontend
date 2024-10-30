@@ -68,7 +68,7 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
             <td className='p-4'>{entity.time_window_start}</td>
             <td className='p-4'>{entity.time_window_end}</td>
             <td className='p-4'>{entity.zip}</td>
-            <td><Modal onToggle={() => {}} /></td>
+            <td className='p-4'><Modal onToggle={() => {}} /></td>
           </tr>
         ))}
       </tbody>

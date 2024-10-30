@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
@@ -18,30 +18,11 @@ interface Entity {
   customerid: string;
 }
 
-const entities: Entity[] = [];
+const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: string }) => {
+  const filteredEntities = entities.filter(entity =>
+    entity.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-async function fetchEntities() {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/packages');
-    if (!response.ok) {
-      throw new Error(`Failed to fetch entities: ${response.statusText}`);
-    }
-    const data = await response.json();
-    entities.push(...data);
-  } catch (error) {
-    console.error('Error fetching entities:', error);
-  }
-}
-
-fetchEntities().then(() => {
-  console.log(entities);
-});
-
-const MyGrid = () => {
-  const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
-    console.log("Modal is", isOpen ? "Open" : "Closed");
-  };
   const headers = [
     { name: 'Package ID' },
     { name: 'Name' },
@@ -62,40 +43,40 @@ const MyGrid = () => {
     });
   };} */
 
-   return (
+  return (
     <table>
-    <thead className="font-source_sans_pro">
-      <tr>
-        {headers.map((header) => (
-          <th key={header.name}>
-            {header.name}
-            {header.name !== 'Actions' && (
-             /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                {sortState[header.name] === 'idle' ? (
-                  <CiCircleChevDown />
-                ) : sortState[header.name] === 'ascending' ? (
-                  <CiCircleChevUp />
-                ) : (
-                  <CiCircleChevDown /> // Descending state (optional icon)
-                )}
-              </button>*/
-            <button className='ml-1'> <CiCircleChevDown/></button>)}
-          </th>
-        ))}
-      </tr>
-    </thead>
+      <thead className="font-source_sans_pro">
+        <tr>
+          {headers.map((header) => (
+            <th className="p-4" key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+                /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                   {sortState[header.name] === 'idle' ? (
+                     <CiCircleChevDown />
+                   ) : sortState[header.name] === 'ascending' ? (
+                     <CiCircleChevUp />
+                   ) : (
+                     <CiCircleChevDown /> // Descending state (optional icon)
+                   )}
+                 </button>*/
+                <button className='ml-1'> <CiCircleChevDown /></button>)}
+            </th>
+          ))}
+        </tr>
+      </thead>
       <tbody className="font-ptsans" >
-        {entities.map((entity) => (
+        {filteredEntities.map((entity) => (
           <tr key={entity.pk}>
-            <td>{entity.pk}</td>
-            <td>{entity.name}</td>
-            <td>{entity.size}</td>
-            <td>{entity.cost}</td>
-            <td>{entity.amount}</td>
-            <td>{entity.payment_method}</td>
-            <td>{entity.status}</td>
-            <td>{entity.customerid}</td>
-            <td><Modal onToggle={handleModalToggle} /></td>
+            <td className='p-4'>{entity.pk}</td>
+            <td className='p-4'>{entity.name}</td>
+            <td className='p-4'>{entity.size}</td>
+            <td className='p-4'>{entity.cost}</td>
+            <td className='p-4'>{entity.amount}</td>
+            <td className='p-4'>{entity.payment_method}</td>
+            <td className='p-4'>{entity.status}</td>
+            <td className='p-4'>{entity.customerid}</td>
+            <td className='p-4'><Modal onToggle={() => { }} /></td>
           </tr>
         ))}
       </tbody>
@@ -104,6 +85,25 @@ const MyGrid = () => {
 };
 
 export default function Page() {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchEntities = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/packages');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entities: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setEntities(data); // Set the entities state
+      } catch (error) {
+        console.error('Error fetching entities:', error);
+      }
+    };
+
+    fetchEntities();
+  }, []);
   return (
     <div>
       {/* Header */}
@@ -113,14 +113,14 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline"> 
+        <div className="flex items-baseline">
           <div className="customborder-link">
-           <Link href="/customer-data">
-            <h2>Manage Customers</h2>
-          </Link>
+            <Link href="/customer-data">
+              <h2>Manage Customers</h2>
+            </Link>
           </div>
           <div className="customborder-active">
-              <h2>Manage Packages</h2>
+            <h2>Manage Packages</h2>
           </div>
           <div className="customborder-link">
             <Link href="/customer-data/view-transactions">
@@ -136,12 +136,10 @@ export default function Page() {
 
 
         {/* Body */}
-        <div className="customborder-body">
-          <div className="p-5">
-            <SearchBar />
-            <div className="grid table">
-              <MyGrid />
-            </div>
+        <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
+          <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+          <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
+            <MyGrid entities={entities} searchQuery={searchQuery} />
           </div>
         </div>
       </div>
