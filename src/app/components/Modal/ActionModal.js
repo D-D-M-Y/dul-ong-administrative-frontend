@@ -27,7 +27,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
   const handleDelete = async () => {
     try {
         // Assume the API endpoint uses the entity ID for deletion
-        const response = await fetch(`/api/customer_data/delete?pk=${selectedEntity.pk}`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/customer_data/delete/${selectedEntity.pk}`, {
             method: 'DELETE',
         });
 
