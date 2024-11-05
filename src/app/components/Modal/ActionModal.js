@@ -24,11 +24,30 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
       setFormData({ ...formData, [name]: value });
   };
 
-    const handleDelete = () => {
-        // Implement delete functionality here (e.g., call an API)
+  const handleDelete = async () => {
+    try {
+        // Assume the API endpoint uses the entity ID for deletion
+        const response = await fetch(`/api/customer_data/delete?pk=${selectedEntity.pk}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete item');
+        }
+
         console.log("Item deleted!");
-        toggleModal();
-    };
+        toggleModal(); // Close the modal after successful deletion
+
+        // trigger a callback to refresh the list (or update the parent component)
+        if (onToggle) {
+            onToggle(true); // Pass true to indicate deletion success
+        }
+    } catch (error) {
+        console.error("Error deleting item:", error);
+        alert("There was an error deleting the item.");
+    }
+};
+
 
     const handleEdit = () => {
         // Implement edit functionality here (e.g., call an API)
@@ -59,7 +78,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
                     <div className="overlay" onClick={toggleModal}></div>
                     <div className="modal-content">
                         <h2 className='font-roboto font-bold text-[36px] text-center flex flex-col justify-center items-center'>
-                            {modalType === "delete" ? "Delete" : "Edit Item"} {/* Dynamic heading */}
+                            {modalType === "delete" ? "Delete" : "Edit Entry"} {/* Dynamic heading */}
                         </h2>
                         {modalType === "delete" ? (
                             <p className='font-source-sans-pro text-[24px] mt-4 mb-4'>Are you sure you want to delete this item?</p>
