@@ -31,13 +31,6 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         if (!formData.zip) errors.zip = 'ZIP Code is required.';
         if (!formData.latitude) errors.latitude = 'Latitude is required.';
         if (!formData.longitude) errors.longitude = 'Longitude is required.';
-        if (!formData.packageName) errors.packageName = 'Package Name is required.';
-        if (!formData.packageSize) errors.packageSize = 'Package Size is required.';
-        if (!formData.packageWeight) errors.packageWeight = 'Package Weight is required.';
-        if (!formData.paymentMethod) errors.paymentMethod = 'Payment Method is required.';
-        if (!formData.paymentAmount) errors.paymentAmount = 'Payment Amount is required.';
-        if (!formData.date) errors.date = 'Date is required.';
-        if (!formData.preferredDelivery) errors.preferredDelivery = 'Preferred Delivery is required.';
         setErrors(errors);
 
         const isValid = Object.keys(errors).length === 0;
@@ -53,8 +46,8 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/add_customer', {
-                method: 'POST',
+            const response = await fetch(`http://127.0.0.1:8000/api/customer_data/edit/${selectedEntity.pk}`, {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -63,27 +56,11 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
 
             if (response.ok) {
                 console.log('Form submitted successfully!');
-                alert('Customer added successfully!');
-                // Clear the form after successful submission
-                setFormData({
-                    customerName: '',
-                    city: '',
-                    barangay: '',
-                    streetAddress: '',
-                    zip: null,
-                    latitude: null,
-                    longitude: null,
-                    packageName: '',
-                    packageSize: null,
-                    packageWeight: null,
-                    paymentMethod: '',
-                    paymentAmount: null,
-                    date: '',
-                    preferredDelivery: ''
-                });
+                alert('Entity was edited and saved successfully!');
                 setErrors({});
                 setSubmitted(false);
                 toggleModal(); // Close the modal after submission
+                window.location.reload();
             } else {
                 console.error('Failed to submit form:', await response.text());
                 alert('Failed to add customer. Please try again.');
