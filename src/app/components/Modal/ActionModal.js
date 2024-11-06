@@ -46,7 +46,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         }
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/customer_data/edit/${selectedEntity.pk}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/edit/${selectedEntity.pk}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/customer_data/delete/${selectedEntity.pk}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/delete/${selectedEntity.pk}`, {
                 method: 'DELETE',
             });
 

@@ -30,7 +30,7 @@ const entities: Entity[] = [];
 
 async function fetchEntities() {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/foo`);
     if (!response.ok) {
       throw new Error(`Failed to fetch entities: ${response.statusText}`);
     }

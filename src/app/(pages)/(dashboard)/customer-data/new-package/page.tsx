@@ -70,7 +70,7 @@ export default function Page() {
     if (formValues.customerName.length > 1) {
       try {
         // Corrected API URL with query parameter for customerName
-        const response = await fetch(`http://127.0.0.1:8000/api/customer_data?name=${formValues.customerName}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data?name=${formValues.customerName}`);
         const data = await response.json();
 
         // Filter data based on partial match
