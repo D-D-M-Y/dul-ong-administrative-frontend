@@ -109,30 +109,30 @@ const MapComponent: FC = () => {
 
     useEffect(() => {
         const customerCounts: { [vehicleId: string]: number } = {};
-        
+
         //11. API Call for Customer Nodes
         const fetchMarkers = async () => {
             setLoading(true);
-            const query = await fetch("http://127.0.0.1:8000/api/customers");
+            const query = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customers`);
             const response = await query.json();
             console.log("Customer Nodes:", response);
-    
+
             response.forEach((data: { vehicleid: string }) => {
                 if (!customerCounts[data.vehicleid]) {
                     customerCounts[data.vehicleid] = 1;
                 }
             });
-    
+
             setMarkers(response.map((data: { latitude: string, longitude: string, vehicleid: string }) => {
                 const customerNumber = customerCounts[data.vehicleid];
-                customerCounts[data.vehicleid]++;    
+                customerCounts[data.vehicleid]++;
                 return {
                     coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
                     finalcolor: parseInt(data.vehicleid) === 1 ? purpleIcon : limeIcon,
                     customerNumber
                 };
             }));
-    
+
             setLoading(false);
         };
         fetchMarkers();
@@ -140,7 +140,7 @@ const MapComponent: FC = () => {
         //12. API Call for Routes
         const fetchRoutes = async () => {
             setLoading(true);
-            const query = await fetch("http://127.0.0.1:8000/api/");
+            const query = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/`);
             const response = await query.json();
             console.log('Routes for Vehicles:', response);
             const apiPolylines = response || [];
@@ -170,32 +170,34 @@ const MapComponent: FC = () => {
             {/* 13. Show the loader if loading. */}
             {loading && <Loader />}
             {/* 14. Add the map container. */}
-            <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
-                {/* 15. Set the tile layer for the map. */}
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {/* 16. Render the markers */}
-                {markers.map((marker, index) => (
-                    <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
-                        <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
-                        <Popup>{`${marker.coordinates.join(",")}`}</Popup>
-                    </Marker>
-                ))}
-                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
-                <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
+            <div style={{ height: "100vh", width: "100vw" }}>
+                <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100%", width: "100%", borderRadius: "0 20px 20px 0" }}>
+                    {/* 15. Set the tile layer for the map. */}
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {/* 16. Render the markers */}
+                    {markers.map((marker, index) => (
+                        <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
+                            <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
+                            <Popup>{`${marker.coordinates.join(",")}`}</Popup>
+                        </Marker>
+                    ))}
+                    <Marker position={[10.693534016734706, 122.5734651076825]} icon={fooIcon}>
+                        <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
 
-                    <Popup>Field Operations Officer</Popup>
-                </Marker>
-                <Marker position={[10.6873430, 122.5166238]}>
-                    <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
-                    <Popup>Origin Depot</Popup>
-                </Marker>
-                {/* 17. Render each Polyline separately with its color */}
-                {convertedPolyline.map((coords, index) => (
-                    <Polyline key={index} positions={coords} color={coords[1].finalcolor} />
-                ))}
-                {/* 18. Include the ZoomHandler for zoom events. */}
-                <ZoomHandler />
-            </MapContainer>
+                        <Popup>Field Operations Officer</Popup>
+                    </Marker>
+                    <Marker position={[10.6873430, 122.5166238]}>
+                        <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
+                        <Popup>Origin Depot</Popup>
+                    </Marker>
+                    {/* 17. Render each Polyline separately with its color */}
+                    {convertedPolyline.map((coords, index) => (
+                        <Polyline key={index} positions={coords} color={coords[1].finalcolor} />
+                    ))}
+                    {/* 18. Include the ZoomHandler for zoom events. */}
+                    <ZoomHandler />
+                </MapContainer>
+            </div>
         </>
     );
 };
