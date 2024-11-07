@@ -6,18 +6,22 @@ import { RiCloseCircleFill } from "react-icons/ri";
 const mapApiToFormData = (data) => ({
     ...data,
     customerName: data.name || data.customerName,
+    streetAddress: data.street_address || data.streetAddress,
+    zip: data.zip_code || data.zip,
 });
 
 const mapFormDataToApi = (data) => ({
     ...data,
     name: data.customerName,
+    street_address: data.streetAddress,
+    zip_code: data.zip,
 });
 
 export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
     const [formData, setFormData] = useState(mapApiToFormData(selectedEntity || {}));
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
-    
+
     useEffect(() => {
         setFormData(mapApiToFormData(selectedEntity || {})); // Update form data when selectedEntity changes
     }, [selectedEntity]);
@@ -41,6 +45,8 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         if (!formData.zip) errors.zip = 'ZIP Code is required.';
         if (!formData.latitude) errors.latitude = 'Latitude is required.';
         if (!formData.longitude) errors.longitude = 'Longitude is required.';
+        if (!formData.time_window_start) errors.time_window_start = 'Start Time is required.';
+        if (!formData.time_window_end) errors.time_window_end = 'End Time is required.';
         setErrors(errors);
 
         const isValid = Object.keys(errors).length === 0;
