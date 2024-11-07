@@ -64,7 +64,7 @@ export default async function Page() {
       <h1 className="font-roboto font-bold"> Route Overview </h1>
       
       <div> 
-        <div className=" h-full w-auto rounded-xl bg-white p-2 shadow-sm">
+        <div className=" h-fit w-fit rounded-xl bg-white p-2 shadow-sm">
         <DynamicMapComponent />        
         </div>
       </div>
