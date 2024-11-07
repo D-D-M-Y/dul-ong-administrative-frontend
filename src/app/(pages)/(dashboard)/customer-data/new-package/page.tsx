@@ -13,6 +13,7 @@ interface FormValues {
   latitude: number | null;
   longitude: number | null;
   packageName: string;
+  amount: number | null;
   packageSize: number | null;
   packageWeight: number | null;
   paymentMethod: string;
@@ -29,6 +30,7 @@ interface FormErrors {
   latitude?: number | null;
   longitude?: number | null;
   packageName?: string;
+  amount?: number | null;
   packageSize?: number | null;
   packageWeight?: number | null;
   paymentMethod?: string;
@@ -52,6 +54,7 @@ export default function Page() {
     latitude: null,
     longitude: null,
     packageName: '',
+    amount: null,
     packageSize: null,
     packageWeight: null,
     paymentMethod: '',
@@ -59,31 +62,6 @@ export default function Page() {
     date: '',
     preferredDelivery: ''
   });
-
-  const fetchSuggestions = async () => {
-    if (formValues.customerName.length > 1) {
-      try {
-        // Corrected API URL with query parameter for customerName
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data?name=${formValues.customerName}`);
-        const data = await response.json();
-
-        // Filter data based on partial match
-        const filteredSuggestions = data
-          .filter((customer: { name: string }) =>
-            customer.name.toLowerCase().includes(formValues.customerName.toLowerCase())
-          )
-          .map((customer: { name: string }) => customer.name);
-
-        setSuggestions(filteredSuggestions);
-        setShowSuggestions(filteredSuggestions.length > 0);
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      }
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-  };
 
   useEffect(() => {
 
@@ -129,7 +107,7 @@ export default function Page() {
 
     if (isValid) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/add_customer', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/add_customer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -150,6 +128,7 @@ export default function Page() {
             latitude: null,
             longitude: null,
             packageName: '',
+            amount: null,
             packageSize: null,
             packageWeight: null,
             paymentMethod: '',
@@ -183,6 +162,7 @@ export default function Page() {
       latitude: null,
       longitude: null,
       packageName: '',
+      amount: null,
       packageSize: null,
       packageWeight: null,
       paymentMethod: '',
@@ -198,7 +178,7 @@ export default function Page() {
     const fetchSuggestions = async () => {
       if (formValues.customerName.length > 1) {
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/customer_data?name=${formValues.customerName}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data?name=${formValues.customerName}`);
           const data = await response.json();
           const filteredSuggestions = data
             .filter((customer: { name: string }) =>
@@ -403,7 +383,7 @@ export default function Page() {
                       </div>
                       <h2 className="mt-5 text-base font-semibold leading-7 text-gray-900">Package Details</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
-                        <div className="sm:col-span-full">
+                        <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
                               type="text"
@@ -418,7 +398,22 @@ export default function Page() {
                             {submitted && errors.packageName && <p className="text-red-500">{errors.packageName}</p>}
                           </div>
                         </div>
-                        <div className="sm:col-span-full">
+                        <div className="sm:col-span-3">
+                          <div className="mt-2">
+                            <input
+                              type="number"
+                              name="amount"
+                              id="amount"
+                              autoComplete="amount"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              placeholder='Amount of Items'
+                              value={formValues.amount ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, amount: parseInt(e.target.value) })}
+                            />
+                            {submitted && errors.packageName && <p className="text-red-500">{errors.packageName}</p>}
+                          </div>
+                        </div>
+                        <div className="sm:col-span-3">
                           <div className="mt-2">
                           <select
                               required
@@ -438,7 +433,7 @@ export default function Page() {
                             {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
                         </div>
-                        <div className="sm:col-span-full">
+                        <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
                               type="number"
