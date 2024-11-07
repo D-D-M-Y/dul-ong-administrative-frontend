@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, FC } from "react";
 import Link from 'next/link';
-import Modal from '@/app/components/Modal/Modal';
 import dynamic from "next/dynamic";
 const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPackageMap"), { ssr: false });
 
@@ -10,15 +9,14 @@ interface FormValues {
   city: string;
   barangay: string;
   streetAddress: string;
-  zip: string;
-  latitude: string;
-  longitude: string;
-  height: string;
-  width: string;
-  length: string;
-  packageWeight: string;
+  zip: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  packageName: string;
+  packageSize: number | null;
+  packageWeight: number | null;
   paymentMethod: string;
-  paymentAmount: string;
+  paymentAmount: number | null;
   date: string;
   preferredDelivery: string;
 }
@@ -27,41 +25,37 @@ interface FormErrors {
   city?: string;
   barangay?: string;
   streetAddress?: string;
-  zip?: string;
-  latitude?: string;
-  longitude?: string;
-  height?: string;
-  width?: string;
-  length?: string;
-  packageWeight?: string;
+  zip?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  packageName?: string;
+  packageSize?: number | null;
+  packageWeight?: number | null;
   paymentMethod?: string;
-  paymentAmount?: string;
+  paymentAmount?: number | null;
   date?: string;
   preferredDelivery?: string;
 }
 
 export default function Page() {
   const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
-  const [name, setName] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isFormValid, setIsFormValid] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formValues, setFormValues] = useState<FormValues>({
     customerName: '',
     city: '',
     barangay: '',
     streetAddress: '',
-    zip: '',
-    latitude: '',
-    longitude: '',
-    height: '',
-    width: '',
-    length: '',
-    packageWeight: '',
+    zip: null,
+    latitude: null,
+    longitude: null,
+    packageName: '',
+    packageSize: null,
+    packageWeight: null,
     paymentMethod: '',
-    paymentAmount: '',
+    paymentAmount: null,
     date: '',
     preferredDelivery: ''
   });
@@ -92,27 +86,27 @@ export default function Page() {
   };
 
   useEffect(() => {
-    fetchSuggestions();
 
     if (
       markerCoords &&
-      (formValues.latitude !== markerCoords[0].toString() ||
-        formValues.longitude !== markerCoords[1].toString())
+      (formValues.latitude !== markerCoords[0] ||
+        formValues.longitude !== markerCoords[1])
     ) {
       setFormValues((prev) => ({
         ...prev,
-        latitude: markerCoords[0].toString(),
-        longitude: markerCoords[1].toString(),
+        latitude: markerCoords[0],
+        longitude: markerCoords[1],
       }));
     }
 
     if (submitted) {
       validateForm();
     }
-  }, [formValues, formValues.customerName, markerCoords, submitted]);
+  }, [formValues, markerCoords]);
+
 
   // Validate form
-  const validateForm = () => {
+  const validateForm = async () => {
     let errors: { [key: string]: string } = {};
     if (!formValues.customerName) errors.customerName = 'Name is required.';
     if (!formValues.city) errors.city = 'City is required.';
@@ -121,32 +115,78 @@ export default function Page() {
     if (!formValues.zip) errors.zip = 'ZIP Code is required.';
     if (!formValues.latitude) errors.latitude = 'Latitude is required.';
     if (!formValues.longitude) errors.longitude = 'Longitude is required.';
-    if (!formValues.height) errors.height = 'Height is required.';
-    if (!formValues.width) errors.width = 'Width is required.';
-    if (!formValues.length) errors.length = 'Length is required.';
+    if (!formValues.packageName) errors.packageName = 'Package Name is required.';
+    if (!formValues.packageSize) errors.packageSize = 'Package Size is required.';
     if (!formValues.packageWeight) errors.packageWeight = 'Package Weight is required.';
     if (!formValues.paymentMethod) errors.paymentMethod = 'Payment Method is required.';
     if (!formValues.paymentAmount) errors.paymentAmount = 'Payment Amount is required.';
     if (!formValues.date) errors.date = 'Date is required.';
     if (!formValues.preferredDelivery) errors.preferredDelivery = 'Preferred Delivery is required.';
     setErrors(errors);
-    setIsFormValid(Object.keys(errors).length === 0);
+    // Check if there are any errors
+    const isValid = Object.keys(errors).length === 0;
+    setSubmitted(true); // Track submission attempt
+
+    if (isValid) {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/add_customer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formValues),
+        });
+
+        if (response.ok) {
+          console.log('Form submitted successfully!');
+          alert('Customer added successfully!');
+          // Clear the form after successful submission
+          setFormValues({
+            customerName: '',
+            city: '',
+            barangay: '',
+            streetAddress: '',
+            zip: null,
+            latitude: null,
+            longitude: null,
+            packageName: '',
+            packageSize: null,
+            packageWeight: null,
+            paymentMethod: '',
+            paymentAmount: null,
+            date: '',
+            preferredDelivery: ''
+          });
+          setErrors({});
+          setSubmitted(false);
+        } else {
+          console.error('Failed to submit form:', await response.text());
+          alert('Failed to add customer. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while adding the customer. Please try again.');
+      }
+    } else {
+      console.log('Form has errors. Please correct them.');
+      alert('The form has blank fields. Please complete the form before submitting.');
+    }
   };
+
   const handleClear = () => {
     setFormValues({
       customerName: '',
       city: '',
       barangay: '',
       streetAddress: '',
-      zip: '',
-      latitude: '',
-      longitude: '',
-      height: '',
-      width: '',
-      length: '',
-      packageWeight: '',
+      zip: null,
+      latitude: null,
+      longitude: null,
+      packageName: '',
+      packageSize: null,
+      packageWeight: null,
       paymentMethod: '',
-      paymentAmount: '',
+      paymentAmount: null,
       date: '',
       preferredDelivery: ''
     });
@@ -154,20 +194,35 @@ export default function Page() {
     setSubmitted(false);
   };
 
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (formValues.customerName.length > 1) {
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/api/customer_data?name=${formValues.customerName}`);
+          const data = await response.json();
+          const filteredSuggestions = data
+            .filter((customer: { name: string }) =>
+              customer.name.toLowerCase().includes(formValues.customerName.toLowerCase())
+            )
+            .map((customer: { name: string }) => customer.name);
+
+          setSuggestions(filteredSuggestions);
+          setShowSuggestions(filteredSuggestions.length > 0);
+        } catch (error) {
+          console.error("Error fetching suggestions:", error);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [formValues.customerName]);
+
   const handleSuggestionClick = (suggestedName: string) => {
     setFormValues((prev) => ({ ...prev, customerName: suggestedName }));
     setShowSuggestions(false); // Hide suggestions after selection
-  };
-
-  // Submit
-  const handleSubmit = () => {
-    setSubmitted(true);
-    validateForm();
-    if (isFormValid) {
-      console.log('Form submitted successfully!');
-    } else {
-      console.log('Form has errors. Please correct them.');
-    }
   };
 
   return (
@@ -304,8 +359,8 @@ export default function Page() {
                               autoComplete="zip"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Zip Code'
-                              value={formValues.zip}
-                              onChange={(e) => setFormValues({ ...formValues, zip: e.target.value })}
+                              value={formValues.zip ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, zip: parseInt(e.target.value) })}
                             />
                             {submitted && errors.zip && <p className="text-red-500">{errors.zip}</p>}
 
@@ -320,9 +375,9 @@ export default function Page() {
                               autoComplete="latitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Latitude'
-                              value={formValues.latitude} // Access latitude from coordinates
+                              value={formValues.latitude ?? ''} // Access latitude from coordinates
                               readOnly
-                              onChange={(e) => setFormValues({ ...formValues, latitude: e.target.value })}
+                              onChange={(e) => setFormValues({ ...formValues, latitude: parseFloat(e.target.value) })}
 
                             />
                             {submitted && errors.latitude && <p className="text-red-500">{errors.latitude}</p>}
@@ -338,9 +393,9 @@ export default function Page() {
                               autoComplete="longitude"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Longitude'
-                              value={formValues.longitude} // Access longitude from coordinates
+                              value={formValues.longitude ?? ''} // Access longitude from coordinates
                               readOnly
-                              onChange={(e) => setFormValues({ ...formValues, longitude: e.target.value })}
+                              onChange={(e) => setFormValues({ ...formValues, longitude: parseFloat(e.target.value) })}
                             />
                             {submitted && errors.longitude && <p className="text-red-500">{errors.longitude}</p>}
                           </div>
@@ -348,62 +403,52 @@ export default function Page() {
                       </div>
                       <h2 className="mt-5 text-base font-semibold leading-7 text-gray-900">Package Details</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
-                        <div className="sm:col-span-2 sm:col-start-1">
-                          <div className="mt-2">
-                            <input
-                              type="number"
-                              name="height"
-                              id="height"
-                              autoComplete="height"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Height'
-                              value={formValues.height}
-                              onChange={(e) => setFormValues({ ...formValues, height: e.target.value })}
-                            />
-                            {submitted && errors.height && <p className="text-red-500">{errors.zip}</p>}
-                          </div>
-                        </div>
-                        <div className="sm:col-span-2">
-                          <div className="mt-2">
-                            <input
-                              type="number"
-                              name="width"
-                              id="width"
-                              autoComplete="width"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Width'
-                              value={formValues.width}
-                              onChange={(e) => setFormValues({ ...formValues, width: e.target.value })}
-                            />
-                            {submitted && errors.width && <p className="text-red-500">{errors.width}</p>}
-                          </div>
-                        </div>
-                        <div className="sm:col-span-2">
+                        <div className="sm:col-span-full">
                           <div className="mt-2">
                             <input
                               type="text"
-                              name="length"
-                              id="length"
-                              autoComplete="length"
+                              name="packageName"
+                              id="packageName"
+                              autoComplete="packageName"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Length'
-                              value={formValues.length}
-                              onChange={(e) => setFormValues({ ...formValues, length: e.target.value })}
+                              placeholder='Package Name'
+                              value={formValues.packageName}
+                              onChange={(e) => setFormValues({ ...formValues, packageName: e.target.value })}
                             />
-                            {submitted && errors.length && <p className="text-red-500">{errors.length}</p>}
+                            {submitted && errors.packageName && <p className="text-red-500">{errors.packageName}</p>}
+                          </div>
+                        </div>
+                        <div className="sm:col-span-full">
+                          <div className="mt-2">
+                          <select
+                              required
+                              name="packageSize"
+                              id="packageSize"
+                              autoComplete="packageSize"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              style={{ height: '2.3rem' }}
+                              value={formValues.packageSize ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, packageSize: parseInt(e.target.value) })}
+                            >
+                              <option defaultValue="" hidden style={{ color: "#999" }}>Package Size</option>
+                              <option value="1">Small (4.45 x 16.51 x 27.94)</option>
+                              <option value="2">Medium (4.45 x 23.5 x 35.6)</option>
+                              <option value="3">Large (4.45 x 30.46 x 45.72)</option>
+                            </select>
+                            {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
                         </div>
                         <div className="sm:col-span-full">
                           <div className="mt-2">
                             <input
-                              type="text"
+                              type="number"
                               name="packageWeight"
                               id="packageWeight"
                               autoComplete="packageWeight"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Package Weight'
-                              value={formValues.packageWeight}
-                              onChange={(e) => setFormValues({ ...formValues, packageWeight: e.target.value })}
+                              value={formValues.packageWeight ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, packageWeight: parseFloat(e.target.value) })}
                             />
                             {submitted && errors.packageWeight && <p className="text-red-500">{errors.packageWeight}</p>}
                           </div>
@@ -413,16 +458,21 @@ export default function Page() {
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
                         <div className="sm:col-span-3">
                           <div className="mt-2">
-                            <input
-                              type="text"
+                            <select
+                              required
                               name="paymentMethod"
                               id="paymentMethod"
                               autoComplete="paymentMethod"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Payment Method'
+                              style={{ height: '2.3rem' }}
                               value={formValues.paymentMethod}
                               onChange={(e) => setFormValues({ ...formValues, paymentMethod: e.target.value })}
-                            />
+                            >
+                              <option defaultValue="" hidden style={{ color: "#999" }}>Payment Method</option>
+                              <option value="CAS">Cash</option>
+                              <option value="CAR">Card</option>
+                              <option value="GCA">GCASH</option>
+                            </select>
                             {submitted && errors.paymentMethod && <p className="text-red-500">{errors.paymentMethod}</p>}
                           </div>
                         </div>
@@ -435,8 +485,8 @@ export default function Page() {
                               autoComplete="paymentAmount"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               placeholder='Payment Amount'
-                              value={formValues.paymentAmount}
-                              onChange={(e) => setFormValues({ ...formValues, paymentAmount: e.target.value })}
+                              value={formValues.paymentAmount ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, paymentAmount: parseFloat(e.target.value) })}
                             />
                             {submitted && errors.paymentAmount && <p className="text-red-500">{errors.paymentAmount}</p>}
                           </div>
@@ -444,7 +494,7 @@ export default function Page() {
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
-                              type="text"
+                              type="date"
                               name="date"
                               id="date"
                               autoComplete="date"
@@ -477,7 +527,7 @@ export default function Page() {
                       </div>
                       <div className="flex justify-center items-center">
                         {/* Submit Button */}
-                        <button onClick={handleSubmit} type="submit" className="w-1/2 h-fit align-center bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 px-4 mt-10">
+                        <button onClick={validateForm} type="submit" className="w-1/2 h-fit align-center bg-indigo-100 rounded-[40px] text-neutral-800 text-base font-bold font-roboto py-2 px-4 mt-10">
                           Submit
                         </button>
                       </div>

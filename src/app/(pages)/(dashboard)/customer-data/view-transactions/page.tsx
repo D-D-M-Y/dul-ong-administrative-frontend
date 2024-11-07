@@ -88,40 +88,40 @@ const MyGrid = () => {
    return (
     <>
     <table>
-    <thead>
-      <tr>
-        {headers.map((header) => (
-          <th key={header.name}>
-            {header.name}
-            {header.name !== 'Actions' && (
-             /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                {sortState[header.name] === 'idle' ? (
-                  <CiCircleChevDown />
-                ) : sortState[header.name] === 'ascending' ? (
-                  <CiCircleChevUp />
-                ) : (
-                  <CiCircleChevDown /> // Descending state (optional icon)
-                )}
-              </button>*/
-            <button className='ml-1'> <CiCircleChevDown/></button>)}
-          </th>
-        ))}
-      </tr>
-    </thead>
+      <thead>
+        <tr>
+          {headers.map((header) => (
+            <th className='p-4' key={header.name}>
+              {header.name}
+              {header.name !== 'Actions' && (
+                /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                   {sortState[header.name] === 'idle' ? (
+                     <CiCircleChevDown />
+                   ) : sortState[header.name] === 'ascending' ? (
+                     <CiCircleChevUp />
+                   ) : (
+                     <CiCircleChevDown /> // Descending state (optional icon)
+                   )}
+                 </button>*/
+                <button className='ml-1'> <CiCircleChevDown /></button>)}
+            </th>
+          ))}
+        </tr>
+      </thead>
       <tbody>
         {entities.map((entity) => (
           <tr key={entity.transactionID}>
-            <td>{entity.transactionID}</td>
-            <td>{entity.paymentMethod}</td>
-            <td>{entity.paymentAmount}</td>
-            <td>{entity.paymentDate.toLocaleDateString()}</td>
-            <td>{entity.status}</td>
-            <td>{entity.deliveryID}</td>
-            <td>{entity.vehicleID}</td>
-            <td>{entity.fooID}</td>
-            <td>{entity.routeID}</td>
-            <td>{entity.customerID}</td>
-            <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
+            <td className='p-4'>{entity.transactionID}</td>
+            <td className='p-4'>{entity.paymentMethod}</td>
+            <td className='p-4'>{entity.paymentAmount}</td>
+            <td className='p-4'>{entity.paymentDate.toLocaleDateString()}</td>
+            <td className='p-4'>{entity.status}</td>
+            <td className='p-4'>{entity.deliveryID}</td>
+            <td className='p-4'>{entity.vehicleID}</td>
+            <td className='p-4'>{entity.fooID}</td>
+            <td className='p-4'>{entity.routeID}</td>
+            <td className='p-4'>{entity.customerID}</td>
+            <td className='p-4'><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
                     <CiEdit size={24} />
                 </div></Button>
                 <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
@@ -144,6 +144,8 @@ const MyGrid = () => {
 };
 
 export default function Page() {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <div>
       {/* Header */}
@@ -153,18 +155,18 @@ export default function Page() {
         </h1>
 
         {/* Folder */}
-        <div className="flex items-baseline"> 
+        <div className="flex items-baseline">
           <div className="customborder-link">
-          <Link href="/customer-data">
-            <h2>Manage Customers</h2>
-          </Link>          </div>
+            <Link href="/customer-data">
+              <h2>Manage Customers</h2>
+            </Link>          </div>
           <div className="customborder-link">
             <Link href="/customer-data/manage-packages">
               <h2>Manage Packages</h2>
             </Link>
           </div>
           <div className="customborder-active">
-              <h2>View Transactions</h2>
+            <h2>View Transactions</h2>
           </div>
           <div className="customborder-link">
             <Link href="/customer-data/new-package">
@@ -177,7 +179,7 @@ export default function Page() {
         {/* Body */}
         <div className="customborder-body">
           <div className="p-5">
-            {/*<SearchBar />*/}
+            <SearchBar query={searchQuery} setQuery={setSearchQuery} />
             <div className="grid table">
               <MyGrid />
             </div>

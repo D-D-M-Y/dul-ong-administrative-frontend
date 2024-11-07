@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
@@ -58,11 +58,13 @@ const fields = [
   { label: "Last Login", name: "last_login", type: "text" },
 ];
 
-const MyGrid = () => {
+const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: string }) => {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
-
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+  const filteredEntities = entities.filter(entity =>
+    entity.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   const handleModalToggle = (isOpen: boolean) => {
     setIsModalOpen(isOpen);
   };
@@ -88,35 +90,27 @@ const MyGrid = () => {
         <thead className='font-source_sans_pro'>
           <tr>
             {headers.map((header) => (
-              <th key={header.name}>
+              <th className="p-4" key={header.name}>
                 {header.name}
                 {header.name !== 'Actions' && (
-                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                     {sortState[header.name] === 'idle' ? (
-                       <CiCircleChevDown />
-                     ) : sortState[header.name] === 'ascending' ? (
-                       <CiCircleChevUp />
-                     ) : (
-                       <CiCircleChevDown /> // Descending state (optional icon)
-                     )}
-                   </button>*/
-                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+                  <button className='ml-1'> <CiCircleChevDown /></button>
+                )}
               </th>
             ))}
           </tr>
         </thead>
         <tbody className='font-ptsans'>
-          {entities.map((entity) => (
+          {filteredEntities.map((entity) => (
             <tr key={entity.email}>
-              <td>{entity.pk}</td>
-              <td>{entity.name}</td>
-              <td>{entity.email}</td>
-              <td>{entity.username}</td>
-              <td>{entity.date_registered}</td>
-              <td>{entity.last_login}</td>
+              <td className='p-4'>{entity.pk}</td>
+              <td className='p-4'>{entity.name}</td>
+              <td className='p-4'>{entity.email}</td>
+              <td className='p-4'>{entity.username}</td>
+              <td className='p-4'>{entity.date_registered}</td>
+              <td className='p-4'>{entity.last_login}</td>
               <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
-                    <CiEdit size={24} />
-                </div></Button>
+                <CiEdit size={24} />
+              </div></Button>
                 <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
                   <CiTrash size={24} />
                 </div></Button></td>
@@ -129,7 +123,7 @@ const MyGrid = () => {
           onToggle={handleModalToggle}
           selectedEntity={selectedEntity}
           modalType={modalType}
-          fields = {fields}
+          fields={fields}
         />
       )}
     </>
@@ -137,6 +131,33 @@ const MyGrid = () => {
 };
 
 export default function Page() {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const fetchEntities = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entities: ${response.statusText}`);
+        }
+        const data = await response.json();
+
+        // Map through the data to add the 'name' property
+        const updatedData = data.map((entity: Entity) => ({
+          ...entity,
+          name: generateName(entity),
+        }));
+
+        setEntities(updatedData); // Update entities with names included
+      } catch (error) {
+        console.error('Error fetching entities:', error);
+      }
+    };
+
+    fetchEntities();
+  }, []);
+
   return (
     <div>
       {/* Header */}
@@ -163,16 +184,14 @@ export default function Page() {
         </div>
 
         {/* Body */}
-        <div className="customborder-body">
-          <div className="p-5">
-               {/*<SearchBar />*/}
-
-            <div className="grid table">
-              <MyGrid />
-            </div>
+        <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
+          <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+          <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
+            <MyGrid entities={entities} searchQuery={searchQuery} />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
