@@ -3,13 +3,23 @@ import "./Modal.css";
 import Button from '@mui/material/Button';
 import { RiCloseCircleFill } from "react-icons/ri";
 
+const mapApiToFormData = (data) => ({
+    ...data,
+    customerName: data.name || data.customerName,
+});
+
+const mapFormDataToApi = (data) => ({
+    ...data,
+    name: data.customerName,
+});
+
 export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
-    const [formData, setFormData] = useState(selectedEntity || {});
+    const [formData, setFormData] = useState(mapApiToFormData(selectedEntity || {}));
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
-
+    
     useEffect(() => {
-        setFormData(selectedEntity || {}); // Update form data when selectedEntity changes
+        setFormData(mapApiToFormData(selectedEntity || {})); // Update form data when selectedEntity changes
     }, [selectedEntity]);
 
     const toggleModal = () => {
@@ -46,12 +56,13 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         }
 
         try {
+            const payload = mapFormDataToApi(formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/edit/${selectedEntity.pk}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             if (response.ok) {
