@@ -4,32 +4,32 @@ import Dropdown from '@/app/ui/dashboard/dropdown';
 import dynamic from "next/dynamic";
 const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/MapComponent"), { ssr: false });
 
-/* imports from tutorial
-    import {
-  fetchRevenue,
-  fetchLatestInvoices,
-  fetchCardData,
-} from */
+//  imports from tutorial
+//   import {
+//   fetchRevenue,
+//   fetchLatestInvoices,
+//   fetchCardData,
+// from */
 
 export default async function Page() {
-  /* function from tutorial
-  const revenue = await fetchRevenue();
-   const latestInvoices = await fetchLatestInvoices();
-   const {
-     numberOfInvoices,
-     numberOfCustomers,
-     totalPaidInvoices,
-     totalPendingInvoices,
-   } = await fetchCardData(); */
+  // function from tutorial
+  // const revenue = await fetchRevenue();
+  //  const latestInvoices = await fetchLatestInvoices();
+  //  const {
+  //    numberOfInvoices,
+  //    numberOfCustomers,
+  //    totalPaidInvoices,
+  //    totalPendingInvoices,
+  //  } = await fetchCardData();
 
   return (
     <main>
-      <h1 className = "font-roboto font-bold">
+      <h1 className="font-roboto font-bold">
         Welcome back, Allana!
       </h1>
-        
-          {/* Delivery Overview */}
-      <div className="flex items-baseline font-roboto"> 
+
+      {/* Delivery Overview */}
+      <div className="flex items-baseline font-roboto">
         <h1> Delivery Overview </h1>
         <div className="ml-4 relative">
           <Dropdown />
@@ -47,7 +47,7 @@ export default async function Page() {
 
       {/* FOO Management */}
 
-      <h1 className="font-roboto font-bold"> FOO Management </h1>
+      <h1 className="font-roboto"> FOO Management </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card title="FOOs Available" value={"1"} type="fooavailable" />
@@ -61,11 +61,10 @@ export default async function Page() {
 
       {/* Route Overview */}
 
-      <h1 className="font-roboto font-bold"> Route Overview </h1>
-      
-      <div> 
-        <div className=" h-fit w-fit rounded-xl bg-white p-2 shadow-sm">
-        <DynamicMapComponent />        
+      <h1 className="font-roboto"> Route Overview </h1>
+      <div className="relative w-full flex">
+        <div className=" h-fit w-fit overflow-hidden">
+          <DynamicMapComponent />
         </div>
       </div>
     </main>
