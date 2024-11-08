@@ -8,6 +8,9 @@ const mapApiToFormData = (data) => ({
     customerName: data.name || data.customerName,
     streetAddress: data.street_address || data.streetAddress,
     zip: data.zip_code || data.zip,
+    packageName: data.name || data.packageNameName,
+    packageSize: data.size || data.packageSize,
+    paymentAmount: data.cost || data.paymentAmount
 });
 
 const mapFormDataToApi = (data) => ({
@@ -15,9 +18,12 @@ const mapFormDataToApi = (data) => ({
     name: data.customerName,
     street_address: data.streetAddress,
     zip_code: data.zip,
+    name: data.packageName,
+    zip_code: data.zip,
+    cost: data.paymentAmount
 });
 
-export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
+export default function Modal({ onToggle, selectedEntity, modalType, fields, endpoint }) {
     const [formData, setFormData] = useState(mapApiToFormData(selectedEntity || {}));
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
@@ -37,16 +43,8 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
 
     // Validate form fields
     const validateForm = () => {
-        let errors = {};
-        if (!formData.customerName) errors.customerName = 'Name is required.';
-        if (!formData.city) errors.city = 'City is required.';
-        if (!formData.barangay) errors.barangay = 'Barangay is required.';
-        if (!formData.streetAddress) errors.streetAddress = 'Street Address is required.';
-        if (!formData.zip) errors.zip = 'ZIP Code is required.';
-        if (!formData.latitude) errors.latitude = 'Latitude is required.';
-        if (!formData.longitude) errors.longitude = 'Longitude is required.';
-        if (!formData.time_window_start) errors.time_window_start = 'Start Time is required.';
-        if (!formData.time_window_end) errors.time_window_end = 'End Time is required.';
+        let error = {};
+        if (!formData) error = '*Required field*';
         setErrors(errors);
 
         const isValid = Object.keys(errors).length === 0;
@@ -54,8 +52,8 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
         return isValid;
     };
 
-    // Handle the submit action for editing/adding a customer
-    const handleEdit = async () => {
+    // Reusable submit action for editing/adding different entities
+    const handleEdit = async (endpoint, method = 'PATCH') => {
         if (!validateForm()) {
             alert('The form has blank fields. Please complete the form before submitting.');
             return;
@@ -63,8 +61,8 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
 
         try {
             const payload = mapFormDataToApi(formData);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/edit/${selectedEntity.pk}`, {
-                method: 'PATCH',
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/${endpoint}/${selectedEntity.pk}`, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -80,18 +78,18 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
                 window.location.reload();
             } else {
                 console.error('Failed to submit form:', await response.text());
-                alert('Failed to add customer. Please try again.');
+                alert('Failed to submit entity. Please try again.');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
-            alert('An error occurred while adding the customer. Please try again.');
+            alert('An error occurred while submitting the form. Please try again.');
         }
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (endpoint, method = 'DELETE') => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/delete/${selectedEntity.pk}`, {
-                method: 'DELETE',
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/${endpoint}/${selectedEntity.pk}`, {
+                method,
             });
 
             if (!response.ok) {
@@ -100,7 +98,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
 
             console.log("Item deleted!");
             alert("Entity successfully deleted!");
-            
+
             toggleModal();
             if (onToggle) {
                 onToggle(true);
@@ -169,11 +167,11 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields }) {
                         <p className="font-source-sans-pro font-bold">Cancel</p>
                     </Button>
                     {modalType === "delete" ? (
-                        <Button className="delete-modal" onClick={handleDelete}>
+                        <Button className="delete-modal" onClick={() => handleDelete(endpoint)}>
                             <p className="font-source-sans-pro font-bold">Delete</p>
                         </Button>
                     ) : (
-                        <Button className="edit-modal" onClick={handleEdit}>
+                        <Button className="edit-modal" onClick={() => handleEdit(endpoint)}>
                             <p className="font-source-sans-pro font-bold">Save</p>
                         </Button>
                     )}
