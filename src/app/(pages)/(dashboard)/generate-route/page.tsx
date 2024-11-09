@@ -8,7 +8,7 @@ export default function Page() {
     <>
       <h1 className="font-bold"> Generate Route</h1>
       <main className="flex">
-        <div className="w-1/4 h-full flex flex-col space-y-3 p-4">
+        <div className="w-1/4 h-fit flex flex-col space-y-3 p-4">
           <h2 className="font-bold content-left"> Route Overview</h2>
 
           <div className="grid gap-6 sm:grid-rows-2 lg:grid-rows-3">
@@ -20,7 +20,7 @@ export default function Page() {
           <button className="w-full bg-indigo-100 rounded-lg text-textC font-bold font-roboto py-2"><h2>Generate Route</h2></button>
         </div>
 
-        <div className="w-3/4 h-full flex space-y-3 p-4">
+        <div className="w-3/4 h-fit flex space-y-3 p-4 overflow-hidden">
           <DynamicMapComponent />
         </div>
       </main>
