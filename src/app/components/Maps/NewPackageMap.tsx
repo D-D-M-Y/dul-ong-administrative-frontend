@@ -118,7 +118,7 @@ const MapComponent: FC<MapComponentProps> = ({onMarkerChange}) => {
             {/* 12. Show the loader if loading. */}
             {loading && <Loader />}
             {/* 14. Add the map container. */}
-            <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
+            <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "80vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {/* 16. Render the markers */}
