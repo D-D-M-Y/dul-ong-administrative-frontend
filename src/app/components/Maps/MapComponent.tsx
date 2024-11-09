@@ -41,12 +41,12 @@ const fooIcon = new L.Icon({
 });
 
 //3. Loader component for showing loading animation.
-const Loader = () => {
+export const Loader = () => {
     return (
         <div className="absolute z-[10000] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <svg
                 aria-hidden="true"
-                className="w-24 h-24 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                className="w-24 h-24 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-violet-700"
                 viewBox="0 0 100 101"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +64,6 @@ const Loader = () => {
     );
 };
 
-const multiPolyline: any[] = [];
 
 //4. Main component definition.
 const MapComponent: FC = () => {
@@ -170,7 +169,7 @@ const MapComponent: FC = () => {
             {/* 13. Show the loader if loading. */}
             {loading && <Loader />}
             {/* 14. Add the map container. */}
-            <div style={{ height: "100vh", width: "100vw" }}>
+            <div style={{ height: "80vh", width: "100vw" }}>
                 <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100%", width: "100%", borderRadius: "0 20px 20px 0" }}>
                     {/* 15. Set the tile layer for the map. */}
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
