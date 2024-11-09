@@ -1,3 +1,5 @@
+// not connected to backend, no sorting function implemented yet
+
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -23,7 +25,7 @@ interface Entity {
 }
 
 const entities: Entity[] = [
-  // Populate entity data here
+  // Static entity (no endpoint exists yet)
   {
     routeID: "CUS000001",
     date: new Date(),
@@ -47,18 +49,20 @@ const fields = [
 
 const MyGrid = () => {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null); 
+  // const [endpoint, setEndpoint] = useState<"/edit" | "/delete" | null>(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
 
-  const handleModalToggle = (isOpen: boolean) => {
-    setIsModalOpen(isOpen);
-  };
+  // const handleModalToggle = (isOpen: boolean) => {
+  //   setIsModalOpen(isOpen);
+  // };
 
-  const openModal = (entity: Entity, type: "edit" | "delete") => {
-    setSelectedEntity(entity);
-    setModalType(type); // Set the modal type
-    setIsModalOpen(true);
-  };
+  // const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "/edit" | "/delete") => {
+  //   setSelectedEntity(entity);
+  //   setEndpoint(endpoint);
+  //   setModalType(type); // Set the modal type
+  //   setIsModalOpen(true);
+  // };
 
   const headers = [
     { name: 'Route ID' },
@@ -69,66 +73,85 @@ const MyGrid = () => {
     { name: 'Vehicle ID' },
     { name: 'Gas' },
     { name: 'Carrying Capacity' },
-    { name: 'Actions' },
+    // { name: 'Actions' },
   ];
   return (
     <>
-    <table>
-      <thead className='font-source_sans_pro'>
-        <tr>
-          {headers.map((header) => (
-            <th key={header.name}>
-              {header.name}
-              {header.name !== 'Actions' && (
-                /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                   {sortState[header.name] === 'idle' ? (
-                     <CiCircleChevDown />
-                   ) : sortState[header.name] === 'ascending' ? (
-                     <CiCircleChevUp />
-                   ) : (
-                     <CiCircleChevDown /> // Descending state (optional icon)
-                   )}
-                 </button>*/
-                <button className='ml-1'> <CiCircleChevDown /></button>)}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className='font-ptsans'>
-        {entities.map((entity) => (
-          <tr key={entity.routeID}>
-            <td>{entity.routeID}</td>
-            <td>{entity.date.toLocaleDateString()}</td>
-            <td>{entity.route}</td>
-            <td>{entity.cargoQuantity}</td>
-            <td>{entity.transportationCost}</td>
-            <td>{entity.vehicleID}</td>
-            <td>{entity.gas}</td>
-            <td>{entity.carryingCapacity}</td>
-             <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit")}><div className="button-content">
-                    <CiEdit size={24} />
-                </div></Button>
-                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete")}><div className="button-content">
+      <table>
+        <thead className='font-source_sans_pro'>
+          <tr>
+            {headers.map((header) => (
+              <th className='p-4' key={header.name}>
+                {header.name}
+                {header.name !== 'Actions' && (
+                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
+                     {sortState[header.name] === 'idle' ? (
+                       <CiCircleChevDown />
+                     ) : sortState[header.name] === 'ascending' ? (
+                       <CiCircleChevUp />
+                     ) : (
+                       <CiCircleChevDown /> // Descending state (optional icon)
+                     )}
+                   </button>*/
+                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className='font-ptsans'>
+          {entities.map((entity) => (
+            <tr key={entity.routeID}>
+              <td className='p-4'>{entity.routeID}</td>
+              <td className='p-4'>{entity.date.toLocaleDateString()}</td>
+              <td className='p-4'>{entity.route}</td>
+              <td className='p-4'>{entity.cargoQuantity}</td>
+              <td className='p-4'>{entity.transportationCost}</td>
+              <td className='p-4'>{entity.vehicleID}</td>
+              <td className='p-4'>{entity.gas}</td>
+              <td className='p-4'>{entity.carryingCapacity}</td>
+              {/* <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "/edit")}><div className="button-content">
+                <CiEdit size={24} />
+              </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "/delete")}><div className="button-content">
                   <CiTrash size={24} />
                 </div></Button>
-                </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    {isModalOpen && selectedEntity && (
+              </td> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* {isModalOpen && selectedEntity && (
         <Modal
           onToggle={handleModalToggle}
+          endpoint={endpoint}
           selectedEntity={selectedEntity}
           modalType={modalType}
-          fields = {fields}
+          fields={fields}
         />
-      )}
-          </>
+      )} */}
+    </>
   );
 };
 
 export default function Page() {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // useEffect(() => {
+  //   const fetchEntities = async () => {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/route_history`);
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to fetch entities: ${response.statusText}`);
+  //       }
+  //       const data = await response.json();
+  //       setEntities(data); // Set the entities state
+  //     } catch (error) {
+  //       console.error('Error fetching entities:', error);
+  //     }
+  //   };
+
+  //   fetchEntities();
+  // }, []);
   return (
     <div>
       {/* Header */}
@@ -143,15 +166,13 @@ export default function Page() {
         </div>
 
         {/* Body */}
-        <div className="customborder-body">
-          <div className='p-5'>
-            {/* <SearchBar /> */}
-            <div className="grid table">
-              <MyGrid />
-            </div>
+        <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
+          {/* <SearchBar query={searchQuery} setQuery={setSearchQuery} /> */}
+          <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
+            <MyGrid />
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
