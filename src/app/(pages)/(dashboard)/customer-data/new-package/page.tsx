@@ -15,7 +15,6 @@ interface FormValues {
   packageName: string;
   amount: number | null;
   packageSize: number | null;
-  packageWeight: number | null;
   paymentMethod: string;
   paymentAmount: number | null;
   date: string;
@@ -32,7 +31,6 @@ interface FormErrors {
   packageName?: string;
   amount?: number | null;
   packageSize?: number | null;
-  packageWeight?: number | null;
   paymentMethod?: string;
   paymentAmount?: number | null;
   date?: string;
@@ -56,7 +54,6 @@ export default function Page() {
     packageName: '',
     amount: null,
     packageSize: null,
-    packageWeight: null,
     paymentMethod: '',
     paymentAmount: null,
     date: '',
@@ -95,7 +92,6 @@ export default function Page() {
     if (!formValues.longitude) errors.longitude = 'Longitude is required.';
     if (!formValues.packageName) errors.packageName = 'Package Name is required.';
     if (!formValues.packageSize) errors.packageSize = 'Package Size is required.';
-    if (!formValues.packageWeight) errors.packageWeight = 'Package Weight is required.';
     if (!formValues.paymentMethod) errors.paymentMethod = 'Payment Method is required.';
     if (!formValues.paymentAmount) errors.paymentAmount = 'Payment Amount is required.';
     if (!formValues.date) errors.date = 'Date is required.';
@@ -130,7 +126,6 @@ export default function Page() {
             packageName: '',
             amount: null,
             packageSize: null,
-            packageWeight: null,
             paymentMethod: '',
             paymentAmount: null,
             date: '',
@@ -164,7 +159,6 @@ export default function Page() {
       packageName: '',
       amount: null,
       packageSize: null,
-      packageWeight: null,
       paymentMethod: '',
       paymentAmount: null,
       date: '',
@@ -383,7 +377,7 @@ export default function Page() {
                       </div>
                       <h2 className="mt-5 text-base font-semibold leading-7 text-gray-900">Package Details</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
-                        <div className="sm:col-span-3">
+                        <div className="sm:col-span-full">
                           <div className="mt-2">
                             <input
                               type="text"
@@ -432,22 +426,7 @@ export default function Page() {
                             </select>
                             {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
-                        </div>
-                        <div className="sm:col-span-3">
-                          <div className="mt-2">
-                            <input
-                              type="number"
-                              name="packageWeight"
-                              id="packageWeight"
-                              autoComplete="packageWeight"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Package Weight'
-                              value={formValues.packageWeight ?? ''}
-                              onChange={(e) => setFormValues({ ...formValues, packageWeight: parseFloat(e.target.value) })}
-                            />
-                            {submitted && errors.packageWeight && <p className="text-red-500">{errors.packageWeight}</p>}
-                          </div>
-                        </div>
+                        </div>  
                       </div>
                       <h2 className="mt-5 text-base font-semibold leading-7 text-gray-900">Transaction Details</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
