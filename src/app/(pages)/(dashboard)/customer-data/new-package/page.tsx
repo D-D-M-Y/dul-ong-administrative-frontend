@@ -14,7 +14,11 @@ interface FormValues {
   longitude: number | null;
   packageName: string;
   amount: number | null;
-  packageSize: number | null;
+  packageSize: string;
+  customLength?: number | null;
+  customWidth?: number | null;
+  customHeight?: number | null;
+  customWeight?: number | null;
   paymentMethod: string;
   paymentAmount: number | null;
   date: string;
@@ -30,7 +34,11 @@ interface FormErrors {
   longitude?: number | null;
   packageName?: string;
   amount?: number | null;
-  packageSize?: number | null;
+  packageSize?: string;
+  customLength?: number | null;
+  customWidth?: number | null;
+  customHeight?: number | null;
+  customWeight?: number | null;
   paymentMethod?: string;
   paymentAmount?: number | null;
   date?: string;
@@ -53,7 +61,11 @@ export default function Page() {
     longitude: null,
     packageName: '',
     amount: null,
-    packageSize: null,
+    packageSize: '',
+    customLength: null,
+    customWidth: null,
+    customHeight: null,
+    customWeight: null,
     paymentMethod: '',
     paymentAmount: null,
     date: '',
@@ -92,10 +104,18 @@ export default function Page() {
     if (!formValues.longitude) errors.longitude = 'Longitude is required.';
     if (!formValues.packageName) errors.packageName = 'Package Name is required.';
     if (!formValues.packageSize) errors.packageSize = 'Package Size is required.';
+    if (formValues.packageSize === "Custom") {
+      if (!formValues.customLength) errors.customLength = 'Length is required.';
+      if (!formValues.customWidth) errors.customWidth = 'Width is required.';
+      if (!formValues.customHeight) errors.customHeight = 'Height is required.';
+      if (!formValues.customWeight) errors.customWeight = 'Weight is required.';
+    }
     if (!formValues.paymentMethod) errors.paymentMethod = 'Payment Method is required.';
     if (!formValues.paymentAmount) errors.paymentAmount = 'Payment Amount is required.';
     if (!formValues.date) errors.date = 'Date is required.';
     if (!formValues.preferredDelivery) errors.preferredDelivery = 'Preferred Delivery is required.';
+
+
     setErrors(errors);
     // Check if there are any errors
     const isValid = Object.keys(errors).length === 0;
@@ -125,7 +145,11 @@ export default function Page() {
             longitude: null,
             packageName: '',
             amount: null,
-            packageSize: null,
+            packageSize: '',
+            customLength: null,
+            customWidth: null,
+            customHeight: null,
+            customWeight: null,
             paymentMethod: '',
             paymentAmount: null,
             date: '',
@@ -158,7 +182,7 @@ export default function Page() {
       longitude: null,
       packageName: '',
       amount: null,
-      packageSize: null,
+      packageSize: '',
       paymentMethod: '',
       paymentAmount: null,
       date: '',
@@ -409,7 +433,7 @@ export default function Page() {
                         </div>
                         <div className="sm:col-span-3">
                           <div className="mt-2">
-                          <select
+                            <select
                               required
                               name="packageSize"
                               id="packageSize"
@@ -417,16 +441,62 @@ export default function Page() {
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               style={{ height: '2.3rem' }}
                               value={formValues.packageSize ?? ''}
-                              onChange={(e) => setFormValues({ ...formValues, packageSize: parseInt(e.target.value) })}
+                              onChange={(e) => setFormValues({ ...formValues, packageSize: e.target.value })}
                             >
                               <option defaultValue="" hidden style={{ color: "#999" }}>Package Size</option>
-                              <option value="1">Small (4.45 x 16.51 x 27.94)</option>
-                              <option value="2">Medium (4.45 x 23.5 x 35.6)</option>
-                              <option value="3">Large (4.45 x 30.46 x 45.72)</option>
+                              <option value="Small">Small (4.45 x 16.51 x 27.94)</option>
+                              <option value="Medium">Medium (4.45 x 23.5 x 35.6)</option>
+                              <option value="Large">Large (4.45 x 30.46 x 45.72)</option>
+                              <option value="Custom">Custom</option>
                             </select>
                             {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
-                        </div>  
+                        </div>
+                        <div className="sm:col-span-full">
+                          <div className="mt-2">
+                          {formValues.packageSize === "Custom" && (
+                            <div className="mt-4">
+                              <div className="flex items-center space-x-4">
+                                <input
+                                  type="number"
+                                  placeholder="Length (cm)"
+                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                  value={formValues.customLength ?? ''}
+                                  onChange={(e) => setFormValues({ ...formValues, customLength: parseFloat(e.target.value) })}
+                                />
+                                {submitted && errors.customLength && <p className="text-red-500">{errors.customLength}</p>}
+                                <input
+                                  type="number"
+                                  placeholder="Width (cm)"
+                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                  value={formValues.customWidth ?? ''}
+                                  onChange={(e) => setFormValues({ ...formValues, customWidth: parseFloat(e.target.value) })}
+                                />
+                                {submitted && errors.customWidth && <p className="text-red-500">{errors.customWidth}</p>}
+
+                                <input
+                                  type="number"
+                                  placeholder="Height (cm)"
+                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                  value={formValues.customHeight ?? ''}
+                                  onChange={(e) => setFormValues({ ...formValues, customHeight: parseFloat(e.target.value) })}
+                                />
+                                {submitted && errors.customHeight && <p className="text-red-500">{errors.customHeight}</p>}
+                              </div>
+                              <div className="mt-3">
+                                <input
+                                  type="number"
+                                  placeholder="Weight (kg)"
+                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                  value={formValues.customWeight ?? ''}
+                                  onChange={(e) => setFormValues({ ...formValues, customWeight: parseFloat(e.target.value) })}
+                                />
+                                {submitted && errors.customWeight && <p className="text-red-500">{errors.customWeight}</p>}
+                              </div>
+                            </div>
+                          )}
+                          </div>
+                        </div>
                       </div>
                       <h2 className="mt-5 text-base font-semibold leading-7 text-gray-900">Transaction Details</h2>
                       <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
