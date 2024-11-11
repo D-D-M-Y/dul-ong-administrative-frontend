@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import "./Modal.css";
 import Button from '@mui/material/Button';
 import { RiCloseCircleFill } from "react-icons/ri";
+import dynamic from "next/dynamic";
+
+const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPackageMap"), { ssr: false });
+
 
 const mapApiToFormData = (data) => ({
     ...data,
@@ -24,13 +28,27 @@ const mapFormDataToApi = (data) => ({
 });
 
 export default function Modal({ onToggle, selectedEntity, modalType, fields, endpoint }) {
+    const [markerCoords, setMarkerCoords] = useState(null);
+
     const [formData, setFormData] = useState(mapApiToFormData(selectedEntity || {}));
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
         setFormData(mapApiToFormData(selectedEntity || {})); // Update form data when selectedEntity changes
-    }, [selectedEntity]);
+        if (
+            markerCoords &&
+            (formData.latitude !== markerCoords[0] ||
+                formData.longitude !== markerCoords[1])
+        ) {
+            setFormData((prev) => ({
+                ...prev,
+                latitude: markerCoords[0],
+                longitude: markerCoords[1],
+            }));
+        }
+
+    }, [selectedEntity, markerCoords]);
 
     const toggleModal = () => {
         onToggle && onToggle(false); // Call the callback if provided
@@ -120,66 +138,70 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
     };
 
     return (
-        <div className="modal">
-            <div className="overlay" onClick={toggleModal}></div>
-            <div className="modal-content">
-                <h2 className="font-roboto font-bold text-[36px] text-center flex flex-col justify-center items-center">
+        <div className="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="overlay fixed inset-0" onClick={toggleModal}></div>
+            <div className="modal-content inline-flex flex-col items-center p-8 bg-white rounded-lg shadow-lg max-w-screen-lg w-full">
+                {/* Modal Header */}
+                <h2 className="text-2xl font-bold text-center mb-4">
                     {modalType === "delete" ? "Delete" : "Edit Entry"}
                 </h2>
+
+                {/* Modal Body */}
                 {modalType === "delete" ? (
-                    <p className="font-source-sans-pro text-[24px] mt-4 mb-4">Are you sure you want to delete this item?</p>
+                    <p className="text-lg mb-4">Are you sure you want to delete this item?</p>
                 ) : (
-                    <form onSubmit={handleSubmit} className={`grid ${fields.length > 5 ? 'grid-cols-2 gap-4' : 'grid-cols-1 gap-2'}`}>
-                        {fields.map((field) => (
-                            <div className="flex flex-col" key={field.name}>
-                                <label className="font-source_sans_pro">{field.label}:</label>
-                                {field.type === "dropdown" ? (
-                                    <select
-                                        name={field.name}
-                                        value={formData[field.name] || ''}
-                                        onChange={handleChange}
-                                        className="p-2 border rounded font-ptsans"
-                                    >
-                                        {field.options.map((option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    <input
-                                        type={field.type}
-                                        name={field.name}
-                                        value={formData[field.name] || ''}
-                                        onChange={handleChange}
-                                        className="p-2 border rounded font-ptsans"
-                                    />
-                                )}
-                                {submitted && errors[field.name] && (
-                                    <span className="text-red-500 text-xs">{errors[field.name]}</span>
-                                )}
-                            </div>
-                        ))}
-                    </form>
+                    <div className="flex flex-col md:flex-row gap-4 w-full">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                            {fields.map((field) => (
+                                <div className="flex flex-col" key={field.name}>
+                                    <label>{field.label}:</label>
+                                    {field.type === "dropdown" ? (
+                                        <select name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="p-2 border rounded">
+                                            {field.options.map((option) => (
+                                                <option key={option} value={option}>{option}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <input
+                                            type={field.type}
+                                            name={field.name}
+                                            value={
+                                                field.name === "latitude" && markerCoords ? markerCoords[0] :
+                                                    field.name === "longitude" && markerCoords ? markerCoords[1] :
+                                                        formData[field.name] || ''
+                                            }
+                                            onChange={handleChange}
+                                            className="p-2 border rounded"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </form>
+                        {endpoint === "customer_data/edit" && (
+                            <div className="flex-shrink w-full md:w-[300px] lg:w-[350px]">
+                            <DynamicMapComponent width="100%" height="450px" onMarkerChange={(coords) => setMarkerCoords(coords)} />
+                        </div>
+                        )}
+                        
+                    </div>
                 )}
+
+                {/* Modal Actions */}
                 <div className="modal-actions flex justify-center space-x-4 pt-4">
-                    <Button className="cancel-modal" onClick={toggleModal}>
-                        <p className="font-source-sans-pro font-bold">Cancel</p>
-                    </Button>
+                    <Button className="cancel-modal" onClick={toggleModal}>Cancel</Button>
                     {modalType === "delete" ? (
-                        <Button className="delete-modal" onClick={() => handleDelete(endpoint)}>
-                            <p className="font-source-sans-pro font-bold">Delete</p>
-                        </Button>
+                        <Button className="delete-modal" onClick={() => handleDelete(endpoint)}>Delete</Button>
                     ) : (
-                        <Button className="edit-modal" onClick={() => handleEdit(endpoint)}>
-                            <p className="font-source-sans-pro font-bold">Save</p>
-                        </Button>
+                        <Button className="edit-modal" onClick={() => handleEdit(endpoint)}>Save</Button>
                     )}
                 </div>
-                <button className="close-modal" onClick={toggleModal}>
+
+                <button className="close-modal absolute top-4 right-4" onClick={toggleModal}>
                     <RiCloseCircleFill size={25} />
                 </button>
             </div>
         </div>
+
+
     );
 }
