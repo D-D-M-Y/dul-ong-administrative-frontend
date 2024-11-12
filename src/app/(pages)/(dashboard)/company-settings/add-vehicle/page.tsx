@@ -156,8 +156,9 @@ export default function Page() {
         {/* Folder */}
         <div className="flex items-baseline font-source_sans_pro">
           <div className="customborder-link">
-            <h2>Manage Admins</h2>
-          </div>
+          <Link href="/company-settings">
+              <h2>Manage Admins</h2>
+            </Link>          </div>
           <div className="customborder-link">
             <Link href="/company-settings/manage-foos">
               <h2>Manage FOOs</h2>
