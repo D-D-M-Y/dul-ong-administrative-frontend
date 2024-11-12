@@ -1,52 +1,34 @@
-
-//1. Import dependencies for React, Leaflet and other functionalities.
-import React, { useState, useEffect, useRef, FC } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents, useMap, Polyline } from "react-leaflet";
+import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 import "leaflet-defaulticon-compatibility";
 import L from "leaflet";
 
-//2. Define the interface for MarkerData.
 interface MarkerData {
     coordinates: [number, number];
     finalcolor: L.Icon;
     customerNumber: number;
+    height: string;
+    width: string;
 }
 
 type PolylineData = { lat: number; lng: number; finalcolor: string }[][];
 
+interface MapComponentProps {
+    markers: MarkerData[];
+    convertedPolyline: PolylineData;
+    loading: boolean;
+    height: string;
+    width: string;
+}
 
-const purpleIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
-
-const limeIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
-
-const fooIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
-
-//3. Loader component for showing loading animation.
-const Loader = () => {
+export const Loader = () => {
     return (
         <div className="absolute z-[10000] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <svg
                 aria-hidden="true"
-                className="w-24 h-24 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                className="w-24 h-24 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-violet-700"
                 viewBox="0 0 100 101"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -64,140 +46,49 @@ const Loader = () => {
     );
 };
 
-const multiPolyline: any[] = [];
+const fooIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
 
-//4. Main component definition.
-const MapComponent: FC = () => {
-    //5. Initialize local state.
-    const [markers, setMarkers] = useState<MarkerData[]>([]);
-    const [markerData, setMarkerData] = useState<MarkerData | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
-    const customerCounts: { [vehicleId: string]: number } = {};
-
-    //6. Declare useRef to reference map.
-    const mapRef = useRef<any | null>(null);
-    //7. ZoomHandler component for handling map zoom events.
-    const ZoomHandler: FC = () => {
-        //8. Use Leaflet's useMap hook.
-        const map = useMap();
-        //9. Function to fly map to given coordinates.
-        const flyToMarker = (coordinates: [number, number], zoom: number) => {
-            if (coordinates && typeof coordinates[0] !== "undefined") {
-                map.flyTo(coordinates, zoom, {
-                    animate: true,
-                    duration: 1.5,
-                });
-            }
-        };
-        useMapEvents({
-            zoomend: () => {
-                setLoading(false);
-            },
-        });
-        //10. useEffect to trigger the map fly when markerData changes.
-        useEffect(() => {
-            if (markerData) {
-                if (markerData.coordinates && typeof markerData.coordinates[0] !== "undefined") {
-                    flyToMarker(markerData.coordinates, 11);
-                }
-            }
-        }, [markerData]);
-
-        return null;
-    };
-
-    useEffect(() => {
-        const customerCounts: { [vehicleId: string]: number } = {};
-        
-        //11. API Call for Customer Nodes
-        const fetchMarkers = async () => {
-            setLoading(true);
-            const query = await fetch("http://127.0.0.1:8000/api/customers");
-            const response = await query.json();
-            console.log("Customer Nodes:", response);
-    
-            response.forEach((data: { vehicleid: string }) => {
-                if (!customerCounts[data.vehicleid]) {
-                    customerCounts[data.vehicleid] = 1;
-                }
-            });
-    
-            setMarkers(response.map((data: { latitude: string, longitude: string, vehicleid: string }) => {
-                const customerNumber = customerCounts[data.vehicleid];
-                customerCounts[data.vehicleid]++;    
-                return {
-                    coordinates: [parseFloat(data.latitude), parseFloat(data.longitude)],
-                    finalcolor: parseInt(data.vehicleid) === 1 ? purpleIcon : limeIcon,
-                    customerNumber
-                };
-            }));
-    
-            setLoading(false);
-        };
-        fetchMarkers();
-
-        //12. API Call for Routes
-        const fetchRoutes = async () => {
-            setLoading(true);
-            const query = await fetch("http://127.0.0.1:8000/api/");
-            const response = await query.json();
-            console.log('Routes for Vehicles:', response);
-            const apiPolylines = response || [];
-            const convertedData = apiPolylines.reduce((finalData: any[], coordinates: any) => {
-                const finalcolor = parseInt(coordinates.vehicleid) === 1 ? 'purple' : 'lime';
-                (finalData[coordinates.vehicleid] = finalData[coordinates.vehicleid] || []).push({
-                    lat: coordinates.latitude, lng:
-                        coordinates.longitude, finalcolor
-                });
-                return finalData
-            }, {})
-
-            console.log('Converted Data:', convertedData);
-
-            const finalData: any = (Object.values(convertedData))
-            console.log('Final Data:', finalData);
-            setConvertedPolyline(finalData);
-
-            setLoading(false);
-        };
-
-        fetchRoutes();
-    }, []);
-
-    return (
-        <>
-            {/* 13. Show the loader if loading. */}
-            {loading && <Loader />}
-            {/* 14. Add the map container. */}
-            <MapContainer center={[10.6873430, 122.5166238]} zoom={13} style={{ height: "100vh", width: "100vw", borderRadius: "0 20px 20px 0" }}>
-                {/* 15. Set the tile layer for the map. */}
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                {/* 16. Render the markers */}
-                {markers.map((marker, index) => (
-                    <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
-                        <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
-                        <Popup>{`${marker.coordinates.join(",")}`}</Popup>
+// Create the functional component with forwardRef
+const MapComponent = forwardRef<HTMLDivElement, MapComponentProps>(
+    ({ markers, convertedPolyline, loading, height, width }, ref) => {
+        return (
+            <>
+                <MapContainer
+                    center={[10.687343, 122.5166238]}
+                    zoom={13}
+                    style={{ height, width, borderRadius: "0 20px 20px 0" }}
+                >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {markers.map((marker, index) => (
+                        <Marker key={index} position={marker.coordinates} icon={marker.finalcolor}>
+                            <Tooltip direction="bottom" permanent>{`Customer ${marker.customerNumber}`}</Tooltip>
+                            <Popup>{`${marker.coordinates.join(",")}`}</Popup>
+                        </Marker>
+                    ))}
+                    <Marker position={[10.713347913370217, 122.56159364827236]} icon={fooIcon}>
+                        <Tooltip direction="right" permanent>
+                            Field Operations Officer
+                        </Tooltip>
+                        <Popup>Field Operations Officer</Popup>
                     </Marker>
-                ))}
-                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
-                <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
+                    <Marker position={[10.687343, 122.5166238]}>
+                        <Tooltip direction="right" permanent>
+                            Origin Depot
+                        </Tooltip>
+                        <Popup>Origin Depot</Popup>
+                    </Marker>
+                    {convertedPolyline.map((coords, index) => (
+                        <Polyline key={index} positions={coords} color={coords[0]?.finalcolor || "purple"} />
+                    ))}
+                </MapContainer>
+            </>
+        );
+    }
+);
 
-                    <Popup>Field Operations Officer</Popup>
-                </Marker>
-                <Marker position={[10.6873430, 122.5166238]}>
-                    <Tooltip direction="right" permanent>{`Origin Depot`}</Tooltip>
-                    <Popup>Origin Depot</Popup>
-                </Marker>
-                {/* 17. Render each Polyline separately with its color */}
-                {convertedPolyline.map((coords, index) => (
-                    <Polyline key={index} positions={coords} color={coords[1].finalcolor} />
-                ))}
-                {/* 18. Include the ZoomHandler for zoom events. */}
-                <ZoomHandler />
-            </MapContainer>
-        </>
-    );
-};
-//19. Export the MapComponent.
 export default MapComponent;

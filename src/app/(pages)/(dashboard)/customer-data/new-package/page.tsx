@@ -13,8 +13,12 @@ interface FormValues {
   latitude: number | null;
   longitude: number | null;
   packageName: string;
-  packageSize: number | null;
-  packageWeight: number | null;
+  amount: number | null;
+  packageSize: string;
+  customLength?: number | null;
+  customWidth?: number | null;
+  customHeight?: number | null;
+  customWeight?: number | null;
   paymentMethod: string;
   paymentAmount: number | null;
   date: string;
@@ -29,13 +33,26 @@ interface FormErrors {
   latitude?: number | null;
   longitude?: number | null;
   packageName?: string;
-  packageSize?: number | null;
-  packageWeight?: number | null;
+  amount?: number | null;
+  packageSize?: string;
+  customLength?: number | null;
+  customWidth?: number | null;
+  customHeight?: number | null;
+  customWeight?: number | null;
   paymentMethod?: string;
   paymentAmount?: number | null;
   date?: string;
   preferredDelivery?: string;
 }
+
+type PackageSize = {
+  pk: number;
+  size_type: string;
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+};
 
 export default function Page() {
   const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
@@ -43,6 +60,7 @@ export default function Page() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [packageSizes, setPackageSizes] = useState<PackageSize[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     customerName: '',
     city: '',
@@ -52,21 +70,26 @@ export default function Page() {
     latitude: null,
     longitude: null,
     packageName: '',
-    packageSize: null,
-    packageWeight: null,
+    amount: null,
+    packageSize: '',
+    customLength: null,
+    customWidth: null,
+    customHeight: null,
+    customWeight: null,
     paymentMethod: '',
     paymentAmount: null,
     date: '',
     preferredDelivery: ''
   });
-  
+
   useEffect(() => {
-    // Reset submitted state on component mount
-    setSubmitted(false);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packages/sizing`)
+      .then((response) => response.json())
+      .then((data: PackageSize[]) => setPackageSizes(data))
+      .catch((error) => console.error("Error fetching package sizes:", error));
   }, []);
 
   useEffect(() => {
-
     if (
       markerCoords &&
       (formValues.latitude !== markerCoords[0] ||
@@ -82,6 +105,7 @@ export default function Page() {
     if (submitted) {
       validateForm();
     }
+
   }, [formValues, markerCoords]);
 
 
@@ -97,24 +121,47 @@ export default function Page() {
     if (!formValues.longitude) errors.longitude = 'Longitude is required.';
     if (!formValues.packageName) errors.packageName = 'Package Name is required.';
     if (!formValues.packageSize) errors.packageSize = 'Package Size is required.';
-    if (!formValues.packageWeight) errors.packageWeight = 'Package Weight is required.';
+    if (formValues.packageSize === "Custom") {
+      if (!formValues.customLength) errors.customLength = 'Length is required.';
+      if (!formValues.customWidth) errors.customWidth = 'Width is required.';
+      if (!formValues.customHeight) errors.customHeight = 'Height is required.';
+      if (!formValues.customWeight) errors.customWeight = 'Weight is required.';
+    }
     if (!formValues.paymentMethod) errors.paymentMethod = 'Payment Method is required.';
     if (!formValues.paymentAmount) errors.paymentAmount = 'Payment Amount is required.';
     if (!formValues.date) errors.date = 'Date is required.';
     if (!formValues.preferredDelivery) errors.preferredDelivery = 'Preferred Delivery is required.';
+
     setErrors(errors);
-    // Check if there are any errors
     const isValid = Object.keys(errors).length === 0;
-    setSubmitted(true); // Track submission attempt
+    setSubmitted(true);
 
     if (isValid) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/add_customer', {
+        // Generate a unique ID for custom package size
+        const packageSizeId = formValues.packageSize === "Custom" ? Date.now() : formValues.packageSize;
+
+        // Prepare customer data with either selected or custom package size ID
+        const customerData = {
+          ...formValues,
+          packageSize: packageSizeId,
+          ...(formValues.packageSize === "Custom" && {
+            id: packageSizeId,
+            size_type: 'Custom',
+            height: formValues.customHeight,
+            length: formValues.customLength,
+            width: formValues.customWidth,
+            weight: formValues.customWeight,
+          }),
+        };
+  
+        // Post data to the add_customer endpoint
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/add_customer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formValues),
+          body: JSON.stringify(customerData),
         });
 
         if (response.ok) {
@@ -130,8 +177,12 @@ export default function Page() {
             latitude: null,
             longitude: null,
             packageName: '',
-            packageSize: null,
-            packageWeight: null,
+            amount: null,
+            packageSize: '',
+            customLength: null,
+            customWidth: null,
+            customHeight: null,
+            customWeight: null,
             paymentMethod: '',
             paymentAmount: null,
             date: '',
@@ -153,6 +204,8 @@ export default function Page() {
     }
   };
 
+
+
   const handleClear = () => {
     setFormValues({
       customerName: '',
@@ -163,8 +216,8 @@ export default function Page() {
       latitude: null,
       longitude: null,
       packageName: '',
-      packageSize: null,
-      packageWeight: null,
+      amount: null,
+      packageSize: '',
       paymentMethod: '',
       paymentAmount: null,
       date: '',
@@ -178,7 +231,7 @@ export default function Page() {
     const fetchSuggestions = async () => {
       if (formValues.customerName.length > 1) {
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/customer_data?name=${formValues.customerName}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/${formValues.customerName}`);
           const data = await response.json();
           const filteredSuggestions = data
             .filter((customer: { name: string }) =>
@@ -237,7 +290,7 @@ export default function Page() {
 
 
         {/* Left Side Form */}
-        <div className='flex font-ptsans'>
+        <div className='flex flex-col lg:flex-row font-ptsans'>
           <div className='w-1/3 h-fit flex-none'>
             <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
@@ -398,9 +451,24 @@ export default function Page() {
                             {submitted && errors.packageName && <p className="text-red-500">{errors.packageName}</p>}
                           </div>
                         </div>
-                        <div className="sm:col-span-full">
+                        <div className="sm:col-span-3">
                           <div className="mt-2">
-                          <select
+                            <input
+                              type="number"
+                              name="amount"
+                              id="amount"
+                              autoComplete="amount"
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                              placeholder='Amount of Items'
+                              value={formValues.amount ?? ''}
+                              onChange={(e) => setFormValues({ ...formValues, amount: parseInt(e.target.value) })}
+                            />
+                            {submitted && errors.packageName && <p className="text-red-500">{errors.packageName}</p>}
+                          </div>
+                        </div>
+                        <div className="sm:col-span-3">
+                          <div className="mt-2">
+                            <select
                               required
                               name="packageSize"
                               id="packageSize"
@@ -408,29 +476,77 @@ export default function Page() {
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               style={{ height: '2.3rem' }}
                               value={formValues.packageSize ?? ''}
-                              onChange={(e) => setFormValues({ ...formValues, packageSize: parseInt(e.target.value) })}
+                              onChange={(e) => {
+                                const selectedValue = e.target.value;
+                                setFormValues({
+                                  ...formValues,
+                                  packageSize: selectedValue,
+                                });
+                                if (selectedValue !== 'Custom') {
+                                  setFormValues((prev) => ({
+                                    ...prev,
+                                    customLength: null,
+                                    customWidth: null,
+                                    customHeight: null,
+                                    customWeight: null,
+                                  }));
+                                }
+                              }}
                             >
                               <option defaultValue="" hidden style={{ color: "#999" }}>Package Size</option>
-                              <option value="1">Small (4.45 x 16.51 x 27.94)</option>
-                              <option value="2">Medium (4.45 x 23.5 x 35.6)</option>
-                              <option value="3">Large (4.45 x 30.46 x 45.72)</option>
+                              {packageSizes.map((size) => (
+                                <option key={size.pk} value={size.pk}>
+                                  {`${size.size_type}: ${size.length} x ${size.width} x ${size.height} - ${size.weight}kg`}
+                                </option>
+                              ))}
+                              <option value="Custom">Custom</option>
                             </select>
                             {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
                         </div>
+
                         <div className="sm:col-span-full">
                           <div className="mt-2">
-                            <input
-                              type="number"
-                              name="packageWeight"
-                              id="packageWeight"
-                              autoComplete="packageWeight"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                              placeholder='Package Weight'
-                              value={formValues.packageWeight ?? ''}
-                              onChange={(e) => setFormValues({ ...formValues, packageWeight: parseFloat(e.target.value) })}
-                            />
-                            {submitted && errors.packageWeight && <p className="text-red-500">{errors.packageWeight}</p>}
+                            {formValues.packageSize === "Custom" && (
+                              <div className="mt-4">
+                                <div className="flex items-center space-x-4">
+                                  <input
+                                    type="number"
+                                    placeholder="Height (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customHeight ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customHeight: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customHeight && <p className="text-red-500">{errors.customHeight}</p>}
+                                  <input
+                                    type="number"
+                                    placeholder="Length (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customLength ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customLength: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customLength && <p className="text-red-500">{errors.customLength}</p>}
+                                  <input
+                                    type="number"
+                                    placeholder="Width (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customWidth ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customWidth: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customWidth && <p className="text-red-500">{errors.customWidth}</p>}
+                                </div>
+                                <div className="mt-3">
+                                  <input
+                                    type="number"
+                                    placeholder="Weight (kg)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customWeight ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customWeight: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customWeight && <p className="text-red-500">{errors.customWeight}</p>}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -459,7 +575,7 @@ export default function Page() {
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
-                              type="text"
+                              type="number"
                               name="paymentAmount"
                               id="paymentAmount"
                               autoComplete="paymentAmount"
@@ -518,8 +634,8 @@ export default function Page() {
             </div>
           </div>
           {/* Right Side Map */}
-          <div className="w-2/3 h-fit flex">
-            <DynamicMapComponent onMarkerChange={(coords) => setMarkerCoords(coords)} />
+          <div className="flex-1 h-[50vh] lg:h-auto lg:w-2/3">
+            <DynamicMapComponent onMarkerChange={(coords) => setMarkerCoords(coords)} width="100%" height="100%" />
           </div>
         </div>
       </div>

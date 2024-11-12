@@ -1,11 +1,16 @@
+// not connected to backend, no sorting function implemented yet
+
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
   CiCircleChevDown,
+  CiTrash,
+  CiEdit,
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
+import Button from '@mui/material/Button';
 
 interface Entity {
   transactionID: string;
@@ -37,11 +42,29 @@ const entities: Entity[] = [
   // ... more entities
 ];
 
+const fields = [
+  { label: "Payment Method", name: "paymentMethod", type: "text" },
+  { label: "Payment Amount", name: "paymentAmount", type: "number" },
+  { label: "Payment Date", name: "paymentDate", type: "date" }, // Use type "date" for date input
+  { label: "Status", name: "status", type: "text" },
+];
+
 const MyGrid = () => {
-  const handleModalToggle = (isOpen: boolean) => {
-    // Perform any actions needed when modal opens/closes (optional)
-    console.log("Modal is", isOpen ? "Open" : "Closed");
-  };
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  // const [endpoint, setEndpoint] = useState<"transactions/edit" | "transactions/delete" | null>(null);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+
+  // const handleModalToggle = (isOpen: boolean) => {
+  //   setIsModalOpen(isOpen);
+  // };
+
+  // const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "transactions/edit" | "transactions/delete") => {
+  //   setSelectedEntity(entity);
+  //   setEndpoint(endpoint);
+  //   setModalType(type); // Set the modal type
+  //   setIsModalOpen(true);
+  // };
   const headers = [
     { name: 'Transaction ID' },
     { name: 'Payment Method' },
@@ -53,65 +76,98 @@ const MyGrid = () => {
     { name: 'FOO ID' },
     { name: 'Route ID' },
     { name: 'Customer ID' },
-    { name: 'Actions' },
+    // { name: 'Actions' },
   ];
-  /*const handleSortClick = (headerName: string) => {
-    setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
-      const newState = Object.fromEntries(
-        Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
-      ) as 'idle' | 'ascending' | 'descending';
-      return newState;
-    });
-  };} */
+  // const handleSortClick = (headerName: string) => {
+  //   setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
+  //     const newState = Object.fromEntries(
+  //       Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
+  //     ) as 'idle' | 'ascending' | 'descending';
+  //     return newState;
+  //   });
+  // };
 
 
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {headers.map((header) => (
-            <th className='p-4' key={header.name}>
-              {header.name}
-              {header.name !== 'Actions' && (
-                /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                   {sortState[header.name] === 'idle' ? (
-                     <CiCircleChevDown />
-                   ) : sortState[header.name] === 'ascending' ? (
-                     <CiCircleChevUp />
-                   ) : (
-                     <CiCircleChevDown /> // Descending state (optional icon)
-                   )}
-                 </button>*/
-                <button className='ml-1'> <CiCircleChevDown /></button>)}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {entities.map((entity) => (
-          <tr key={entity.transactionID}>
-            <td className='p-4'>{entity.transactionID}</td>
-            <td className='p-4'>{entity.paymentMethod}</td>
-            <td className='p-4'>{entity.paymentAmount}</td>
-            <td className='p-4'>{entity.paymentDate.toLocaleDateString()}</td>
-            <td className='p-4'>{entity.status}</td>
-            <td className='p-4'>{entity.deliveryID}</td>
-            <td className='p-4'>{entity.vehicleID}</td>
-            <td className='p-4'>{entity.fooID}</td>
-            <td className='p-4'>{entity.routeID}</td>
-            <td className='p-4'>{entity.customerID}</td>
-            <td className='p-4'><Modal onToggle={handleModalToggle} /></td>
+    <>
+      <table>
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th className='p-4' key={header.name}>
+                {header.name}
+                {header.name !== 'Actions' && (
+                  // <button type="button" onClick={() => handleSortClick(header.name)}>
+                  //    {sortState[header.name] === 'idle' ? (
+                  //      <CiCircleChevDown />
+                  //    ) : sortState[header.name] === 'ascending' ? (
+                  //      <CiCircleChevUp />
+                  //    ) : (
+                  //      <CiCircleChevDown /> // Descending state (optional icon)
+                  //    )}
+                  //  </button>
+                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+              </th>
+            ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {entities.map((entity) => (
+            <tr key={entity.transactionID}>
+              <td className='p-4'>{entity.transactionID}</td>
+              <td className='p-4'>{entity.paymentMethod}</td>
+              <td className='p-4'>{entity.paymentAmount}</td>
+              <td className='p-4'>{entity.paymentDate.toLocaleDateString()}</td>
+              <td className='p-4'>{entity.status}</td>
+              <td className='p-4'>{entity.deliveryID}</td>
+              <td className='p-4'>{entity.vehicleID}</td>
+              <td className='p-4'>{entity.fooID}</td>
+              <td className='p-4'>{entity.routeID}</td>
+              <td className='p-4'>{entity.customerID}</td>
+              {/* <td className='p-4'><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "transactions/edit")}><div className="button-content">
+                <CiEdit size={24} />
+              </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "transactions/delete")}><div className="button-content">
+                  <CiTrash size={24} />
+                </div></Button>
+              </td> */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* {isModalOpen && selectedEntity && (
+        <Modal
+          onToggle={handleModalToggle}
+          endpoint={endpoint}
+          selectedEntity={selectedEntity}
+          modalType={modalType}
+          fields={fields}
+        />
+      )} */}
+    </>
   );
 };
 
 export default function Page() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [entities, setEntities] = useState<Entity[]>([]);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // useEffect(() => {
+  //   const fetchEntities = async () => {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`);
+  //       if (!response.ok) {
+  //         throw new Error(`Failed to fetch entities: ${response.statusText}`);
+  //       }
+  //       const data = await response.json();
+  //       setEntities(data); // Set the entities state
+  //     } catch (error) {
+  //       console.error('Error fetching entities:', error);
+  //     }
+  //   };
 
+  //   fetchEntities();
+  // }, []);
   return (
     <div>
       {/* Header */}
@@ -143,12 +199,10 @@ export default function Page() {
 
 
         {/* Body */}
-        <div className="customborder-body">
-          <div className="p-5">
-            <SearchBar query={searchQuery} setQuery={setSearchQuery} />
-            <div className="grid table">
-              <MyGrid />
-            </div>
+        <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
+          {/* <SearchBar query={searchQuery} setQuery={setSearchQuery} /> */}
+          <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
+            <MyGrid />
           </div>
         </div>
       </div>

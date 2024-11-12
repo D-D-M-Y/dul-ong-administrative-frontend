@@ -3,9 +3,14 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Modal from '@/app/components/Modal/ActionModal.js';
 import {
+  CiCircleChevUp,
   CiCircleChevDown,
+  CiTrash,
+  CiEdit,
 } from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
+import Button from '@mui/material/Button';
+import { Loader } from "@/app/components/Maps/MapComponent"
 
 interface Entity {
   pk: number;
@@ -23,41 +28,62 @@ function generateName(entity: Entity): string {
   return entity.fname + ' ' + entity.mname + ' ' + entity.lname;
 }
 
-const entities: Entity[] = [];
 
-async function fetchEntities() {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/users/foo');
-    if (!response.ok) {
-      throw new Error(`Failed to fetch entities: ${response.statusText}`);
-    }
-    const data = await response.json();
-    data.forEach((entity: Entity) => {
-      entity.name = generateName(entity);
-    });
-    entities.push(...data);
-  } catch (error) {
-    console.error('Error fetching entities:', error);
-  }
-}
-
-fetchEntities().then(() => {
-  console.log(entities);
-});
+const fields = [
+  { label: "First Name", name: "fname", type: "text" },
+  { label: "Middle Name", name: "mname", type: "text" },
+  { label: "Last Name", name: "lname", type: "text" },
+  { label: "Email", name: "email", type: "text" },
+  { label: "Username", name: "username", type: "text" },
+  { label: "Date Registered", name: "date_registered", type: "text" },
+];
 
 const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: string }) => {
-  const filteredEntities = entities.filter(entity =>
-    entity.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
+  const [endpoint, setEndpoint] = useState<"users/edit" | "users/delete" | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+  const [sortBy, setSortBy] = useState<keyof Entity | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const sortedEntities = entities.sort((a, b) => {
+      if (!sortBy) return 0;
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+  const handleSort = (column: keyof Entity) => {
+    if (sortBy === column) {
+      setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const handleModalToggle = (isOpen: boolean) => {
+    setIsModalOpen(isOpen);
+  };
+
+  const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "users/edit" | "users/delete") => {
+    setSelectedEntity(entity);
+    setEndpoint(endpoint);
+    setModalType(type); // Set the modal type
+    setIsModalOpen(true);
+  };
 
   const headers = [
-    { name: 'ID' },
-    { name: 'Name' },
-    { name: 'Email' },
-    { name: 'Username' },
-    { name: 'Date Added' },
-    { name: 'Last Login' },
-    { name: 'Actions' },
+    { name: 'ID', key: 'pk' as keyof Entity },
+    { name: 'Name', key: 'lname' as keyof Entity },
+    { name: 'Email', key: 'email' as keyof Entity },
+    { name: 'Username', key: 'username' as keyof Entity },
+    { name: 'Date Added', key: 'date_registered' as keyof Entity },
+    { name: 'Last Login', key: null },
+    { name: 'Actions', key: null },
   ];
 
   return (
@@ -68,15 +94,21 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
             {headers.map((header) => (
               <th className="p-4" key={header.name}>
                 {header.name}
-                {header.name !== 'Actions' && (
-                  <button className='ml-1'> <CiCircleChevDown /></button>
+                {header.key && (
+                  <button className='ml-1' onClick={() => handleSort(header.key!)}>
+                    {sortBy === header.key ? (
+                      sortOrder === 'asc' ? <CiCircleChevDown /> : <CiCircleChevUp />
+                    ) : (
+                      <CiCircleChevDown />
+                    )}
+                  </button>
                 )}
               </th>
             ))}
           </tr>
         </thead>
         <tbody className='font-ptsans'>
-          {filteredEntities.map((entity) => (
+          {sortedEntities.map((entity) => (
             <tr key={entity.email}>
               <td className='p-4'>{entity.pk}</td>
               <td className='p-4'>{entity.name}</td>
@@ -84,11 +116,26 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
               <td className='p-4'>{entity.username}</td>
               <td className='p-4'>{entity.date_registered}</td>
               <td className='p-4'>{entity.last_login}</td>
-              <td className='p-4'><Modal onToggle={() => { }} /></td>
+              <td><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "users/edit")}><div className="button-content">
+                <CiEdit size={24} />
+              </div></Button>
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "users/delete")}><div className="button-content">
+                  <CiTrash size={24} />
+                </div></Button>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {isModalOpen && selectedEntity && (
+        <Modal
+          onToggle={handleModalToggle}
+          endpoint={endpoint}
+          selectedEntity={selectedEntity}
+          modalType={modalType}
+          fields={fields}
+        />
+      )}
     </>
   );
 };
@@ -96,33 +143,52 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
 export default function Page() {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
     const fetchEntities = async () => {
+      setLoading(true);
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+        const endpoint = searchQuery
+          ? `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo/${searchQuery}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo?page=${page}&limit=10`;
+
+        const response = await fetch(endpoint);
         if (!response.ok) {
           throw new Error(`Failed to fetch entities: ${response.statusText}`);
         }
         const data = await response.json();
-        
-        // Map through the data to add the 'name' property
-        const updatedData = data.map((entity: Entity) => ({
-          ...entity,
-          name: generateName(entity),
-        }));
-        
-        setEntities(updatedData); // Update entities with names included
+
+        // Check if 'results' exists and is an array
+        if (data.results && Array.isArray(data.results)) {
+          // Map through the data to add the 'name' property
+          const updatedData = data.results.map((entity: Entity) => ({
+            ...entity,
+            name: generateName(entity),
+          }));
+
+          setEntities(updatedData);
+          setTotalPages(data.total_pages);
+        } else {
+          console.error('Expected an array in data.results');
+          setEntities([]); // Clear entities if data structure is unexpected
+        }
       } catch (error) {
         console.error('Error fetching entities:', error);
+      } finally {
+        setLoading(false);
       }
     };
-  
+
     fetchEntities();
-  }, []);
-  
+  }, [page, searchQuery]);
+
   return (
-    <div>
+    <>
+      {loading && <Loader />}
+      
       {/* Header */}
       <div>
         <h1 className='font-bold font-roboto'>
@@ -148,13 +214,33 @@ export default function Page() {
 
         {/* Body */}
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
-          <SearchBar query={searchQuery} setQuery={setSearchQuery} />
+          <SearchBar setSearchQuery={setSearchQuery} />
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
             <MyGrid entities={entities} searchQuery={searchQuery} />
           </div>
         </div>
+
+        <div className="pagination flex justify-between mt-4">
+          {page > 1 && (
+            <button
+              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+              onClick={() => setPage(prev => prev - 1)}
+            >
+              Previous
+            </button>
+          )}
+          <span>Page {page}</span>
+          {page < totalPages && (
+            <button
+              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+              onClick={() => setPage(prev => prev + 1)}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
