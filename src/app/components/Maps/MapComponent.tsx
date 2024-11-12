@@ -9,31 +9,19 @@ interface MarkerData {
     coordinates: [number, number];
     finalcolor: L.Icon;
     customerNumber: number;
+    height: string;
+    width: string;
 }
-
 
 type PolylineData = { lat: number; lng: number; finalcolor: string }[][];
 
-const purpleIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
-
-const limeIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
-
-const fooIcon = new L.Icon({
-    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-});
+interface MapComponentProps {
+    markers: MarkerData[];
+    convertedPolyline: PolylineData;
+    loading: boolean;
+    height: string;
+    width: string;
+}
 
 export const Loader = () => {
     return (
@@ -57,78 +45,23 @@ export const Loader = () => {
         </div>
     );
 };
+
+const fooIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+
 // Create the functional component with forwardRef
-const MapComponent = forwardRef<{ generateRoute: () => void }, {}>((_, ref) => {
-    const [markers, setMarkers] = useState<MarkerData[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
-
-    const fetchMarkers = async () => {
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customers`);
-        const customerCounts: { [vehicleId: string]: number } = {};
-
-        const data = await response.json();
-        setMarkers(
-            data.map((item: { latitude: string; longitude: string; vehicleid: string }) => {
-                const customerNumber = customerCounts[item.vehicleid] || 1;
-                customerCounts[item.vehicleid] = customerNumber + 1;
-                return {
-                    coordinates: [parseFloat(item.latitude), parseFloat(item.longitude)],
-                    finalcolor: parseInt(item.vehicleid) === 1 ? purpleIcon : limeIcon,
-                    customerNumber,
-                };
-            })
-        );
-        setLoading(false);
-    };
-
-    const fetchRoutes = async () => {
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/`);
-        const data = await response.json();
-
-        const convertedData = data.reduce((acc: any[], item: any) => {
-            const finalcolor = parseInt(item.vehicleid) === 1 ? 'purple' : 'lime';
-            (acc[item.vehicleid] = acc[item.vehicleid] || []).push({
-                lat: item.latitude,
-                lng: item.longitude,
-                finalcolor,
-            });
-            return acc;
-        }, {});
-
-        setConvertedPolyline(Object.values(convertedData));
-        setLoading(false);
-    };
-
-    const generateRoute = async () => {
-        console.log("Generate Route function called.");
-        setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/generate`);
-        if (response.ok) {
-            await fetchMarkers();
-            await fetchRoutes();
-        }
-        setLoading(false);
-    };
-
-    // Expose generateRoute via ref
-    useImperativeHandle(ref, () => ({
-        generateRoute,
-    }));
-
-    return (
-        <>
-            {loading && <Loader />}
-            <button onClick={generateRoute} className="absolute top-4 left-4 z-50 bg-blue-500 text-white p-2 rounded">
-                Generate Route
-            </button>
-            <div style={{ height: "80vh", width: "100vw" }}>
+const MapComponent = forwardRef<HTMLDivElement, MapComponentProps>(
+    ({ markers, convertedPolyline, loading, height, width }, ref) => {
+        return (
+            <>
                 <MapContainer
                     center={[10.687343, 122.5166238]}
                     zoom={13}
-                    style={{ height: "100%", width: "100%", borderRadius: "0 20px 20px 0" }}
+                    style={{ height, width, borderRadius: "0 20px 20px 0" }}
                 >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     {markers.map((marker, index) => (
@@ -137,7 +70,7 @@ const MapComponent = forwardRef<{ generateRoute: () => void }, {}>((_, ref) => {
                             <Popup>{`${marker.coordinates.join(",")}`}</Popup>
                         </Marker>
                     ))}
-                    <Marker position={[10.693534016734706, 122.5734651076825]} icon={fooIcon}>
+                    <Marker position={[10.713347913370217, 122.56159364827236]} icon={fooIcon}>
                         <Tooltip direction="right" permanent>
                             Field Operations Officer
                         </Tooltip>
@@ -153,9 +86,9 @@ const MapComponent = forwardRef<{ generateRoute: () => void }, {}>((_, ref) => {
                         <Polyline key={index} positions={coords} color={coords[0]?.finalcolor || "purple"} />
                     ))}
                 </MapContainer>
-            </div>
-        </>
-    );
-});
+            </>
+        );
+    }
+);
 
 export default MapComponent;
