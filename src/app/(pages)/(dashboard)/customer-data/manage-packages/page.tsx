@@ -22,17 +22,19 @@ interface Entity {
   status: string;
 }
 
-const fields = [
-  { label: "Name", name: "packageName", type: "text" },
-  { label: "Size", name: "packageSize", type: "number" },
-  { label: "Cost", name: "paymentAmount", type: "number" },
-  { label: "Amount of Items", name: "amount", type: "number" },
-  { label: "Payment Method", name: "payment_method", type: "text" },
-  { label: "Status", name: "status", type: "text" },
+type PackageSize = {
+  pk: number;
+  size_type: string;
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+};
 
-];
 
-const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: string }) => {
+
+
+const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQuery: string, fields:any }) => {
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
   const [endpoint, setEndpoint] = useState<"packages/edit" | "packages/delete" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,14 +43,14 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const sortedEntities = entities.sort((a, b) => {
-      if (!sortBy) return 0;
-      const aValue = a[sortBy];
-      const bValue = b[sortBy];
+    if (!sortBy) return 0;
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
 
   const handleSort = (column: keyof Entity) => {
     if (sortBy === column) {
@@ -143,6 +145,7 @@ export default function Page() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [packageSizes, setPackageSizes] = useState<PackageSize[]>([]);
 
   useEffect(() => {
     const fetchEntities = async () => {
@@ -166,8 +169,54 @@ export default function Page() {
       }
     };
 
+    const fetchPackageSizes = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packages/sizing`);
+        if (!response.ok) throw new Error('Failed to fetch package sizes');
+        const data = await response.json();
+        setPackageSizes(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchEntities();
+    fetchPackageSizes();
   }, [page, searchQuery]);
+
+  const fields = [
+    { label: "Name", name: "packageName", type: "text" },
+    {
+      label: "Size",
+      name: "packageSize",
+      type: "dropdown",
+      options: [
+        ...packageSizes.map((size) => ({
+          name: `${size.size_type}: ${size.length} x ${size.width} x ${size.height} - ${size.weight}kg`,
+          value: size.pk,
+        })),
+        { name: "Custom", value: `Custom` },  // Add the Custom option
+      ],
+    },
+    { label: "Cost", name: "paymentAmount", type: "number" },
+    { label: "Amount of Items", name: "amount", type: "number" },
+    {
+      label: "Payment Method", name: "payment_method", type: "dropdown", options: [
+        { name: "Cash", value: "CAS" },
+        { name: "Card", value: "CAR" },
+        { name: "GCash", value: "GCA" },
+      ]
+    },
+    {
+      label: "Status", name: "status", type: "dropdown", options: [
+        { name: "Delivered", value: "DEL" },
+        { name: "To be Delivered", value: "TDL" },
+        { name: "Pending", value: "PEN" },
+      ]
+    },
+  
+  ];
+
   return (
     <>
       {loading && <Loader />}
@@ -205,7 +254,7 @@ export default function Page() {
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
           <SearchBar setSearchQuery={setSearchQuery} />
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <MyGrid entities={entities} searchQuery={searchQuery} />
+            <MyGrid entities={entities} searchQuery={searchQuery} fields={fields} />
           </div>
         </div>
 
