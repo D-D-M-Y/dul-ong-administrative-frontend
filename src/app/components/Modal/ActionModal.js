@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/NewPackageMap"), { ssr: false });
 
 
-const mapApiToFormData = (data) => ({
+const mapApiToFormValues = (data) => ({
     ...data,
     customerName: data.name || data.customerName,
     streetAddress: data.street_address || data.streetAddress,
@@ -17,31 +17,45 @@ const mapApiToFormData = (data) => ({
     paymentAmount: data.cost || data.paymentAmount
 });
 
-const mapFormDataToApi = (data) => ({
+const mapFormValuesToApi = (data) => ({
     ...data,
     name: data.customerName,
     street_address: data.streetAddress,
     zip_code: data.zip,
     name: data.packageName,
     zip_code: data.zip,
-    cost: data.paymentAmount
+    cost: data.paymentAmount,
+    height: data.customHeight,
+    length: data.customLength,
+    width: data.customWidth,
+    weight: data.customHeight
 });
 
 export default function Modal({ onToggle, selectedEntity, modalType, fields, endpoint }) {
     const [markerCoords, setMarkerCoords] = useState(null);
 
-    const [formData, setFormData] = useState(mapApiToFormData(selectedEntity || {}));
+    const [formValues, setFormValues] = useState(mapApiToFormValues(selectedEntity || {}));
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
+    const [isCustomSize, setIsCustomSize] = useState(formValues.packageSize === "Custom");
 
+    const handleSizeChange = (e) => {
+        const { name, value } = e.target;
+        handleChange(e);
+        if (name === "packageSize" && value === "Custom") {
+            setIsCustomSize(true);
+        } else if (name === "packageSize") {
+            setIsCustomSize(false);
+        }
+    };
     useEffect(() => {
-        setFormData(mapApiToFormData(selectedEntity || {})); // Update form data when selectedEntity changes
+        setFormValues(mapApiToFormValues(selectedEntity || {})); // Update form data when selectedEntity changes
         if (
             markerCoords &&
-            (formData.latitude !== markerCoords[0] ||
-                formData.longitude !== markerCoords[1])
+            (formValues.latitude !== markerCoords[0] ||
+                formValues.longitude !== markerCoords[1])
         ) {
-            setFormData((prev) => ({
+            setFormValues((prev) => ({
                 ...prev,
                 latitude: markerCoords[0],
                 longitude: markerCoords[1],
@@ -56,13 +70,13 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormValues({ ...formValues, [name]: value });
     };
 
     // Validate form fields
     const validateForm = () => {
-        let error = {};
-        if (!formData) error = '*Required field*';
+        let errors = {};
+        if (!formValues) error = '*Required field*';
         setErrors(errors);
 
         const isValid = Object.keys(errors).length === 0;
@@ -78,7 +92,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
         }
 
         try {
-            const payload = mapFormDataToApi(formData);
+            const payload = mapFormValuesToApi(formValues);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/${endpoint}/${selectedEntity.pk}`, {
                 method,
                 headers: {
@@ -95,6 +109,13 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                 toggleModal(); // Close the modal after submission
                 window.location.reload();
             } else {
+                // Log custom size values before submitting
+                if (isCustomSize) {
+                    console.log('Custom Height:', formValues.customHeight);
+                    console.log('Custom Width:', formValues.customWidth);
+                    console.log('Custom Length:', formValues.customLength);
+                    console.log('Custom Weight:', formValues.customWeight);
+                }
                 console.error('Failed to submit form:', await response.text());
                 alert('Failed to submit entity. Please try again.');
             }
@@ -156,9 +177,9 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                                 <div className="flex flex-col" key={field.name}>
                                     <label>{field.label}:</label>
                                     {field.type === "dropdown" ? (
-                                        <select name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="p-2 border rounded">
+                                        <select name={field.name} value={formValues[field.name] || ''} onChange={handleSizeChange} className="p-2 border rounded">
                                             {field.options.map((option) => (
-                                                <option key={option} value={option}>{option}</option>
+                                                <option key={option.value} value={option.value}>{option.name}</option>
                                             ))}
                                         </select>
                                     ) : (
@@ -168,7 +189,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                                             value={
                                                 field.name === "latitude" && markerCoords ? markerCoords[0] :
                                                     field.name === "longitude" && markerCoords ? markerCoords[1] :
-                                                        formData[field.name] || ''
+                                                        formValues[field.name] || ''
                                             }
                                             onChange={handleChange}
                                             className="p-2 border rounded"
@@ -176,13 +197,58 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                                     )}
                                 </div>
                             ))}
+                            {/* Conditionally render custom size fields */}
+                            {isCustomSize && (
+                                <>
+                                    <div className="flex flex-col">
+                                        <label>Custom Height:</label>
+                                        <input
+                                            type="number"
+                                            name="customHeight"
+                                            value={formValues.customHeight || ""}
+                                            onChange={handleChange}
+                                            className="p-2 border rounded"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Custom Width:</label>
+                                        <input
+                                            type="number"
+                                            name="customWidth"
+                                            value={formValues.customWidth || ""}
+                                            onChange={handleChange}
+                                            className="p-2 border rounded"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Custom Length:</label>
+                                        <input
+                                            type="number"
+                                            name="customLength"
+                                            value={formValues.customLength || ""}
+                                            onChange={handleChange}
+                                            className="p-2 border rounded"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label>Custom Weight:</label>
+                                        <input
+                                            type="number"
+                                            name="customWeight"
+                                            value={formValues.customWeight || ""}
+                                            onChange={handleChange}
+                                            className="p-2 border rounded"
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </form>
                         {endpoint === "customer_data/edit" && (
                             <div className="flex-shrink w-full md:w-[300px] lg:w-[350px]">
-                            <DynamicMapComponent width="100%" height="450px" onMarkerChange={(coords) => setMarkerCoords(coords)} />
-                        </div>
+                                <DynamicMapComponent width="100%" height="450px" onMarkerChange={(coords) => setMarkerCoords(coords)} />
+                            </div>
                         )}
-                        
+
                     </div>
                 )}
 
