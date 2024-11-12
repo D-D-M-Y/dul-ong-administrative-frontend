@@ -23,7 +23,7 @@ interface Entity {
   latitude: string;
   time_window_start: number;
   time_window_end: number;
-  zip: number;
+  zip_code: number;
 }
 
 const fields = [
@@ -127,7 +127,7 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
               <td className='p-4'>{entity.latitude}</td>
               <td className='p-4'>{entity.time_window_start}</td>
               <td className='p-4'>{entity.time_window_end}</td>
-              <td className='p-4'>{entity.zip}</td>
+              <td className='p-4'>{entity.zip_code}</td>
               <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "customer_data/edit")}><div className="button-content">
                 <CiEdit size={24} />
               </div></Button>
