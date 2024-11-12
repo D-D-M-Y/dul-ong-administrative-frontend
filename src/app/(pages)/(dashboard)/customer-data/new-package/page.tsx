@@ -45,12 +45,22 @@ interface FormErrors {
   preferredDelivery?: string;
 }
 
+type PackageSize = {
+  pk: number;
+  size_type: string;
+  length: number;
+  width: number;
+  height: number;
+  weight: number;
+};
+
 export default function Page() {
   const [markerCoords, setMarkerCoords] = useState<number[] | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [packageSizes, setPackageSizes] = useState<PackageSize[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     customerName: '',
     city: '',
@@ -73,7 +83,13 @@ export default function Page() {
   });
 
   useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packages/sizing`)
+      .then((response) => response.json())
+      .then((data: PackageSize[]) => setPackageSizes(data))
+      .catch((error) => console.error("Error fetching package sizes:", error));
+  }, []);
 
+  useEffect(() => {
     if (
       markerCoords &&
       (formValues.latitude !== markerCoords[0] ||
@@ -89,6 +105,7 @@ export default function Page() {
     if (submitted) {
       validateForm();
     }
+
   }, [formValues, markerCoords]);
 
 
@@ -115,20 +132,36 @@ export default function Page() {
     if (!formValues.date) errors.date = 'Date is required.';
     if (!formValues.preferredDelivery) errors.preferredDelivery = 'Preferred Delivery is required.';
 
-
     setErrors(errors);
-    // Check if there are any errors
     const isValid = Object.keys(errors).length === 0;
-    setSubmitted(true); // Track submission attempt
+    setSubmitted(true);
 
     if (isValid) {
       try {
+        // Generate a unique ID for custom package size
+        const packageSizeId = formValues.packageSize === "Custom" ? Date.now() : formValues.packageSize;
+
+        // Prepare customer data with either selected or custom package size ID
+        const customerData = {
+          ...formValues,
+          packageSize: packageSizeId,
+          ...(formValues.packageSize === "Custom" && {
+            id: packageSizeId,
+            size_type: 'Custom',
+            height: formValues.customHeight,
+            length: formValues.customLength,
+            width: formValues.customWidth,
+            weight: formValues.customWeight,
+          }),
+        };
+  
+        // Post data to the add_customer endpoint
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/add_customer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formValues),
+          body: JSON.stringify(customerData),
         });
 
         if (response.ok) {
@@ -171,6 +204,8 @@ export default function Page() {
     }
   };
 
+
+
   const handleClear = () => {
     setFormValues({
       customerName: '',
@@ -196,7 +231,7 @@ export default function Page() {
     const fetchSuggestions = async () => {
       if (formValues.customerName.length > 1) {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data?name=${formValues.customerName}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer_data/${formValues.customerName}`);
           const data = await response.json();
           const filteredSuggestions = data
             .filter((customer: { name: string }) =>
@@ -255,7 +290,7 @@ export default function Page() {
 
 
         {/* Left Side Form */}
-        <div className='flex font-ptsans'>
+        <div className='flex flex-col lg:flex-row font-ptsans'>
           <div className='w-1/3 h-fit flex-none'>
             <div className="position-relative bg-white rounded-bl-lg">
               <div className="p-5">
@@ -441,60 +476,77 @@ export default function Page() {
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               style={{ height: '2.3rem' }}
                               value={formValues.packageSize ?? ''}
-                              onChange={(e) => setFormValues({ ...formValues, packageSize: e.target.value })}
+                              onChange={(e) => {
+                                const selectedValue = e.target.value;
+                                setFormValues({
+                                  ...formValues,
+                                  packageSize: selectedValue,
+                                });
+                                if (selectedValue !== 'Custom') {
+                                  setFormValues((prev) => ({
+                                    ...prev,
+                                    customLength: null,
+                                    customWidth: null,
+                                    customHeight: null,
+                                    customWeight: null,
+                                  }));
+                                }
+                              }}
                             >
                               <option defaultValue="" hidden style={{ color: "#999" }}>Package Size</option>
-                              <option value="Small">Small (4.45 x 16.51 x 27.94)</option>
-                              <option value="Medium">Medium (4.45 x 23.5 x 35.6)</option>
-                              <option value="Large">Large (4.45 x 30.46 x 45.72)</option>
+                              {packageSizes.map((size) => (
+                                <option key={size.pk} value={size.pk}>
+                                  {`${size.size_type}: ${size.length} x ${size.width} x ${size.height} - ${size.weight}kg`}
+                                </option>
+                              ))}
                               <option value="Custom">Custom</option>
                             </select>
                             {submitted && errors.packageSize && <p className="text-red-500">{errors.packageSize}</p>}
                           </div>
                         </div>
+
                         <div className="sm:col-span-full">
                           <div className="mt-2">
-                          {formValues.packageSize === "Custom" && (
-                            <div className="mt-4">
-                              <div className="flex items-center space-x-4">
-                                <input
-                                  type="number"
-                                  placeholder="Length (cm)"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                  value={formValues.customLength ?? ''}
-                                  onChange={(e) => setFormValues({ ...formValues, customLength: parseFloat(e.target.value) })}
-                                />
-                                {submitted && errors.customLength && <p className="text-red-500">{errors.customLength}</p>}
-                                <input
-                                  type="number"
-                                  placeholder="Width (cm)"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                  value={formValues.customWidth ?? ''}
-                                  onChange={(e) => setFormValues({ ...formValues, customWidth: parseFloat(e.target.value) })}
-                                />
-                                {submitted && errors.customWidth && <p className="text-red-500">{errors.customWidth}</p>}
-
-                                <input
-                                  type="number"
-                                  placeholder="Height (cm)"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                  value={formValues.customHeight ?? ''}
-                                  onChange={(e) => setFormValues({ ...formValues, customHeight: parseFloat(e.target.value) })}
-                                />
-                                {submitted && errors.customHeight && <p className="text-red-500">{errors.customHeight}</p>}
+                            {formValues.packageSize === "Custom" && (
+                              <div className="mt-4">
+                                <div className="flex items-center space-x-4">
+                                  <input
+                                    type="number"
+                                    placeholder="Height (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customHeight ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customHeight: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customHeight && <p className="text-red-500">{errors.customHeight}</p>}
+                                  <input
+                                    type="number"
+                                    placeholder="Length (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customLength ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customLength: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customLength && <p className="text-red-500">{errors.customLength}</p>}
+                                  <input
+                                    type="number"
+                                    placeholder="Width (cm)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customWidth ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customWidth: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customWidth && <p className="text-red-500">{errors.customWidth}</p>}
+                                </div>
+                                <div className="mt-3">
+                                  <input
+                                    type="number"
+                                    placeholder="Weight (kg)"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
+                                    value={formValues.customWeight ?? ''}
+                                    onChange={(e) => setFormValues({ ...formValues, customWeight: parseFloat(e.target.value) })}
+                                  />
+                                  {submitted && errors.customWeight && <p className="text-red-500">{errors.customWeight}</p>}
+                                </div>
                               </div>
-                              <div className="mt-3">
-                                <input
-                                  type="number"
-                                  placeholder="Weight (kg)"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
-                                  value={formValues.customWeight ?? ''}
-                                  onChange={(e) => setFormValues({ ...formValues, customWeight: parseFloat(e.target.value) })}
-                                />
-                                {submitted && errors.customWeight && <p className="text-red-500">{errors.customWeight}</p>}
-                              </div>
-                            </div>
-                          )}
+                            )}
                           </div>
                         </div>
                       </div>
@@ -523,7 +575,7 @@ export default function Page() {
                         <div className="sm:col-span-3">
                           <div className="mt-2">
                             <input
-                              type="text"
+                              type="number"
                               name="paymentAmount"
                               id="paymentAmount"
                               autoComplete="paymentAmount"
@@ -582,8 +634,8 @@ export default function Page() {
             </div>
           </div>
           {/* Right Side Map */}
-          <div className="w-2/3 h-fit flex">
-            <DynamicMapComponent onMarkerChange={(coords) => setMarkerCoords(coords)} />
+          <div className="flex-1 h-[50vh] lg:h-auto lg:w-2/3">
+            <DynamicMapComponent onMarkerChange={(coords) => setMarkerCoords(coords)} width="100%" height="100%" />
           </div>
         </div>
       </div>
