@@ -19,6 +19,9 @@ interface DashboardData {
 
 export default function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [markers, setMarkers] = useState([]);
+  const [convertedPolyline, setConvertedPolyline] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -73,44 +76,45 @@ export default function Page() {
   if (!data) return <div>Loading...</div>;
 
   return (
-    <main>
-      <h1 className="font-roboto font-bold">
-        Welcome back, Allana!
-      </h1>
+    <>
+      <main>
+        <div>
+          <h1 className="font-roboto font-bold">
+            Welcome back, Allana!
+          </h1>
 
-      <div className="flex items-baseline font-roboto">
-        <h1> Delivery Overview </h1>
-        <div className="ml-4 relative">
-          <Dropdown />
+          <div className="flex items-baseline font-roboto">
+            <h1> Delivery Overview </h1>
+            <div className="ml-4 relative">
+              <Dropdown />
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Card title="Total Packages" value={data.totalPackages} type="total" />
+            <Card title="Average Delivery Time" value={data.avgDeliveryTime} type="avgdeltime" />
+            <Card title="On-time Rate" value={data.onTimeRate} type="ontimerate" />
+            <Card title="Successful Delivery Rate" value={data.successfulDeliveryRate} type="successfulrate" />
+          </div>
+
+          <div className="m-10"></div>
+
+          <h1 className="font-roboto"> FOO Management </h1>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Card title="FOOs Available" value={data.foosAvailable} type="fooavailable" />
+            <Card title="FOOs En-route" value={data.foosEnRoute} type="fooenroute" />
+            <Card title="FOOs Idling" value={data.foosIdling} type="fooidling" />
+            <Card title="Packages Delivered" value={data.packagesDelivered} type="packagedel" />
+          </div>
+
+          <div className="m-10"></div>
         </div>
-      </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card title="Total Packages" value={data.totalPackages} type="total" />
-        <Card title="Average Delivery Time" value={data.avgDeliveryTime} type="avgdeltime" />
-        <Card title="On-time Rate" value={data.onTimeRate} type="ontimerate" />
-        <Card title="Successful Delivery Rate" value={data.successfulDeliveryRate} type="successfulrate" />
-      </div>
+        <h1 className="font-roboto"> Route Overview </h1>
+      </main>
+      <DynamicMapComponent markers={markers} convertedPolyline={convertedPolyline} loading={loading} height='80%' width='100%' />
 
-      <div className="m-10"></div>
-
-      <h1 className="font-roboto"> FOO Management </h1>
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card title="FOOs Available" value={data.foosAvailable} type="fooavailable" />
-        <Card title="FOOs En-route" value={data.foosEnRoute} type="fooenroute" />
-        <Card title="FOOs Idling" value={data.foosIdling} type="fooidling" />
-        <Card title="Packages Delivered" value={data.packagesDelivered} type="packagedel" />
-      </div>
-
-      <div className="m-10"></div>
-
-      <h1 className="font-roboto"> Route Overview </h1>
-      <div className="relative w-full flex">
-        <div className="h-fit w-fit overflow-hidden">
-          <DynamicMapComponent />
-        </div>
-      </div>
-    </main>
+    </>
   );
 }
