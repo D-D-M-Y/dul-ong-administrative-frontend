@@ -68,7 +68,7 @@ export default function Page() {
 
     if (isValid) {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/vehicles/add_vehicle', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/vehicles/add_vehicle`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -123,10 +123,15 @@ export default function Page() {
   useEffect(() => {
     const fetchFooOptions = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/users/foo');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/foo`);
         if (response.ok) {
           const data = await response.json();
-          setFooOptions(data); // Assuming data is an array of { id, name }
+          // Ensure that 'results' is an array before setting it
+          if (Array.isArray(data.results)) {
+            setFooOptions(data.results); // Set the foo options array
+          } else {
+            console.error('Expected "results" to be an array:', data.results);
+          }
         } else {
           console.error('Failed to fetch FOO options:', await response.text());
         }
@@ -134,6 +139,7 @@ export default function Page() {
         console.error('Error fetching FOO options:', error);
       }
     };
+    
 
     fetchFooOptions();
   }, []);
