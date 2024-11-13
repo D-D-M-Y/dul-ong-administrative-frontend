@@ -22,7 +22,7 @@ interface FormValues {
   paymentMethod: string;
   paymentAmount: number | null;
   date: string;
-  preferredDelivery: string;
+  preferredDelivery: boolean;
 }
 interface FormErrors {
   customerName?: string;
@@ -42,7 +42,7 @@ interface FormErrors {
   paymentMethod?: string;
   paymentAmount?: number | null;
   date?: string;
-  preferredDelivery?: string;
+  preferredDelivery?: boolean;
 }
 
 type PackageSize = {
@@ -79,7 +79,7 @@ export default function Page() {
     paymentMethod: '',
     paymentAmount: null,
     date: '',
-    preferredDelivery: ''
+    preferredDelivery: true || false
   });
 
   useEffect(() => {
@@ -154,7 +154,7 @@ export default function Page() {
             weight: formValues.customWeight,
           }),
         };
-  
+
         // Post data to the add_customer endpoint
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/add_customer`, {
           method: 'POST',
@@ -186,11 +186,17 @@ export default function Page() {
             paymentMethod: '',
             paymentAmount: null,
             date: '',
-            preferredDelivery: ''
+            preferredDelivery: false
           });
           setErrors({});
           setSubmitted(false);
         } else {
+          console.log('id: ', packageSizeId );
+          console.log('size: ', formValues.packageSize);
+          console.log('height: ', formValues.customHeight);
+          console.log('width: ', formValues.customWidth);
+          console.log('length: ', formValues.customLength);
+          console.log('weight: ', formValues.customWeight);
           console.error('Failed to submit form:', await response.text());
           alert('Failed to add customer. Please try again.');
         }
@@ -221,7 +227,7 @@ export default function Page() {
       paymentMethod: '',
       paymentAmount: null,
       date: '',
-      preferredDelivery: ''
+      preferredDelivery: true || false
     });
     setErrors({});
     setSubmitted(false);
@@ -610,12 +616,12 @@ export default function Page() {
                               autoComplete="preferredDelivery"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-5"
                               style={{ height: '2.3rem' }}
-                              value={formValues.preferredDelivery}
-                              onChange={(e) => setFormValues({ ...formValues, preferredDelivery: e.target.value })}
+                              value={formValues.preferredDelivery ? "true" : "false"}
+                              onChange={(e) => setFormValues({ ...formValues, preferredDelivery: e.target.value === 'true' })}
                             >
                               <option defaultValue={"Preferred Delivery"} hidden style={{ color: "#999" }}>Preferred Delivery</option>
-                              <option value="priority" style={{ color: "text-gray-900" }}>Priority Shipping</option>
-                              <option value="economy" style={{ color: "text-gray-900" }}>Economy Shipping</option>
+                              <option value="true" style={{ color: "text-gray-900" }}>Priority Shipping</option>
+                              <option value="false" style={{ color: "text-gray-900" }}>Economy Shipping</option>
                             </select>
                             {submitted && errors.preferredDelivery && <p className="text-red-500">{errors.preferredDelivery}</p>}
                           </div>
