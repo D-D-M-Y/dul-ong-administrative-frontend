@@ -12,14 +12,19 @@ import SearchBar from '@/app/ui/tables/searchbar';
 import Button from '@mui/material/Button';
 import { Loader } from "@/app/components/Maps/MapComponent"
 
-interface Entity {
-  pk: number
-  name: string;
-  size: number;
-  cost: string;
-  amount: number;
+interface Transaction {
+  id: number;
   payment_method: string;
   status: string;
+}
+
+interface Entity {
+  pk: number;
+  name: string;
+  size: string;
+  cost: string;
+  amount: number;
+  transactionid: Transaction;
 }
 
 type PackageSize = {
@@ -39,20 +44,11 @@ const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQ
   const [endpoint, setEndpoint] = useState<"packages/edit" | "packages/delete" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
-  const [sortBy, setSortBy] = useState<keyof Entity | null>(null);
+  type SortBy = keyof Entity | 'transactionid.payment_method' | 'transactionid.status';
+  const [sortBy, setSortBy] = useState<SortBy | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const sortedEntities = entities.sort((a, b) => {
-    if (!sortBy) return 0;
-    const aValue = a[sortBy];
-    const bValue = b[sortBy];
-
-    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-    return 0;
-  });
-
-  const handleSort = (column: keyof Entity) => {
+  const handleSort = (column: SortBy) => {
     if (sortBy === column) {
       setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
     } else {
@@ -60,6 +56,30 @@ const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQ
       setSortOrder('asc');
     }
   };
+  
+  
+  const sortedEntities = entities.sort((a, b) => {
+    if (!sortBy) return 0;
+  
+    let aValue, bValue;
+  
+    if (sortBy === 'transactionid.payment_method') {
+      aValue = a.transactionid.payment_method;
+      bValue = b.transactionid.payment_method;
+    } else if (sortBy === 'transactionid.status') {
+      aValue = a.transactionid.status;
+      bValue = b.transactionid.status;
+    } else {
+      aValue = a[sortBy];
+      bValue = b[sortBy];
+    }
+  
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
+  
+  
 
   const handleModalToggle = (isOpen: boolean) => {
     setIsModalOpen(isOpen);
@@ -78,8 +98,8 @@ const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQ
     { name: 'Size', key: 'size' as keyof Entity },
     { name: 'Costs', key: 'cost' as keyof Entity },
     { name: 'Amount', key: 'amount' as keyof Entity },
-    { name: 'Payment Method', key: 'payment_method' as keyof Entity },
-    { name: 'Status', key: 'status' as keyof Entity },
+    { name: 'Payment Method', key: 'transactionid.payment_method' as keyof Entity },
+    { name: 'Status', key: 'transactionid.status' as keyof Entity },
     { name: 'Actions', key: null },
   ];
 
@@ -113,8 +133,8 @@ const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQ
               <td className='p-4'>{entity.size}</td>
               <td className='p-4'>{entity.cost}</td>
               <td className='p-4'>{entity.amount}</td>
-              <td className='p-4'>{entity.payment_method}</td>
-              <td className='p-4'>{entity.status}</td>
+              <td className='p-4'>{entity.transactionid.payment_method}</td>
+              <td className='p-4'>{entity.transactionid.status}</td>
               <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "packages/edit")}><div className="button-content">
                 <CiEdit size={24} />
               </div></Button>
@@ -199,22 +219,7 @@ export default function Page() {
       ],
     },
     { label: "Cost", name: "paymentAmount", type: "number" },
-    { label: "Amount of Items", name: "amount", type: "number" },
-    {
-      label: "Payment Method", name: "payment_method", type: "dropdown", options: [
-        { name: "Cash", value: "CAS" },
-        { name: "Card", value: "CAR" },
-        { name: "GCash", value: "GCA" },
-      ]
-    },
-    {
-      label: "Status", name: "status", type: "dropdown", options: [
-        { name: "Delivered", value: "DEL" },
-        { name: "To be Delivered", value: "TDL" },
-        { name: "Pending", value: "PEN" },
-      ]
-    },
-  
+    { label: "Amount of Items", name: "amount", type: "number" },  
   ];
 
   return (
