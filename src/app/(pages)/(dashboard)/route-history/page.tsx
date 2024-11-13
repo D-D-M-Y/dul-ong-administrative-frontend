@@ -1,118 +1,87 @@
-// not connected to backend, no sorting function implemented yet
-
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Modal from '@/app/components/Modal/ActionModal.js';
-import {
-  CiCircleChevDown,
-  CiTrash,
-  CiEdit,
-} from "react-icons/ci";
-import SearchBar from '@/app/ui/tables/searchbar';
-import Button from '@mui/material/Button';
+import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
+import { Loader } from "@/app/components/Maps/MapComponent"
+
 
 
 interface Entity {
-  routeID: string
-  date: Date;
-  route: string;
-  cargoQuantity: number;
-  transportationCost: string;
-  vehicleID: string;
-  gas: number;
-  carryingCapacity: number;
+  pk: number;
+  route_date: Date;
+  cargo_quantity: number;
+  transportation_cost: number;
+  total_weight: number;
 }
 
-const entities: Entity[] = [
-  // Static entity (no endpoint exists yet)
-  {
-    routeID: "CUS000001",
-    date: new Date(),
-    route: "Iloilo City",
-    cargoQuantity: 1000,
-    transportationCost: "8",
-    vehicleID: "VEH000001",
-    gas: 50,
-    carryingCapacity: 1000,
-  }  // ... more entities
-];
 
-const fields = [
-  { label: "Date", name: "date", type: "date" }, // Use type "date" for date input
-  { label: "Route", name: "route", type: "text" },
-  { label: "Cargo Quantity", name: "cargoQuantity", type: "number" },
-  { label: "Transportation Cost", name: "transportationCost", type: "text" }, // Keeping as text for currency
-  { label: "Gas", name: "gas", type: "number" },
-  { label: "Carrying Capacity", name: "carryingCapacity", type: "number" },
-];
+const MyGrid = ({ entities }: { entities: Entity[] }) => {
+  const [sortBy, setSortBy] = useState<keyof Entity | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-const MyGrid = () => {
-  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  // const [endpoint, setEndpoint] = useState<"/edit" | "/delete" | null>(null);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+  const sortedEntities = entities.sort((a, b) => {
+    if (!sortBy) return 0;
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
 
-  // const handleModalToggle = (isOpen: boolean) => {
-  //   setIsModalOpen(isOpen);
-  // };
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
 
-  // const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "/edit" | "/delete") => {
-  //   setSelectedEntity(entity);
-  //   setEndpoint(endpoint);
-  //   setModalType(type); // Set the modal type
-  //   setIsModalOpen(true);
-  // };
+  const handleSort = (column: keyof Entity) => {
+    if (sortBy === column) {
+      setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
 
   const headers = [
-    { name: 'Route ID' },
-    { name: 'Date' },
-    { name: 'Route' },
-    { name: 'Cargo Quantity' },
-    { name: 'Transportation Cost' },
-    { name: 'Vehicle ID' },
-    { name: 'Gas' },
-    { name: 'Carrying Capacity' },
-    // { name: 'Actions' },
+    { name: 'Route ID', key: 'pk' as keyof Entity },
+    { name: 'Payment Date', key: 'route_date' as keyof Entity },
+    { name: 'Cargo Quantity', key: 'cargo_quantity' as keyof Entity },
+    { name: 'Transportation Cost', key: 'transportation_cost' as keyof Entity },
+    { name: 'Carrying Capacity', key: 'total_weight' as keyof Entity },
   ];
+
+
+
   return (
     <>
       <table>
-        <thead className='font-source_sans_pro'>
+        <thead>
           <tr>
             {headers.map((header) => (
               <th className='p-4' key={header.name}>
                 {header.name}
                 {header.name !== 'Actions' && (
-                  /* <button type="button" onClick={() => handleSortClick(header.name)}>
-                     {sortState[header.name] === 'idle' ? (
-                       <CiCircleChevDown />
-                     ) : sortState[header.name] === 'ascending' ? (
-                       <CiCircleChevUp />
-                     ) : (
-                       <CiCircleChevDown /> // Descending state (optional icon)
-                     )}
-                   </button>*/
-                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+                  <button className='ml-1' onClick={() => handleSort(header.key!)}>
+                    {sortBy === header.key ? (
+                      sortOrder === 'asc' ? <CiCircleChevDown /> : <CiCircleChevUp />
+                    ) : (
+                      <CiCircleChevDown />
+                    )}
+                  </button>
+                  // <button className='ml-1'> <CiCircleChevDown /></button>
+                )}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className='font-ptsans'>
-          {entities.map((entity) => (
-            <tr key={entity.routeID}>
-              <td className='p-4'>{entity.routeID}</td>
-              <td className='p-4'>{entity.date.toLocaleDateString()}</td>
-              <td className='p-4'>{entity.route}</td>
-              <td className='p-4'>{entity.cargoQuantity}</td>
-              <td className='p-4'>{entity.transportationCost}</td>
-              <td className='p-4'>{entity.vehicleID}</td>
-              <td className='p-4'>{entity.gas}</td>
-              <td className='p-4'>{entity.carryingCapacity}</td>
-              {/* <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "/edit")}><div className="button-content">
+        <tbody>
+          {sortedEntities.map((entity) => (
+            <tr key={entity.pk}>
+              <td className='p-4'>{entity.pk}</td>
+              <td className='p-4'>{entity.route_date}</td>
+              <td className='p-4'>{entity.cargo_quantity}</td>
+              <td className='p-4'>{entity.transportation_cost}</td>
+              <td className='p-4'>{entity.total_weight}</td>
+              {/* <td className='p-4'><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "transactions/edit")}><div className="button-content">
                 <CiEdit size={24} />
               </div></Button>
-                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "/delete")}><div className="button-content">
+                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "transactions/delete")}><div className="button-content">
                   <CiTrash size={24} />
                 </div></Button>
               </td> */}
@@ -135,29 +104,36 @@ const MyGrid = () => {
 
 export default function Page() {
   const [entities, setEntities] = useState<Entity[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   // const [searchQuery, setSearchQuery] = useState('');
-  // useEffect(() => {
-  //   const fetchEntities = async () => {
-  //     try {
-  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/route_history`);
-  //       if (!response.ok) {
-  //         throw new Error(`Failed to fetch entities: ${response.statusText}`);
-  //       }
-  //       const data = await response.json();
-  //       setEntities(data); // Set the entities state
-  //     } catch (error) {
-  //       console.error('Error fetching entities:', error);
-  //     }
-  //   };
-
-  //   fetchEntities();
-  // }, []);
+  useEffect(() => {
+    const fetchEntities = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/route_history`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entities: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setEntities(data.results || []); // Set the entities state
+        setTotalPages(data.total_pages || 1);
+      } catch (error) {
+        console.error('Error fetching entities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEntities();
+  }, [page]);
   return (
     <div>
+      {loading && <Loader />}
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
-          Route History
+        <h1 className='font-bold'>
+          Customer Data
         </h1>
 
         {/* Folder */}
@@ -165,14 +141,34 @@ export default function Page() {
           <h2>Manage Routes</h2>
         </div>
 
+
         {/* Body */}
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
           {/* <SearchBar query={searchQuery} setQuery={setSearchQuery} /> */}
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <MyGrid />
+            <MyGrid entities={entities} />
           </div>
         </div>
       </div>
-    </div >
+      <div className="pagination flex justify-between mt-4">
+        {page > 1 && (
+          <button
+            className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+            onClick={() => setPage(prev => prev - 1)}
+          >
+            Previous
+          </button>
+        )}
+        <span>Page {page}</span>
+        {page < totalPages && (
+          <button
+            className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+            onClick={() => setPage(prev => prev + 1)}
+          >
+            Next
+          </button>
+        )}
+      </div>
+    </div>
   );
 }

@@ -1,91 +1,58 @@
-// not connected to backend, no sorting function implemented yet
-
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Modal from '@/app/components/Modal/ActionModal.js';
-import {
-  CiCircleChevDown,
-  CiTrash,
-  CiEdit,
-} from "react-icons/ci";
-import SearchBar from '@/app/ui/tables/searchbar';
-import Button from '@mui/material/Button';
+import { CiCircleChevDown, CiCircleChevUp } from "react-icons/ci";
+import { Loader } from "@/app/components/Maps/MapComponent"
+
+
 
 interface Entity {
-  transactionID: string;
-  paymentMethod: string;
-  paymentAmount: number;
-  paymentDate: Date;
+  pk: number;
+  payment_method: string;
   status: string;
-  deliveryID: string;
-  vehicleID: string;
-  fooID: string;
-  routeID: string;
-  customerID: string;
+  vehicleid: string;
+  routeid: string;
+  fooid: string;
+  customerid: string;
+  preferred: boolean;
+  date: Date;
 }
 
-const entities: Entity[] = [
-  // Populate entity data here
-  {
-    transactionID: "TRA0000001",
-    paymentMethod: "PAID",
-    paymentAmount: 140,
-    paymentDate: new Date(),
-    status: "Successful",
-    deliveryID: "DEL0000001",
-    vehicleID: "VEH0000001",
-    fooID: "FOO0000001",
-    routeID: "ROU0000001",
-    customerID: "CUS0000001",
-  }
-  // ... more entities
-];
 
-const fields = [
-  { label: "Payment Method", name: "paymentMethod", type: "text" },
-  { label: "Payment Amount", name: "paymentAmount", type: "number" },
-  { label: "Payment Date", name: "paymentDate", type: "date" }, // Use type "date" for date input
-  { label: "Status", name: "status", type: "text" },
-];
+const MyGrid = ({ entities }: { entities: Entity[] }) => {
+  const [sortBy, setSortBy] = useState<keyof Entity | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-const MyGrid = () => {
-  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  // const [endpoint, setEndpoint] = useState<"transactions/edit" | "transactions/delete" | null>(null);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
+  const sortedEntities = entities.sort((a, b) => {
+    if (!sortBy) return 0;
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
 
-  // const handleModalToggle = (isOpen: boolean) => {
-  //   setIsModalOpen(isOpen);
-  // };
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  });
 
-  // const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "transactions/edit" | "transactions/delete") => {
-  //   setSelectedEntity(entity);
-  //   setEndpoint(endpoint);
-  //   setModalType(type); // Set the modal type
-  //   setIsModalOpen(true);
-  // };
+  const handleSort = (column: keyof Entity) => {
+    if (sortBy === column) {
+      setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
   const headers = [
-    { name: 'Transaction ID' },
-    { name: 'Payment Method' },
-    { name: 'Payment Amount' },
-    { name: 'Payment Date' },
-    { name: 'Status' },
-    { name: 'Delivery ID' },
-    { name: 'Vehicle ID' },
-    { name: 'FOO ID' },
-    { name: 'Route ID' },
-    { name: 'Customer ID' },
-    // { name: 'Actions' },
+    { name: 'Transaction ID', key: 'pk' as keyof Entity },
+    { name: 'Payment Method', key: 'payment_method' as keyof Entity },
+    { name: 'Status', key: 'status' as keyof Entity },
+    { name: 'Vehicle ID', key: 'vehicleid' as keyof Entity },
+    { name: 'Route ID', key: 'routeid' as keyof Entity },
+    { name: 'FOO ID', key: 'fooid' as keyof Entity },
+    { name: 'Customer ID', key: 'customerid' as keyof Entity },
+    { name: 'Preferred Delivery', key: 'preferred' as keyof Entity },
+    { name: 'Payment Date', key: 'date' as keyof Entity },
   ];
-  // const handleSortClick = (headerName: string) => {
-  //   setSortState((prevState: 'idle' | 'ascending' | 'descending') => {
-  //     const newState = Object.fromEntries(
-  //       Object.entries(prevState).map(([key, value]) => (key === headerName ? [key, value === 'idle' ? 'ascending' : value === 'ascending' ? 'descending' : 'idle'] : [key, 'idle']))
-  //     ) as 'idle' | 'ascending' | 'descending';
-  //     return newState;
-  //   });
-  // };
 
 
 
@@ -98,33 +65,33 @@ const MyGrid = () => {
               <th className='p-4' key={header.name}>
                 {header.name}
                 {header.name !== 'Actions' && (
-                  // <button type="button" onClick={() => handleSortClick(header.name)}>
-                  //    {sortState[header.name] === 'idle' ? (
-                  //      <CiCircleChevDown />
-                  //    ) : sortState[header.name] === 'ascending' ? (
-                  //      <CiCircleChevUp />
-                  //    ) : (
-                  //      <CiCircleChevDown /> // Descending state (optional icon)
-                  //    )}
-                  //  </button>
-                  <button className='ml-1'> <CiCircleChevDown /></button>)}
+                  <button className='ml-1' onClick={() => handleSort(header.key!)}>
+                    {sortBy === header.key ? (
+                      sortOrder === 'asc' ? <CiCircleChevDown /> : <CiCircleChevUp />
+                    ) : (
+                      <CiCircleChevDown />
+                    )}
+                  </button>
+                  // <button className='ml-1'> <CiCircleChevDown /></button>
+                )}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {entities.map((entity) => (
-            <tr key={entity.transactionID}>
-              <td className='p-4'>{entity.transactionID}</td>
-              <td className='p-4'>{entity.paymentMethod}</td>
-              <td className='p-4'>{entity.paymentAmount}</td>
-              <td className='p-4'>{entity.paymentDate.toLocaleDateString()}</td>
-              <td className='p-4'>{entity.status}</td>
-              <td className='p-4'>{entity.deliveryID}</td>
-              <td className='p-4'>{entity.vehicleID}</td>
-              <td className='p-4'>{entity.fooID}</td>
-              <td className='p-4'>{entity.routeID}</td>
-              <td className='p-4'>{entity.customerID}</td>
+          {sortedEntities.map((entity) => (
+            <tr key={entity.pk}>
+              <td className='p-4'>{entity.pk}</td>
+              <td className='p-4'>
+                {entity.payment_method === 'GCA' ? 'GCash' :
+                  entity.payment_method === 'CAR' ? 'Card' : 'Cash'}
+              </td>              <td className='p-4'>{entity.status}</td>
+              <td className='p-4'>{entity.vehicleid}</td>
+              <td className='p-4'>{entity.routeid}</td>
+              <td className='p-4'>{entity.fooid}</td>
+              <td className='p-4'>{entity.customerid}</td>
+              <td className='p-4'>{entity.preferred ? "Priority Shipping" : "Economy Shipping"}</td>
+              <td className='p-4'>{entity.date}</td>
               {/* <td className='p-4'><Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "transactions/edit")}><div className="button-content">
                 <CiEdit size={24} />
               </div></Button>
@@ -151,25 +118,32 @@ const MyGrid = () => {
 
 export default function Page() {
   const [entities, setEntities] = useState<Entity[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   // const [searchQuery, setSearchQuery] = useState('');
-  // useEffect(() => {
-  //   const fetchEntities = async () => {
-  //     try {
-  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`);
-  //       if (!response.ok) {
-  //         throw new Error(`Failed to fetch entities: ${response.statusText}`);
-  //       }
-  //       const data = await response.json();
-  //       setEntities(data); // Set the entities state
-  //     } catch (error) {
-  //       console.error('Error fetching entities:', error);
-  //     }
-  //   };
-
-  //   fetchEntities();
-  // }, []);
+  useEffect(() => {
+    const fetchEntities = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions/view`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch entities: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setEntities(data.results || []); // Set the entities state
+        setTotalPages(data.total_pages || 1);
+      } catch (error) {
+        console.error('Error fetching entities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEntities();
+  }, [page]);
   return (
     <div>
+      {loading && <Loader />}
       {/* Header */}
       <div>
         <h1 className='font-bold'>
@@ -202,9 +176,28 @@ export default function Page() {
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
           {/* <SearchBar query={searchQuery} setQuery={setSearchQuery} /> */}
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <MyGrid />
+            <MyGrid entities={entities} />
           </div>
         </div>
+      </div>
+      <div className="pagination flex justify-between mt-4">
+        {page > 1 && (
+          <button
+            className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+            onClick={() => setPage(prev => prev - 1)}
+          >
+            Previous
+          </button>
+        )}
+        <span>Page {page}</span>
+        {page < totalPages && (
+          <button
+            className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
+            onClick={() => setPage(prev => prev + 1)}
+          >
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
