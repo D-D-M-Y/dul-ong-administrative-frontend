@@ -91,6 +91,14 @@ export default function Page() {
           });
           setErrors({});
           setSubmitted(false);
+
+          console.log("vehicleName", formValues.vehicleName )
+          console.log("vehicle", formValues.vehicle)
+          console.log("fuelType", formValues.fuelType)
+          console.log("consumption", formValues.consumption)
+          console.log("foo", formValues.foo)
+          console.log("weight", formValues.weight)
+          console.log("area", formValues.area)
         } else {
           console.error('Failed to submit form:', await response.text());
           alert('Failed to add vehicle. Please try again.');
@@ -242,8 +250,8 @@ export default function Page() {
                                 onChange={(e) => setFormValues({ ...formValues, fuelType: e.target.value })}
                               >
                                 <option defaultValue="" hidden style={{ color: "#999" }}>Fuel Type</option>
-                                <option value="diesel">Diesel</option>
-                                <option value="gas">Unleaded</option>
+                                <option value="DIE">Diesel</option>
+                                <option value="GAS">Unleaded</option>
                               </select>
                               {submitted && errors.fuelType && <p className="text-red-500">{errors.fuelType}</p>}
 
