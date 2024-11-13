@@ -12,8 +12,8 @@ const mapApiToFormValues = (data) => ({
     customerName: data.name || data.customerName,
     streetAddress: data.street_address || data.streetAddress,
     zip: data.zip_code || data.zip,
-    packageName: data.name || data.packageNameName,
-    packageSize: data.size || data.packageSize,
+    packageName: data.name || data.packageName,
+    packageSize: data.size || "",
     paymentAmount: data.cost || data.paymentAmount
 });
 
@@ -177,11 +177,32 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                                 <div className="flex flex-col" key={field.name}>
                                     <label>{field.label}:</label>
                                     {field.type === "dropdown" ? (
-                                        <select name={field.name} value={formValues[field.name] || ''} onChange={handleSizeChange} className="p-2 border rounded">
-                                            {field.options.map((option) => (
-                                                <option key={option.value} value={option.value}>{option.name}</option>
-                                            ))}
-                                        </select>
+                                        field.name === "packageSize" || "size" ? (
+                                            // Custom code for packageSize dropdown
+                                            <select
+                                                name={field.name}
+                                                value={formValues[field.name] || ''}
+                                                onChange={handleSizeChange}
+                                                className="p-2 border rounded"
+                                            >
+                                                <option defaultValue="" hidden>Choose a size</option> {/* Hidden placeholder */}
+                                                {field.options.map((option) => (
+                                                    <option key={option.value} value={option.value}>{option.name}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            // Default dropdown rendering for other fields
+                                            <select
+                                                name={field.name}
+                                                value={formValues[field.name] || ''}
+                                                onChange={handleChange}
+                                                className="p-2 border rounded"
+                                            >
+                                                {field.options.map((option) => (
+                                                    <option key={option.value} value={option.value}>{option.name}</option>
+                                                ))}
+                                            </select>
+                                        )
                                     ) : (
                                         <input
                                             type={field.type}
@@ -197,6 +218,7 @@ export default function Modal({ onToggle, selectedEntity, modalType, fields, end
                                     )}
                                 </div>
                             ))}
+
                             {/* Conditionally render custom size fields */}
                             {isCustomSize && (
                                 <>
