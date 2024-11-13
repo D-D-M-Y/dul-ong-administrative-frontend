@@ -11,7 +11,7 @@ import L from "leaflet";
 interface MarkerData {
     coordinates: [number, number];
 }
-interface MapComponentProps{
+interface MapComponentProps {
     onMarkerChange?: (coordinates: number[]) => void;
     width: string;
     height: string;
@@ -57,7 +57,7 @@ const Loader = () => {
     );
 };
 //4. Main component definition.
-const MapComponent: FC<MapComponentProps> = ({onMarkerChange, height, width}) => {
+const MapComponent: FC<MapComponentProps> = ({ onMarkerChange, height, width }) => {
     //5. Initialize local state.
     const [markers, setMarkers] = useState<MarkerData[]>([]); // Array to store markers
     const [currentMarkerIndex, setCurrentMarkerIndex] = useState<number>(-1);
@@ -87,7 +87,7 @@ const MapComponent: FC<MapComponentProps> = ({onMarkerChange, height, width}) =>
                     setLoading(true);
                     const { lat, lng } = e.latlng;
                     setMarkers([{ coordinates: [lat, lng] }]);
-                    
+
                     setCurrentMarkerIndex(0);
                     setLoading(false);
                 }
@@ -103,7 +103,7 @@ const MapComponent: FC<MapComponentProps> = ({onMarkerChange, height, width}) =>
             if (markers.length > 0) {
                 setMarkerData(markers[0]); // Set initial marker data
                 onMarkerChange?.(markers[0].coordinates); // Call onMarkerChange with initial coordinates
-              }
+            }
         }, [markerData, markers]);
         return null;
     };
@@ -124,8 +124,10 @@ const MapComponent: FC<MapComponentProps> = ({onMarkerChange, height, width}) =>
                 {/* 15. Set the tile layer for the map. */}
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {/* 16. Render the markers */}
-                <Marker position={[10.693534016734706,122.5734651076825]} icon={fooIcon}>
-                <Tooltip direction="right" permanent>{`Field Operations Officer`}</Tooltip>
+                <Marker position={[10.713347913370217, 122.56159364827236]} icon={fooIcon}>
+                    <Tooltip direction="right" permanent>
+                        Field Operations Officer
+                    </Tooltip>
                     <Popup>Field Operations Officer</Popup>
                 </Marker>
                 <Marker position={[10.6873430, 122.5166238]}>
