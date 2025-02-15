@@ -91,4 +91,5 @@ const MapComponent = forwardRef<HTMLDivElement, MapComponentProps>(
     }
 );
 
+MapComponent.displayName = 'MapComponent';
 export default MapComponent;
