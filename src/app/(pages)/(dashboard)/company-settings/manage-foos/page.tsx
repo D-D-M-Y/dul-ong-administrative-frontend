@@ -11,6 +11,7 @@ import {
 import SearchBar from '@/app/ui/tables/searchbar';
 import Button from '@mui/material/Button';
 import { Loader } from "@/app/components/Maps/MapComponent"
+import Paginator from '@/app/ui/tables/paginator';
 
 interface Entity {
   pk: number;
@@ -140,20 +141,27 @@ const MyGrid = ({ entities, searchQuery }: { entities: Entity[], searchQuery: st
   );
 };
 
-export default function Page() {
-  const [entities, setEntities] = useState<Entity[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
+export default function Page(props:{
+  searchParams: {
+    query: string;
+    page: string;
+  }
+}) {
+
+  const searchParams = props.searchParams;
+  const query = searchParams.query || '';
   const [totalPages, setTotalPages] = useState(1);
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const currentPage = Number(searchParams?.page) || 1;
   const [loading, setLoading] = useState(true);
 
 useEffect(() => {
     const fetchEntities = async () => {
       setLoading(true);
       try {
-        const endpoint = searchQuery
-          ? `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo/${searchQuery}`
-          : `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo?page=${page}&limit=10`;
+        const endpoint = query
+          ? `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo/${query}`
+          : `${process.env.NEXT_PUBLIC_API_URL}/api/users/foo?page=${currentPage}&limit=10`;
 
         const response = await fetch(endpoint);
         if (!response.ok) {
@@ -183,7 +191,7 @@ useEffect(() => {
     };
 
     fetchEntities();
-  }, [page, searchQuery]);
+  }, [currentPage]);
 
   return (
     <>
@@ -214,31 +222,13 @@ useEffect(() => {
 
         {/* Body */}
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
-          <SearchBar setSearchQuery={setSearchQuery} />
+          <SearchBar/>
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <MyGrid entities={entities} searchQuery={searchQuery} />
+            <MyGrid entities={entities} searchQuery={query} />
           </div>
         </div>
 
-        <div className="pagination flex justify-between mt-4">
-          {page > 1 && (
-            <button
-              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
-              onClick={() => setPage(prev => prev - 1)}
-            >
-              Previous
-            </button>
-          )}
-          <span>Page {page}</span>
-          {page < totalPages && (
-            <button
-              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
-              onClick={() => setPage(prev => prev + 1)}
-            >
-              Next
-            </button>
-          )}
-        </div>
+        <Paginator totalPages={totalPages}/>
       </div>
     </>
   );
