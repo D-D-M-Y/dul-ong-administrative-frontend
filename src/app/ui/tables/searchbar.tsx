@@ -1,19 +1,29 @@
 // SearchBar.tsx
+'use client';
 import React, { useState } from 'react';
 import { CiSearch } from "react-icons/ci";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
-interface SearchBarProps {
-  setSearchQuery: (query: string) => void;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ setSearchQuery }) => {
+export default function SearchBar (){
   const [inputValue, setInputValue] = useState('');
 
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
   const handleSearch = () => {
-    setSearchQuery(inputValue);
+    const params = new URLSearchParams(searchParams);
+    if (inputValue && inputValue != ''){
+      params.set('query', inputValue);
+    } else {
+      params.delete('query')
+    }
+    replace(`${pathname}?${params.toString()}`)
+
+
+
   };
   const handleClear = () => {
-    setSearchQuery('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -31,6 +41,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setSearchQuery }) => {
         onKeyDown={handleKeyDown}
         placeholder="Search by Name"
         className="search-input"
+        defaultValue={searchParams.get('query')?.toString()}
       />
       <button
         className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white ml-5"
@@ -47,5 +58,3 @@ const SearchBar: React.FC<SearchBarProps> = ({ setSearchQuery }) => {
     </div>
   );
 };
-
-export default SearchBar;
