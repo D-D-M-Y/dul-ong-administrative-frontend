@@ -1,4 +1,6 @@
 "use client";
+import fetchMarkers from '@/app/lib/fetchmarkers';
+import fetchRoutes from '@/app/lib/fetchroutes';
 import { Card } from '@/app/ui/dashboard/cards';
 import Dropdown from '@/app/ui/dashboard/dropdown';
 import dynamic from "next/dynamic";
@@ -19,8 +21,8 @@ interface DashboardData {
 
 export default function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [markers, setMarkers] = useState([]);
-  const [convertedPolyline, setConvertedPolyline] = useState([]);
+  const [markers, setMarker] = useState([]);
+  const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -70,7 +72,19 @@ export default function Page() {
       });
     }
 
+    async function fetchMarkerGroup(){
+      const val = await fetchMarkers();
+      setMarker(val);
+    }
+
+    async function fetchRouteGroup(){
+      const val = await fetchRoutes();
+      setConvertedPolyline(val);
+    }
+
     fetchData();
+    fetchMarkerGroup();
+    fetchRouteGroup();
   }, []);
 
   if (!data) return <div>Loading...</div>;
@@ -113,7 +127,7 @@ export default function Page() {
 
         <h1 className="font-roboto"> Route Overview </h1>
       </main>
-      <DynamicMapComponent markers={markers} convertedPolyline={convertedPolyline} loading={loading} height='80%' width='100%' />
+      <DynamicMapComponent markers={markers} convertedPolyline={convertedPolyline} height='80%' width='100%' />
 
     </>
   );
