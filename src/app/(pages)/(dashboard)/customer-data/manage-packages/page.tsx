@@ -1,208 +1,55 @@
-"use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Modal from '@/app/components/Modal/ActionModal.js';
-import {
-  CiCircleChevUp,
-  CiCircleChevDown,
-  CiTrash,
-  CiEdit,
-} from "react-icons/ci";
 import SearchBar from '@/app/ui/tables/searchbar';
-import Button from '@mui/material/Button';
-import { Loader } from "@/app/components/Maps/MapComponent"
-
-interface Transaction {
-  id: number;
-  payment_method: string;
-  status: string;
-}
-
-interface Entity {
-  pk: number;
-  name: string;
-  size: string;
-  cost: string;
-  amount: number;
-  transactionid: Transaction;
-}
-
-type PackageSize = {
-  pk: number;
-  size_type: string;
-  length: number;
-  width: number;
-  height: number;
-  weight: number;
-};
+import { Loader } from '@/app/components/Loading';
+import PackageGrid from '@/app/components/Griddata/PackageGrid';
+import Paginator from '@/app/ui/tables/paginator';
 
 
 
+export default async function Page(props:{
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>
+}) {
 
-const MyGrid = ({ entities, searchQuery, fields }: { entities: Entity[], searchQuery: string, fields:any }) => {
-  const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [endpoint, setEndpoint] = useState<"packages/edit" | "packages/delete" | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"edit" | "delete" | null>(null);
-  type SortBy = keyof Entity | 'transactionid.payment_method' | 'transactionid.status';
-  const [sortBy, setSortBy] = useState<SortBy | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+  //const [packageSizes, setPackageSizes] = useState<PackageSize[]>([]);
 
-  const handleSort = (column: SortBy) => {
-    if (sortBy === column) {
-      setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortBy(column);
-      setSortOrder('asc');
+  const fetchEntities = async (): Promise<{entities: PackageEntity[], totalPages: number}> => {
+    try {
+      const endpoint = query
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/packages/${query}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/api/packages?page=${currentPage}&limit=10`;
+
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch entities: ${response.statusText}`);
+      }
+      const data = await response.json();
+      
+      return {entities:data.results, totalPages: data.total_pages}
+    } catch (error) {
+      throw new Error(`Error fetching entities`);
     }
   };
-  
-  
-  const sortedEntities = entities.sort((a, b) => {
-    if (!sortBy) return 0;
-  
-    let aValue, bValue;
-  
-    if (sortBy === 'transactionid.payment_method') {
-      aValue = a.transactionid.payment_method;
-      bValue = b.transactionid.payment_method;
-    } else if (sortBy === 'transactionid.status') {
-      aValue = a.transactionid.status;
-      bValue = b.transactionid.status;
-    } else {
-      aValue = a[sortBy];
-      bValue = b[sortBy];
+
+  const fetchPackageSizes = async (): Promise<PackageSize[]> => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packages/sizing`);
+      if (!response.ok) throw new Error('Failed to fetch package sizes');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw new Error('Cannot find package sizes')
     }
-  
-    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-    return 0;
-  });
-  
-  
-
-  const handleModalToggle = (isOpen: boolean) => {
-    setIsModalOpen(isOpen);
   };
 
-  const openModal = (entity: Entity, type: "edit" | "delete", endpoint: "packages/edit" | "packages/delete") => {
-    setSelectedEntity(entity);
-    setEndpoint(endpoint);
-    setModalType(type); // Set the modal type
-    setIsModalOpen(true);
-  };
-
-  const headers = [
-    { name: 'Package ID', key: 'pk' as keyof Entity },
-    { name: 'Name', key: 'name' as keyof Entity },
-    { name: 'Size', key: 'size' as keyof Entity },
-    { name: 'Costs', key: 'cost' as keyof Entity },
-    { name: 'Amount', key: 'amount' as keyof Entity },
-    { name: 'Payment Method', key: 'transactionid.payment_method' as keyof Entity },
-    { name: 'Status', key: 'transactionid.status' as keyof Entity },
-    { name: 'Actions', key: null },
-  ];
-
-
-  return (
-    <>
-      <table>
-        <thead className="font-source_sans_pro">
-          <tr>
-            {headers.map((header) => (
-              <th className="p-4" key={header.name}>
-                {header.name}
-                {header.key && (
-                  <button className='ml-1' onClick={() => handleSort(header.key!)}>
-                    {sortBy === header.key ? (
-                      sortOrder === 'asc' ? <CiCircleChevDown /> : <CiCircleChevUp />
-                    ) : (
-                      <CiCircleChevDown />
-                    )}
-                  </button>
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="font-ptsans" >
-          {sortedEntities.map((entity) => (
-            <tr key={entity.pk}>
-              <td className='p-4'>{entity.pk}</td>
-              <td className='p-4'>{entity.name}</td>
-              <td className='p-4'>{entity.size}</td>
-              <td className='p-4'>{entity.cost}</td>
-              <td className='p-4'>{entity.amount}</td>
-              <td className='p-4'>{entity.transactionid.payment_method}</td>
-              <td className='p-4'>{entity.transactionid.status}</td>
-              <td> <Button variant="outlined" color="primary" onClick={() => openModal(entity, "edit", "packages/edit")}><div className="button-content">
-                <CiEdit size={24} />
-              </div></Button>
-                <Button variant="outlined" color="error" onClick={() => openModal(entity, "delete", "packages/delete")}><div className="button-content">
-                  <CiTrash size={24} />
-                </div></Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {isModalOpen && selectedEntity && (
-        <Modal
-          onToggle={handleModalToggle}
-          endpoint={endpoint}
-          selectedEntity={selectedEntity}
-          modalType={modalType}
-          fields={fields}
-        />
-      )}
-    </>
-  );
-};
-
-export default function Page() {
-  const [entities, setEntities] = useState<Entity[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [packageSizes, setPackageSizes] = useState<PackageSize[]>([]);
-
-  useEffect(() => {
-    const fetchEntities = async () => {
-      setLoading(true);
-      try {
-        const endpoint = searchQuery
-          ? `${process.env.NEXT_PUBLIC_API_URL}/api/packages/${searchQuery}`
-          : `${process.env.NEXT_PUBLIC_API_URL}/api/packages?page=${page}&limit=10`;
-
-        const response = await fetch(endpoint);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch entities: ${response.statusText}`);
-        }
-        const data = await response.json();
-        setEntities(data.results || data);
-        setTotalPages(data.total_pages);
-      } catch (error) {
-        console.error('Error fetching entities:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchPackageSizes = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/packages/sizing`);
-        if (!response.ok) throw new Error('Failed to fetch package sizes');
-        const data = await response.json();
-        setPackageSizes(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchEntities();
-    fetchPackageSizes();
-  }, [page, searchQuery]);
+    const {entities, totalPages} = await fetchEntities();
+    const packageSizes = await fetchPackageSizes();
 
   const fields = [
     { label: "Name", name: "packageName", type: "text" },
@@ -224,7 +71,6 @@ export default function Page() {
 
   return (
     <>
-      {loading && <Loader />}
 
       {/* Header */}
       <div>
@@ -257,31 +103,12 @@ export default function Page() {
 
         {/* Body */}
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
-          <SearchBar setSearchQuery={setSearchQuery} />
+          <SearchBar/>
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <MyGrid entities={entities} searchQuery={searchQuery} fields={fields} />
+            <PackageGrid entities={entities} fields={fields} />
           </div>
         </div>
-
-        <div className="pagination flex justify-between mt-4">
-          {page > 1 && (
-            <button
-              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
-              onClick={() => setPage(prev => prev - 1)}
-            >
-              Previous
-            </button>
-          )}
-          <span>Page {page}</span>
-          {page < totalPages && (
-            <button
-              className="bg-violet-600 hover:bg-violet-500 py-2 px-4 rounded-full text-white"
-              onClick={() => setPage(prev => prev + 1)}
-            >
-              Next
-            </button>
-          )}
-        </div>
+        <Paginator totalPages={totalPages} currentPage={currentPage}/>
       </div>
     </>
   );
