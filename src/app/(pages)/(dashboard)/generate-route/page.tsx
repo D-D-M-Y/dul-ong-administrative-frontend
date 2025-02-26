@@ -1,8 +1,7 @@
+'use server';
+
 import { Card } from '@/app/ui/dashboard/cards';
-import L from 'leaflet';
 import MapComponent from '@/app/components/Maps/MapComponent';
-import { Suspense } from 'react';
-import { Loader } from '@/app/components/Loading';
 import dynamic from 'next/dynamic';
 import GenerateRouteButton from '@/app/ui/generateroute';
 import ErrorBoundary from '@/app/components/ErrorBoundary';
@@ -58,9 +57,7 @@ export default async function Page() {
             <Card title="FOOs Available" value={data.foosAvailable} type="fooavailable" />
             <Card title="Routes Constructed" value={data.routesConstructed} type="routegen" />
           </div>
-          <ErrorBoundary>
-            <GenerateRouteButton/>
-          </ErrorBoundary>
+          <GenerateRouteButton/>
         </div>
 
         <div className="flex-1 h-[50vh] lg:h-auto lg:w-2/3">

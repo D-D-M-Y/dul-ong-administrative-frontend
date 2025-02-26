@@ -1,22 +1,31 @@
 "use client";
 import { useState } from "react";
 import { Loader } from "../components/Loading";
+import generateRoute from "../lib/actions";
 
 export default function GenerateRouteButton(){
   const [loading, setLoading] = useState(false)
   const [showError, setError] = useState();
-  const generateRoute = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/generate`);
-      if (!response.ok) {
-        throw new Error("Error in generating route");
-      }
-    };
+  
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      await generateRoute();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   if (loading == false){
     return (
         <button 
-            onClick={() => {setLoading(true); try{generateRoute()}catch(err){setError(() => {throw err;})}; setLoading(false)}} 
+            onClick={handleClick} 
             className="w-full bg-indigo-100 rounded-lg text-textC font-bold font-roboto py-2">
             <h2>Generate Route</h2>
+            {showError && <p className="error">{showError}</p>}
         </button>
     )
   }
