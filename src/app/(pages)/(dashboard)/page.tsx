@@ -3,10 +3,11 @@ import fetchMarkers from '@/app/lib/fetchmarkers';
 import fetchRoutes from '@/app/lib/fetchroutes';
 import { Card } from '@/app/ui/dashboard/cards';
 import Dropdown from '@/app/ui/dashboard/dropdown';
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import withAuth from '../hoc/withAuth';  // Import the HOC to protect this page
 
-const DynamicMapComponent = dynamic(() => import("@/app/components/Maps/MapComponent"), { ssr: false });
+const DynamicMapComponent = dynamic(() => import('@/app/components/Maps/MapComponent'), { ssr: false });
 
 interface DashboardData {
   totalPackages: number;
@@ -19,7 +20,7 @@ interface DashboardData {
   packagesDelivered: number;
 }
 
-export default function Page() {
+function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [markers, setMarker] = useState([]);
   const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
@@ -93,15 +94,10 @@ export default function Page() {
     <>
       <main>
         <div>
-          <h1 className="font-roboto font-bold">
-            Welcome back, Allana!
-          </h1>
+          <h1 className="font-roboto font-bold">Welcome back, Allana!</h1>
 
           <div className="flex items-baseline font-roboto">
             <h1> Delivery Overview </h1>
-            {/* <div className="ml-4 relative">
-              <Dropdown />
-            </div> */}
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -128,7 +124,9 @@ export default function Page() {
         <h1 className="font-roboto"> Route Overview </h1>
       </main>
       <DynamicMapComponent markers={markers} convertedPolyline={convertedPolyline} height='80%' width='100%' />
-
     </>
   );
 }
+
+// Wrap the Page component with the `withAuth` HOC to protect it
+export default withAuth(Page);

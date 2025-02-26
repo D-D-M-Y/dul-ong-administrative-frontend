@@ -1,6 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { FcGoogle } from "react-icons/fc";
+import { useRouter } from 'next/navigation';
 
 import { useState, FormEvent, ChangeEvent, useTransition, startTransition } from 'react';
 import { authenticate } from '@/app/lib/authenticate';
@@ -63,12 +64,13 @@ export default function Page({searchParams}: PageProps) {
             <p className = "relative text-center text-textC pl-2">Continue with Google</p>
           </button>
 
-          <div className="flex items-center pb-2 mt-4">
-            <div className="w-auto p-5 border-b border-lgray py-1"></div>
-            <span className="text-lgray font-source-sans-pro px-2">or</span>
-            <div className="w-auto p-5 border-b border-lgray py-1"></div>
-          </div>
-
+      <div className="flex flex-col flex-grow bg-white rounded-l-3xl justify-center items-center h-screen">
+        <h1 className="font-bold font-roboto">Log In</h1>
+        
+        {/* <button className="border rounded-lg p-2 hover:highlight flex justify-center w-1/3">
+          <FcGoogle size={18} />
+          <p className="relative text-center text-textC pl-2">Continue with Google</p>
+        </button>
           <div className="flex flex-col pt-4 space-y-2 w-1/3">
             <input type="text" id="email" name="email" value={inputs.email} className="border rounded-lg px-2 py-1 text-textC text-m font-ptsans" onChange={handleChange} placeholder="Username or Email" />
             <input type="password" id="password" name="password" value={inputs.password} className="border rounded-lg px-2 py-1 text-textC text-m font-ptsans" onChange={handleChange} placeholder="Password" />
@@ -78,5 +80,6 @@ export default function Page({searchParams}: PageProps) {
       </div>
       </form>
       </div>
+    </div>
   );
 }
