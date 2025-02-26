@@ -1,0 +1,1 @@
+type PolylineData = { lat: number; lng: number; finalcolor: string }[][];

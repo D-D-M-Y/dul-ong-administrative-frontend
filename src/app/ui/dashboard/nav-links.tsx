@@ -12,6 +12,7 @@ import {
   CiLogout,
   CiViewList 
 } from "react-icons/ci";
+import { signOut } from 'next-auth/react';
 
 const links = [
   { name: 'Dashboard', href: '/', icon: <CiGrid42 className='icon' size={40} />},
@@ -32,7 +33,24 @@ export default function NavLinks() {
         const isActive = pathname === link.href || 
                          (link.href === '/company-settings' && pathname.startsWith('/company-settings')) ||
                          (link.href === '/customer-data' && pathname.startsWith('/customer-data'));
-
+        if (link.name == 'Exit'){
+          return (
+            <button
+            onClick={() =>{
+              signOut({redirectTo: '/login'})
+            }}
+            key={link.name}
+            className={clsx(
+              "nav-links",
+              isActive && "nav-link-active",
+            )}
+          >
+            {link.icon}
+            <span className="image-overlay"></span>
+            <p className="hidden md:block">{link.name}</p>
+          </button>
+          );
+        } else{
         return (
           <Link
             key={link.name}
@@ -47,6 +65,7 @@ export default function NavLinks() {
             <p className="hidden md:block">{link.name}</p>
           </Link>
         );
+      }
       })}
     </>
   );
