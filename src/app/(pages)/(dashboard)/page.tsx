@@ -5,7 +5,6 @@ import { Card } from '@/app/ui/dashboard/cards';
 import Dropdown from '@/app/ui/dashboard/dropdown';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
-import withAuth from '../hoc/withAuth';  // Import the HOC to protect this page
 
 const DynamicMapComponent = dynamic(() => import('@/app/components/Maps/MapComponent'), { ssr: false });
 
@@ -129,4 +128,4 @@ function Page() {
 }
 
 // Wrap the Page component with the `withAuth` HOC to protect it
-export default withAuth(Page);
+export default Page;
