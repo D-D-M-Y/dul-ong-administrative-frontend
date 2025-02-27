@@ -1,10 +1,8 @@
 'use server';
 
 import { Card } from '@/app/ui/dashboard/cards';
-import MapComponent from '@/app/components/Maps/MapComponent';
 import dynamic from 'next/dynamic';
 import GenerateRouteButton from '@/app/ui/generateroute';
-import ErrorBoundary from '@/app/components/ErrorBoundary';
 import fetchMarkers from '@/app/lib/fetchmarkers';
 import fetchRoutes from '@/app/lib/fetchroutes';
 
