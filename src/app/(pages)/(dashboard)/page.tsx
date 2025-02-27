@@ -2,9 +2,9 @@
 import fetchMarkers from '@/app/lib/fetchmarkers';
 import fetchRoutes from '@/app/lib/fetchroutes';
 import { Card } from '@/app/ui/dashboard/cards';
-import Dropdown from '@/app/ui/dashboard/dropdown';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import LoadingSpinner from "@/app/components/Loading";
 
 const DynamicMapComponent = dynamic(() => import('@/app/components/Maps/MapComponent'), { ssr: false });
 
@@ -23,7 +23,7 @@ function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [markers, setMarker] = useState([]);
   const [convertedPolyline, setConvertedPolyline] = useState<PolylineData>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -87,7 +87,7 @@ function Page() {
     fetchRouteGroup();
   }, []);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) return  <LoadingSpinner />;
 
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Loader } from "../components/Loading";
+import LoadingSpinner from "../components/Loading";
 import generateRoute from "../lib/actions";
 
 export default function GenerateRouteButton(){
@@ -30,6 +30,6 @@ export default function GenerateRouteButton(){
     )
   }
   else {
-    return(<Loader/>)
+    return(<LoadingSpinner/>)
   }
 }

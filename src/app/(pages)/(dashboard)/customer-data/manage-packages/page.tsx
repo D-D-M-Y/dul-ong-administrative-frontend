@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SearchBar from '@/app/ui/tables/searchbar';
-import { Loader } from '@/app/components/Loading';
 import PackageGrid from '@/app/components/Griddata/PackageGrid';
 import Paginator from '@/app/ui/tables/paginator';
 

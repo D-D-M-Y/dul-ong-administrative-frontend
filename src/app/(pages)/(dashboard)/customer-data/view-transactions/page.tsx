@@ -1,7 +1,4 @@
-"use client";
-import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Loader } from '@/app/components/Loading';
 import TransactionGrid from '@/app/components/Griddata/TransactionGrid';
 import Paginator from '@/app/ui/tables/paginator';
 

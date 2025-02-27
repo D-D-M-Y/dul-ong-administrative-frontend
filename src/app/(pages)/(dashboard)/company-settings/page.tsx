@@ -1,30 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import SearchBar from '@/app/ui/tables/searchbar';
-import { Loader } from '@/app/components/Loading';
-import AdminGrid from '@/app/components/Griddata/AdminGrid';
-import Paginator from '@/app/ui/tables/paginator';
-import { Suspense } from 'react';
+import Link from "next/link";
+import SearchBar from "@/app/ui/tables/searchbar";
+import LoadingSpinner from "@/app/components/Loading";
+import AdminGrid from "@/app/components/Griddata/AdminGrid";
+import Paginator from "@/app/ui/tables/paginator";
+import { Suspense } from "react";
 
 function generateName(entity: FooEntity): string {
-  return entity.fname + ' ' + entity.mname + ' ' + entity.lname;
+  return entity.fname + " " + entity.mname + " " + entity.lname;
 }
 
 export default async function Page(props: {
-  searchParams?: Promise <{
+  searchParams?: Promise<{
     query?: string;
     page?: string;
-  }> 
+  }>;
 }) {
   const searchParams = await props.searchParams;
-  const query = searchParams?.query || '';
+  const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
   //const [entities, setEntities] = useState<FooEntity[]>([]);
   //const [page, setPage] = useState(1);
   //const [totalPages, setTotalPages] = useState(1);
 
-
-  const fetchEntities = async (): Promise<{entities: FooEntity[], totalPages: number}> => {
+  const fetchEntities = async (): Promise<{
+    entities: FooEntity[];
+    totalPages: number;
+  }> => {
     try {
       const endpoint = query
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/users/admin/${query}`
@@ -43,26 +44,23 @@ export default async function Page(props: {
           ...entity,
           name: generateName(entity),
         }));
-
-        return {entities: updatedData, totalPages:data.total_pages};
+        return { entities: updatedData, totalPages: data.total_pages };
       } else {
-        throw new Error('Expected an array in data.results');
+
+        throw new Error("Expected an array in data.results");
       }
     } catch (error) {
-      throw new Error('Error fetching entities');
+      throw new Error("Error fetching entities");
     }
   };
 
-  const {entities, totalPages} = await fetchEntities();
+  const { entities, totalPages } = await fetchEntities();
 
   return (
     <>
-
       {/* Header */}
       <div>
-        <h1 className='font-bold font-roboto'>
-          Company Settings
-        </h1>
+        <h1 className="font-bold font-roboto">Company Settings</h1>
 
         {/* Folder */}
         <div className="flex items-baseline font-source_sans_pro">
@@ -83,19 +81,18 @@ export default async function Page(props: {
 
         {/* Body */}
         <div className="customborder-body p-5 overflow-auto max-h-[1080px] max-w-[1920px]">
-          <SearchBar/>
+          <SearchBar />
           <div className="grid table w-full overflow-auto p-4 max-h-[600px]">
-            <Suspense key={query + entities} fallback={<Loader/>}>
-              <AdminGrid entities={entities}/>
+            <Suspense key={query + entities} fallback={<LoadingSpinner />}>
+              <AdminGrid entities={entities} />
             </Suspense>
           </div>
         </div>
-      
-      <Suspense key={totalPages} fallback={<Loader/>}>
-        <Paginator totalPages={totalPages} currentPage={currentPage}/>
-      </Suspense>
+
+        <Suspense key={totalPages} fallback={<LoadingSpinner />}>
+          <Paginator totalPages={totalPages} currentPage={currentPage} />
+        </Suspense>
       </div>
     </>
   );
 }
-

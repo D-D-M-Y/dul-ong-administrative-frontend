@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import { Loader  } from '@/app/components/Loading';
 import RouteGrid from '@/app/components/Griddata/RouteGrid';
 import Paginator from '@/app/ui/tables/paginator';
 
@@ -19,7 +17,6 @@ export default async function Page(props:{
         throw new Error(`Failed to fetch entities: ${response.statusText}`);
       }
       const data = await response.json();
-      
       return {entities: data.results, totalPages: data.total_pages}
     } catch (error) {
       throw new Error(`Error fetching entitites`)
@@ -32,7 +29,7 @@ export default async function Page(props:{
       {/* Header */}
       <div>
         <h1 className='font-bold'>
-          Customer Data
+          Route History
         </h1>
 
         {/* Folder */}
