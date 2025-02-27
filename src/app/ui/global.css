@@ -4,7 +4,7 @@
 
 :root {
   --foreground: #F4F4F4;
-  }
+}
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -18,20 +18,7 @@
   }
 }
 
-@font-face {
-  font-family: 'Roboto';
-  src: url('/fonts/Roboto-Regular.ttf') format('truetype'),
-}
-
-@font-face {
-  font-family: 'PT Sans';
-  src: url('/fonts/PTSans-Regular.ttf') format('truetype'),
-}
-
-@font-face {
-  font-family: 'Source Sans Pro';
-  src: url('/fonts/SourceSansPro-Regular.otf') format('opentype'),
-}
+/* Removed @font-face declarations as fonts are imported */
 
 input[type='number'] {
   -moz-appearance: textfield;
@@ -54,110 +41,114 @@ body {
 
 /* headers */
 
-h1 {                  /*header for page*/ 
-  font-family:    "Roboto";
-  font-size:      250%;
+h1 { /*header for page*/
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 250%;
   color: #212121;
 }
 
-h2 {                   /*header for tabs*/ 
-  display:             inline-block;
-  top:                 0.2rem; 
-  margin:              auto;
-  font-family:         "Source Sans Pro";
-  font-size:           large;
+h2 { /*header for tabs*/
+  display: inline-block;
+  top: 0.2rem;
+  margin: auto;
+  font-family: var(--font-sourcesans), sans-serif;
+  font-size: large;
 }
 
-h3 {                   /*header for cards*/ 
-  font-family:         "Source Sans Pro"; 
-  font-size:           x-large; 
-  color:             #212121;
+h3 { /*header for cards*/
+  font-family: var(--font-sourcesans), sans-serif; 
+  font-size: x-large;
+  color: #212121;
 }
 
-h4 {                   /*name in sidenav*/ 
-  font-family:         "Roboto"; 
-  font-size:           x-large;
-  font-weight:         bold;
-  color:             #212121;
+h4 { /*name in sidenav*/
+  font-family: var(--font-roboto), sans-serif;
+  font-size: x-large;
+  font-weight: bold;
+  color: #212121;
 }
 
 h5 {
-  font-family:         "Roboto"; 
-  font-size:           small;
-  color:             #212121;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: small;
+  color: #212121;
 }
 
 p {
-  font-family:         "PT Sans"; 
-  font-size:           medium;
+  font-family: var(--font-ptsans), sans-serif;
+  font-size: medium;
 }
 
 .font-roboto {
-  font-family:    "Roboto";
+  font-family: var(--font-roboto), sans-serif;
 }
 
-.font-source-sans-pro {
-  font-family:    "Source Sans Pro";
+.font-source-sans-3 { /* Updated class name */
+  font-family: var(--font-sourcesans), sans-serif;
 }
 
 .font-ptsans {
-  font-family:    "PT Sans";
+  font-family: var(--font-ptsans), sans-serif;
 }
+
+.font-dmserif {
+  font-family: var(--font-dmserif), serif;
+}
+
 /* dashboard*/
 
 .nav-links {
-  color:              #212121;
-  font-size:            medium;
-  background-color:   #FFFFFF; 
-  display:              flex;
-  height:               3rem;
-  flex-grow:            1;
-  align-items:          center;
-  justify-content:      center;
-  gap:                  0.2rem;
-  border-radius:        1rem;
-  background-color:     #F9FAFB; 
-  transition:           background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
-  font-family:          "Source Sans Pro";
-  
+  color: #212121;
+  font-size: medium;
+  background-color: #FFFFFF;
+  display: flex;
+  height: 3rem;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  border-radius: 1rem;
+  background-color: #F9FAFB;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  font-family: var(--font-sourcesans), sans-serif;
+
 
   &:hover {
-    background-color: #E6E6FA; 
-    color: #212121; 
+    background-color: #E6E6FA;
+    color: #212121;
   }
 
-
-  @media (min-width: 768px) { 
+  @media (min-width: 768px) {
     flex-grow: initial;
     justify-content: flex-start;
     padding: 2px 3px;
   }
 }
 
-.icon{
+.icon {
   padding-left: 0.5rem;
 }
 
 .nav-link-active {
-  color: #FFFFFF; 
-  background-color: #6F42C1; 
+  color: #FFFFFF;
+  background-color: #6F42C1;
 }
 
 .dropdown {
   z-index: 1; /* Or a higher number if necessary | this puts dropdown in the front */
-  font-family:          "PT Sans";
+  font-family: var(--font-ptsans), sans-serif;
 }
 
 /* company settings */
 
 .customborder-active {
   width: fit-content;
-  height: 100%; 
+  height: 100%;
   position: relative;
   background-color: white;
   border-width: 0.1rem;
   border-color: white;
-  border-radius:  1rem 1rem 0 0;  
+  border-radius: 1rem 1rem 0 0;
   color: #6F42C1;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -166,13 +157,13 @@ p {
 
 .customborder-link {
   width: fit-content;
-  height: 100%; 
+  height: 100%;
   position: relative;
   background-color: #F4F4F4;
   border-width: 0.1rem;
   border-color: #D9D9D9;
   border-bottom: 0;
-  border-radius:  1rem 1rem 0 0;  
+  border-radius: 1rem 1rem 0 0;
   color: #212121;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -181,67 +172,64 @@ p {
 }
 
 .customborder-body {
-  width:              100%;
-  height:             100%; 
-  position:           relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
   background-color: white;
-  border-color:     white;
-  border-radius:      0 1rem 1rem 1rem; 
+  border-color: white;
+  border-radius: 0 1rem 1rem 1rem;
 }
 
-.table{ 
-  border-width:       0.2rem;
-  border-color:     #D9D9D9;
-  border-radius:      0.5rem;
-  height:             100%;
-  width:              100%;
-  position:           flex;
+.table {
+  border-width: 0.2rem;
+  border-color: #D9D9D9;
+  border-radius: 0.5rem;
+  height: 100%;
+  width: 100%;
+  position: flex;
 }
 
 th {
-  font-size:          large;
-  font-weight:        bold;
+  font-size: large;
+  font-weight: bold;
   background-color: white;
-  border-color:     #D9D9D9;
-  border-width:       0.05rem;
-  border-top:         0.05rem;
-  border-bottom:      0.05rem;
-  border-left:        0.05rem;
-  padding-top:        1rem; 
-  padding-bottom:     1rem;
-  align-items:        center;
-  font-family:        "Source Sans Pro";
-
+  border-color: #D9D9D9;
+  border-width: 0.05rem;
+  border-top: 0.05rem;
+  border-bottom: 0.05rem;
+  border-left: 0.05rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  align-items: center;
+  font-family: var(--font-sourcesans), sans-serif; 
 }
-
 
 th:hover button {
-  background-color: #E6E6FA; 
-  border:           #F4F4F4;
-  border-width:       0.5rem;
-  border-radius:      0.5rem;
+  background-color: #E6E6FA;
+  border: #F4F4F4;
+  border-width: 0.5rem;
+  border-radius: 0.5rem;
 }
 
-
 td {
-  font-size:          small;
-  border-color:    #D9D9D9;
-  border-width:       0.05rem;
-  border-bottom:      0.05rem;
-  border-left:        0.05rem;
-  text-align:         center;
-  font-family:        "PT Sans";
+  font-size: small;
+  border-color: #D9D9D9;
+  border-width: 0.05rem;
+  border-bottom: 0.05rem;
+  border-left: 0.05rem;
+  text-align: center;
+  font-family: var(--font-ptsans), sans-serif;
 }
 
 .searchbar {
-  display: flex; 
-  align-items: center; 
-  border: 0.2rem solid #d9d9d9; 
-  border-radius: 0.5rem; 
+  display: flex;
+  align-items: center;
+  border: 0.2rem solid #d9d9d9;
+  border-radius: 0.5rem;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   width: fit-content;
-  font-family:        "PT Sans";
+  font-family: var(--font-ptsans), sans-serif;
 }
 
 .button-content {
